@@ -2,6 +2,7 @@
 <html>
     <head>
         <title>Ocelot</title>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
         <script src="http://fb.me/react-0.4.0.js"></script>
         <script src="http://underscorejs.org/underscore.js"></script>
         <script src="http://backbonejs.org/backbone.js"></script>
@@ -15,7 +16,11 @@
         <a href="{{users.create_login_url('/')}}">Sign in or register</a>.
         {%- endif %}
         <script>
-            React.renderComponent(CardList({models:cards}, null), document.body);
+            var cards = new CardCollection();
+            cards.fetch();
+            React.renderComponent(
+                CardList({collection:cards}, null),
+                document.body);
         </script>
     </body>
 </html>
