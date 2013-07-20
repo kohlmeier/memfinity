@@ -1,4 +1,4 @@
 #!/bin/bash
 
-jsx -x jsx -w webapp/frontend/ webapp/static/ &
+watchify -t reactify webapp/frontend/* -o webapp/static/frontend.js &
 dev_appserver.py webapp

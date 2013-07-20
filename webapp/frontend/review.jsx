@@ -1,5 +1,7 @@
 /** @jsx React.DOM */
-// see it in action - http://jsfiddle.net/dinojoel/8LRge/15/
+/*
+ * Interface for review mode
+ */
 var BackboneMixin = require('./backbonemixin.js');
 
 /*
@@ -19,27 +21,24 @@ var CardCollection = Backbone.Collection.extend({
     // TODO - comparator
 });
 
-// var cards = [
-//     new CardModel({front: 'allez', back: 'go', tags: ['french']}),
-//     new CardModel({front: 'matin', back: 'morning', tags: ['french']})
-// ];
-
-var CardList = React.createClass({
+// props: collection, position ({x, y})?
+var CardStack = React.createClass({
     mixins: [BackboneMixin],
     render: function() {
         var currentCard = this.state.cardNum;
-        var cards = _(this.props.collection.models).map(function(model, ix) {
-            var scale = currentCard === ix ? 1 : 0.8;
-            var style = {
-                '-webkit-transform': 'scale(' + scale + ')',
-                left: (250 + (ix - currentCard) * 420) + 'px'
-            };
-            return <Card model={model}
-                         style={style}
-                         nextCard={this.nextCard}
-                         key={model.cid} />;
-        }, this);
-        return <div class='cardlist'>{cards}</div>;
+        var topCardModel = this.props.collection.models[this.state.cardNum];
+        if (!topCardModel) { // empty stack
+            return <div class='emptycardstack'>
+                empty stack!
+            </div>;
+        } else {
+            var topCard = <Card model={topCardModel}
+                                nextCard={this.nextCard}
+                                key={topCardModel.cid} />;
+            return <div class='cardstack' style={{left: '300px'}}>
+                {topCard}
+            </div>;
+        }
     },
     // TODO - does this have to be a function?
     getInitialState: function() {
@@ -76,7 +75,7 @@ var Card = React.createClass({
         } else { // meta
             stateView = <CardMeta info={this.props.model.get('meta')} />;
         }
-        return <div class='card' style={this.props.style}>
+        return <div class='card'>
             {stateView}
         </div>;
     },
@@ -138,6 +137,7 @@ var MetaButton = React.createClass({
     }
 });
 
-var cards = new CardCollection();
-cards.fetch();
-React.renderComponent(<CardList collection={cards} />, document.body);
+module.exports = {
+    CardCollection: CardCollection,
+    CardStack: CardStack
+};
