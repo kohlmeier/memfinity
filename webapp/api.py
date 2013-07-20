@@ -23,6 +23,16 @@ def get_oauth_user():
     return user
 
 
+def get_current_user():
+    """Return the OAuth authenticated user, else raise an exception."""
+    user = users.get_current_user()
+
+    if not user:
+        raise Exception("Login required for this call.")
+
+    return user
+
+
 def entity_view(handler, route_root):
     """Query for a single entity by Key."""
     path = handler.request.path
@@ -98,7 +108,7 @@ def card_query(handler):
 
 def card_add(handler):
     """Add a new Card."""
-    user = get_oauth_user()
+    user = get_current_user()
     user_data = models.UserData.get_for_user_id(user.user_id())
     if not user_data:
         raise Exception("No UserData found.")
@@ -121,7 +131,7 @@ def card_add(handler):
 
 def card_update(handler, delete=False):
     """Update or Delete an exisiting Card."""
-    user = get_oauth_user()
+    user = get_current_user()
     user_data = models.UserData.get_for_user_id(user.user_id())
     if not user_data:
         raise Exception("No UserData found.")
@@ -167,7 +177,7 @@ def card_import(handler):
 
     Called with the form: /api/card/<card_id>/import
     """
-    user = get_oauth_user()
+    user = get_current_user()
     user_data = models.UserData.get_for_user_id(user.user_id())
     if not user_data:
         raise Exception("No UserData found.")
@@ -201,7 +211,7 @@ def card_import(handler):
 
 def user_update(handler):
     """Update and exisiting Card."""
-    user = get_oauth_user()
+    user = get_current_user()
     user_data = models.UserData.get_for_user_id(user.user_id())
     if not user_data:
         raise Exception("No UserData found.")
