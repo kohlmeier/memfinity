@@ -138,3 +138,6 @@ var MetaButton = React.createClass({
     }
 });
 
+var cards = new CardCollection();
+cards.fetch();
+React.renderComponent(<CardList collection={cards} />, document.body);
