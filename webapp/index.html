@@ -6,7 +6,6 @@
         <script src="http://fb.me/react-0.4.0.js"></script>
         <script src="http://underscorejs.org/underscore.js"></script>
         <script src="http://backbonejs.org/backbone.js"></script>
-        <script src="/static/frontend.js"></script>
         <link rel="stylesheet" href="/static/frontend.css" />
     </head>
     <body>
@@ -15,12 +14,6 @@
         {%- else -%}
         <a href="{{users.create_login_url('/')}}">Sign in or register</a>.
         {%- endif %}
-        <script>
-            var cards = new CardCollection();
-            cards.fetch();
-            React.renderComponent(
-                CardList({collection:cards}, null),
-                document.body);
-        </script>
+        <script src="/static/frontend.js"></script>
     </body>
 </html>

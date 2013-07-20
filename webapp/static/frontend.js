@@ -197,6 +197,9 @@ var MetaButton = React.createClass({displayName: 'MetaButton',
     }
 });
 
+var cards = new CardCollection();
+cards.fetch();
+React.renderComponent(CardList( {collection:cards} ), document.body);
 
 },{"./backbonemixin.js":1}]},{},[1,2])
 ;
