@@ -1,0 +1,49 @@
+.cardlist {
+    width: 100000px;
+    left: -50000px;
+    position: absolute;
+}
+
+.card {
+    width: 400px;
+    height: 300px;
+    border: 1px solid #3a3a3a;
+    font: 16px 'Helvetica Neue';
+    font-weight: 200;
+    color: #3a3a3a;
+    position: absolute;
+}
+
+.cardFront {
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.content {
+    margin-top: 20%;
+    text-align: center;
+}
+
+.choices {
+    bottom: 15px;
+    position: absolute;
+}
+
+.choices_hard {
+    margin-right: 20px;
+    margin-left: 150px;
+}
+
+.clearfix:before,
+.clearfix:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.clearfix:after {
+    clear: both;
+}

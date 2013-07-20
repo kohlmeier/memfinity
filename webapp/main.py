@@ -1,22 +1,37 @@
+import os
+
 from google.appengine.api import users
 
+import jinja2
 import webapp2
 
 import api
+
+
+JINJA_ENVIRONMENT = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
+    extensions=['jinja2.ext.autoescape'],
+    )
 
 
 class MainPage(webapp2.RequestHandler):
 
     def get(self):
         user = users.get_current_user()
-        if user:
-            greeting = ('Welcome, %s! (<a href="%s">sign out</a>)' %
-                        (user.nickname(), users.create_logout_url('/')))
-        else:
-            greeting = ('<a href="%s">Sign in or register</a>.' %
-                        users.create_login_url('/'))
+        template = JINJA_ENVIRONMENT.get_template('index.html')
+        env = {
+            'user': user,
+            'users': users,
+        }
+        self.response.write(template.render(env))
+        # if user:
+        #     greeting = ('Welcome, %s! (<a href="%s">sign out</a>)' %
+        #                 (user.nickname(), users.create_logout_url('/')))
+        # else:
+        #     greeting = ('<a href="%s">Sign in or register</a>.' %
+        #                 users.create_login_url('/'))
 
-        self.response.out.write('<html><body>%s</body></html>' % greeting)
+        # self.response.out.write('<html><body>%s</body></html>' % greeting)
 
 
 class ApiHandler(webapp2.RequestHandler):
