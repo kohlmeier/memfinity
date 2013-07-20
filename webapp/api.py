@@ -1,8 +1,9 @@
 import json
-import logging
 
 from google.appengine.api import oauth
+from google.appengine.ext import ndb
 
+import jsonify
 import models
 
 
@@ -21,15 +22,19 @@ def get_oauth_user():
 
 
 def card_view(handler):
-    data = json.loads(handler.request.body)
-    
-    response = {}
-    if 'card_key' in data:
-        card = ndb.Key(urlsafe=data['card_key'])
-        if card:
-            response_data = card.
+    path = handler.request.path
+    response = '{}'
 
+    root = '/api/card/'
+    if not path.startswith(root) and len(path) > len(root):
+        return response
 
+    card_key = path[len(root):]
+    card = ndb.Key(urlsafe=card_key).get()
+    if card:
+        response = jsonify.jsonify(card, pretty_print=True)
+
+    return response
 
 
 def card_add(handler):

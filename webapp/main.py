@@ -40,8 +40,7 @@ class ApiHandler(webapp2.RequestHandler):
         self.response.out.write(response)
 
 
-
 application = webapp2.WSGIApplication([
     ('/', MainPage),
-    ('/api/card', ApiHandler),
+    ('/api/.*', ApiHandler),
     ], debug=True)
