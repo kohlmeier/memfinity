@@ -1,0 +1,18 @@
+{
+  "name": "SSRS",
+  "description": "SSRS",
+  "version": "0.1",
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": ["contextMenus", "tabs", "https://api.pushover.net/1/messages.json"],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "icons": {
+    "16": "icon_16x16.png",
+    "128": "icon.png"
+  },
+  "manifest_version": 2
+}
