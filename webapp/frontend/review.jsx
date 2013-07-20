@@ -1,5 +1,6 @@
 /** @jsx React.DOM */
 // see it in action - http://jsfiddle.net/dinojoel/8LRge/15/
+var BackboneMixin = require('./backbonemixin.js');
 
 /*
  * Cards store the following data:
@@ -12,19 +13,26 @@ var CardModel = Backbone.Model.extend({
     rate: function(rating) { console.log('rated ' + rating); }
 });
 
-var cards = [
-    new CardModel({front: 'allez', back: 'go', tags: ['french']}),
-    new CardModel({front: 'matin', back: 'morning', tags: ['french']})
-];
+var CardCollection = Backbone.Collection.extend({
+    model: CardModel,
+    url: '/api/cards/' // TODO
+    // TODO - comparator
+});
+
+// var cards = [
+//     new CardModel({front: 'allez', back: 'go', tags: ['french']}),
+//     new CardModel({front: 'matin', back: 'morning', tags: ['french']})
+// ];
 
 var CardList = React.createClass({
+    mixins: [BackboneMixin],
     render: function() {
         var currentCard = this.state.cardNum;
-        var cards = _(this.props.models).map(function(model, ix) {
+        var cards = _(this.props.collection.models).map(function(model, ix) {
             var scale = currentCard === ix ? 1 : 0.8;
             var style = {
                 '-webkit-transform': 'scale(' + scale + ')',
-                left: (50060 + (ix - currentCard) * 420) + 'px'
+                left: (250 + (ix - currentCard) * 420) + 'px'
             };
             return <Card model={model}
                          style={style}
@@ -39,6 +47,9 @@ var CardList = React.createClass({
     },
     nextCard: function() {
         this.setState({cardNum: this.state.cardNum + 1});
+    },
+    getBackboneModels: function() {
+        return [this.props.collection];
     }
 });
 

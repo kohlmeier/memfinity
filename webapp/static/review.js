@@ -1,64 +1,3 @@
-;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
-var _validateModelArray = function(backboneModels) {
-    if (!_.isArray(backboneModels)) {
-        throw new Error('getBackboneModels must return an array, ' +
-            'get this ' + backboneModels + ' out of here.');
-    }
-}
-
-/**
- * BackboneMixin - automatic binding and unbinding for react classes mirroring
- * backbone models and views. Example:
- *
- *     var Model = Backbone.Model.extend({ ... });
- *     var Collection = Backbone.Collection.extend({ ... });
- *
- *     var Example = React.createClass({
- *         mixins: [BackboneMixin],
- *         getBackboneModels: function() {
- *             return [this.model, this.collection];
- *         }
- *     });
- *
- * List the models and collections that your class uses and it'll be
- * automatically `forceUpdate`-ed when they change.
- *
- * This binds *and* unbinds the events.
- */
-var BackboneMixin = {
-    // Passing this.forceUpdate directly to backbone.on will cause it to call
-    // forceUpdate with the changed model, which we don't want
-    _backboneForceUpdate: function() {
-        this.forceUpdate();
-    },
-    componentDidMount: function() {
-        // Whenever there may be a change in the Backbone data, trigger a
-        // reconcile.
-        var backboneModels = this.getBackboneModels();
-        _validateModelArray(backboneModels);
-        backboneModels.map(function(backbone) {
-            // The add, remove, and reset events are never fired for
-            // models, as far as I know.
-            backbone.on('add change remove reset', this._backboneForceUpdate,
-                this);
-        }.bind(this));
-    },
-    componentWillUnmount: function() {
-        var backboneModels = this.getBackboneModels();
-        _validateModelArray(backboneModels);
-        // Ensure that we clean up any dangling references when the
-        // component is destroyed.
-        backboneModels.map(function(backbone) {
-            // Remove all callbacks for all events with `this` as a context
-            backbone.off('add change remove reset', this._backboneForceUpdate,
-                this);
-        }.bind(this));
-    }
-};
-
-module.exports = BackboneMixin;
-
-},{}],2:[function(require,module,exports){
 /** @jsx React.DOM */
 // see it in action - http://jsfiddle.net/dinojoel/8LRge/15/
 var BackboneMixin = require('./backbonemixin.js');
@@ -197,6 +136,3 @@ var MetaButton = React.createClass({displayName: 'MetaButton',
     }
 });
 
-
-},{"./backbonemixin.js":1}]},{},[1,2])
-;
