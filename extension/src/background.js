@@ -14,8 +14,7 @@ function uploadCard(card, callback){
 var currentCard = null;
 function onPopupClosed() {
     console.log('Popup closed! Current card:', currentCard);
-
-    //uploadCard(request.content, console.log);
+    uploadCard(request.content, console.log);
 }
 
 var PopupCloseMonitor = {
