@@ -1,4 +1,5 @@
 import os
+import re
 
 from google.appengine.api import users
 
@@ -50,6 +51,12 @@ class ApiHandler(webapp2.RequestHandler):
             # '/api/cards/<user_key>' -> returns cards for a single user
             # '/api/cards/<user_key>?tags=tag1,tag2' -> w/ tag filtering
             response = api.card_query(self)
+        elif path.startswith('/api/user/'):
+            # retrieve an individual user
+            response = api.user_view(self)
+
+        else:
+            raise Exception("Unsupported API path: %s" % path)
 
         self.response.out.write(response)
 
@@ -57,11 +64,40 @@ class ApiHandler(webapp2.RequestHandler):
         #api.get_oauth_user()  # just for authentication
         path = self.request.path
         if path == '/api/card':
+            # add a new card
             response = api.card_add(self)
         else:
             raise Exception("Unsupported API path: %s" % path)
 
         self.response.out.write(response)
+
+    def put(self):
+        path = self.request.path
+        if re.match('/api/card/.+/import', path):
+            # import a card to the current user's feed
+            response = api.card_import(self)
+        elif path.startswith('/api/card/'):
+            # update an individual card
+            response = api.card_update(self)
+        elif path.startswith('/api/user/'):
+            # update an individual user
+            response = api.user_update(self)
+        else:
+            raise Exception("Unsupported API path: %s" % path)
+
+        self.response.out.write(response)
+
+    def delete(self):
+        path = self.request.path
+        if path.startswith('/api/card/'):
+            # delete an individual card
+            response = api.card_update(self, delete=True)
+        else:
+            raise Exception("Unsupported API path: %s" % path)
+
+        self.response.out.write(response)
+
+
 
 
 application = webapp2.WSGIApplication([
