@@ -2,6 +2,8 @@ from google.appengine.api import users
 
 import webapp2
 
+import api
+
 
 class MainPage(webapp2.RequestHandler):
 
@@ -16,6 +18,30 @@ class MainPage(webapp2.RequestHandler):
 
         self.response.out.write('<html><body>%s</body></html>' % greeting)
 
+
+class ApiHandler(webapp2.RequestHandler):
+
+    def get(self):
+        #api.get_oauth_user()  # just for authentication
+        path = self.request.path
+        if path.startswith('/api/card/'):
+            response = api.card_view(self)
+
+        self.response.out.write(response)
+
+    def post(self):
+        #api.get_oauth_user()  # just for authentication
+        path = self.request.path
+        if path == '/api/card':
+            response = api.card_add(self)
+        else:
+            raise Exception("Unsupported API path: %s" % path)
+
+        self.response.out.write(response)
+
+
+
 application = webapp2.WSGIApplication([
     ('/', MainPage),
-], debug=True)
+    ('/api/card', ApiHandler),
+    ], debug=True)
