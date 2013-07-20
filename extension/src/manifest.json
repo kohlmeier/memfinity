@@ -6,7 +6,7 @@
     "default_icon": "icon.png",
     "default_popup": "popup.html"
   },
-  "permissions": ["contextMenus", "tabs", "https://api.pushover.net/1/messages.json"],
+  "permissions": ["contextMenus", "tabs"],
   "background": {
     "scripts": ["background.js"]
   },
