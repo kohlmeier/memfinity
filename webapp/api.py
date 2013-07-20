@@ -2,6 +2,7 @@ import json
 import logging
 
 from google.appengine.api import oauth
+from google.appengine.api import users
 from google.appengine.ext import ndb
 
 import jsonify
@@ -36,6 +37,11 @@ def entity_view(handler, route_root):
         response = jsonify.jsonify(entity, pretty_print=True)
 
     return response
+
+
+def user_view_current(handler):
+    """Return information about the currently logged in user."""
+    return jsonify.jsonify(users.get_current_user())
 
 
 def user_view(handler):

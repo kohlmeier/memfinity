@@ -51,6 +51,8 @@ class ApiHandler(webapp2.RequestHandler):
             # '/api/cards/<user_key>' -> returns cards for a single user
             # '/api/cards/<user_key>?tags=tag1,tag2' -> w/ tag filtering
             response = api.card_query(self)
+        elif path == '/api/user':
+            response = api.user_view_current(self)            
         elif path.startswith('/api/user/'):
             # retrieve an individual user
             response = api.user_view(self)

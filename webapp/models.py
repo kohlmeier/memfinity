@@ -92,6 +92,21 @@ class Card(ndb.Model):
     modified = ndb.DateTimeProperty(auto_now=True)
     source_url = ndb.StringProperty()
 
+    # stores a list of dicts, each dict represents a presentation
+    # of this problem for review, and what happened.  The list is sorted,
+    # with the most recent activity first.  E.g., 
+    # review_history = [
+    #     {
+    #         "timestamp": <python datetime>,
+    #         "result": <"easy"|"hard">
+    #     },
+    #     {
+    #         "timestamp": <python datetime>,
+    #         "result": <"easy"|"hard">
+    #     }
+    # ]
+    review_history = ndb.JsonProperty()
+
     def update_from_dict(self, data):
         """Update this entity from data in a dict."""
         # Note that we never update user_key here
