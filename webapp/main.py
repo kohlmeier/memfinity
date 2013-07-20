@@ -25,7 +25,16 @@ class ApiHandler(webapp2.RequestHandler):
         #api.get_oauth_user()  # just for authentication
         path = self.request.path
         if path.startswith('/api/card/'):
+            # retrieve an individual card
             response = api.card_view(self)
+        elif path.startswith('/api/cards'):
+            # query for many cards
+            # '/api/cards' -> returns all cards, ordered by date added desc
+            # '/api/cards/' -> returns all cards, ordered by date added desc
+            # '/api/cards?tag=tag1,tag2' -> as above, but with tag filtering
+            # '/api/cards/<user_key>' -> returns cards for a single user
+            # '/api/cards/<user_key>?tags=tag1,tag2' -> w/ tag filtering
+            response = api.card_query(self)
 
         self.response.out.write(response)
 
