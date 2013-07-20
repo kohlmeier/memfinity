@@ -28,7 +28,8 @@ var CardList = React.createClass({displayName: 'CardList',
             };
             return Card( {model:model,
                          style:style,
-                         nextCard:this.nextCard}, null );
+                         nextCard:this.nextCard,
+                         key:model.cid} );
         }, this);
         return React.DOM.div( {className:"cardlist"}, cards);
     },
@@ -36,12 +37,13 @@ var CardList = React.createClass({displayName: 'CardList',
     getInitialState: function() {
         return { cardNum: 0 };
     },
-    nextCard: React.autoBind(function() {
+    nextCard: function() {
         this.setState({cardNum: this.state.cardNum + 1});
-    })
+    }
 });
 
 // props: nextCard, front, back, (tags or meta)
+// TODO this should probably take state as as prop
 var Card = React.createClass({displayName: 'Card',
     render: function() {
         var stateView,
@@ -50,17 +52,18 @@ var Card = React.createClass({displayName: 'Card',
                 this.props.nextCard();
             }.bind(this);
         if (this.state.state === 'front') {
-            var clickHandler = _(this.setState.bind(this))
-                .partial({ state: 'back' });
+            var clickHandler = function() {
+                this.setState({state: 'back'});
+            }.bind(this);
             stateView = CardFront(
                 {content:this.props.model.get('front'),
-                onClick:clickHandler}, null )
+                onClick:clickHandler} )
         } else if (this.state.state === 'back') {
             stateView = CardBack(
                 {content:this.props.model.get('back'),
-                rate:rate}, null );
+                rate:rate} );
         } else { // meta
-            stateView = CardMeta( {info:this.props.model.get('meta')}, null );
+            stateView = CardMeta( {info:this.props.model.get('meta')} );
         }
         return React.DOM.div( {className:"card", style:this.props.style}, 
             stateView
@@ -76,7 +79,7 @@ var Card = React.createClass({displayName: 'Card',
 var CardFront = React.createClass({displayName: 'CardFront',
     render: function() {
         return React.DOM.div( {className:"cardFront", onClick:this.props.onClick}, 
-            Content( {content:this.props.content}, null )
+            Content( {content:this.props.content} )
         );
     }
 });
@@ -84,16 +87,16 @@ var CardFront = React.createClass({displayName: 'CardFront',
 var CardBack = React.createClass({displayName: 'CardBack',
     render: function() {
         // <MetaButton onClick={undefined} />
-        return React.DOM.div( {className:"clearfix"}, [
-            Content( {content:this.props.content}, null ),
-            Choices( {rate:this.props.rate}, null )
-        ]);
+        return React.DOM.div( {className:"clearfix"}, 
+            Content( {content:this.props.content} ),
+            Choices( {rate:this.props.rate} )
+        );
     }
 });
 
 var CardMeta = React.createClass({displayName: 'CardMeta',
     render: function() {
-        return React.DOM.span(null, null );
+        return React.DOM.span(null );
     }
 });
 
@@ -105,20 +108,20 @@ var Content = React.createClass({displayName: 'Content',
 
 var Choices = React.createClass({displayName: 'Choices',
     render: function() {
-        return React.DOM.div( {className:"choices"}, [
+        return React.DOM.div( {className:"choices"}, 
             React.DOM.span( {className:"choices_hard",
                   onClick:_(this.props.rate).partial('hard')}, 
 " Hard "            ),
             React.DOM.span( {className:"choices_easy",
                   onClick:_(this.props.rate).partial('easy')}, 
 " Easy "            )
-        ]);
+        );
     }
 });
 
 var MetaButton = React.createClass({displayName: 'MetaButton',
     render: function() {
-        return React.DOM.div(null, null );
+        return React.DOM.div(null );
     }
 });
 

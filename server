@@ -1,0 +1,4 @@
+#!/bin/bash
+
+jsx -x jsx -w webapp/frontend/ webapp/static/ &
+dev_appserver.py webapp

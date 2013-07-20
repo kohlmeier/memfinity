@@ -28,7 +28,8 @@ var CardList = React.createClass({
             };
             return <Card model={model}
                          style={style}
-                         nextCard={this.nextCard} />;
+                         nextCard={this.nextCard}
+                         key={model.cid} />;
         }, this);
         return <div class='cardlist'>{cards}</div>;
     },
@@ -36,12 +37,13 @@ var CardList = React.createClass({
     getInitialState: function() {
         return { cardNum: 0 };
     },
-    nextCard: React.autoBind(function() {
+    nextCard: function() {
         this.setState({cardNum: this.state.cardNum + 1});
-    })
+    }
 });
 
 // props: nextCard, front, back, (tags or meta)
+// TODO this should probably take state as as prop
 var Card = React.createClass({
     render: function() {
         var stateView,
@@ -50,8 +52,9 @@ var Card = React.createClass({
                 this.props.nextCard();
             }.bind(this);
         if (this.state.state === 'front') {
-            var clickHandler = _(this.setState.bind(this))
-                .partial({ state: 'back' });
+            var clickHandler = function() {
+                this.setState({state: 'back'});
+            }.bind(this);
             stateView = <CardFront
                 content={this.props.model.get('front')}
                 onClick={clickHandler} />
