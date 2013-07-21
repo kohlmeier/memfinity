@@ -337,7 +337,15 @@ module.exports = Header;
  * - ... meta ...
  */
 var CardModel = Backbone.Model.extend({
-    rate: function(rating) { console.log('rated ' + rating); }
+    url: function() {
+        return '/api/card/' + this.get('key') + '/';
+    },
+    rate: function(rating) {
+        var url = '/api/card/' + key + '/review'
+        // 'easy' or 'hard'
+        var data = {
+        };
+    }
 });
 
 var CardCollection = Backbone.Collection.extend({
