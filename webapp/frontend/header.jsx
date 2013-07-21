@@ -1,10 +1,18 @@
 /** @jsx React.DOM */
+var gravatar = require('./gravatar.js');
+
 var Header = React.createClass({
     render: function() {
         var homeActive = this.state.home,
             feedActive = this.state.feed,
             aboutActive = this.state.about;
-        
+
+        var login_link;
+        if (window.username === "None"){
+            login_link = <a href="/login">Login</a>;
+        }else{
+            login_link = <span><img src={gravatar(window.username + '@gmail.com')} /><a href="/logout">Logout</a></span>;
+        }
         return <div class='navbar navbar-inverse'>
             <div class='navbar-inner'>
                 <ul class='nav pull-left'>
@@ -19,6 +27,9 @@ var Header = React.createClass({
                         onMouseEnter={_(this.alertEnter).partial('feed')}
                         onMouseLeave={_(this.alertLeave).partial('feed')}>
                         <i class='icon-twitter'></i> Feed
+                    </li>
+                    <li id="header_login" class={'header_login'}>
+                        {login_link}
                     </li>
                 </ul>
                 <ul class='nav pull-right'>

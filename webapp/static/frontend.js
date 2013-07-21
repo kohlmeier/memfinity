@@ -216,12 +216,20 @@ module.exports = getGravatar
 
 },{}],5:[function(require,module,exports){
 /** @jsx React.DOM */
+var gravatar = require('./gravatar.js');
+
 var Header = React.createClass({displayName: 'Header',
     render: function() {
         var homeActive = this.state.home,
             feedActive = this.state.feed,
             aboutActive = this.state.about;
-        
+
+        var login_link;
+        if (window.username === "None"){
+            login_link = React.DOM.a( {href:"/login"}, "Login");
+        }else{
+            login_link = React.DOM.span(null, React.DOM.img( {src:gravatar(window.username + '@gmail.com')} ),React.DOM.a( {href:"/logout"}, "Logout"));
+        }
         return React.DOM.div( {className:"navbar navbar-inverse"}, 
             React.DOM.div( {className:"navbar-inner"}, 
                 React.DOM.ul( {className:"nav pull-left"}, 
@@ -234,7 +242,10 @@ var Header = React.createClass({displayName: 'Header',
                         onClick:_(this.props.onNavigate).partial('feed'),
                         onMouseEnter:_(this.alertEnter).partial('feed'),
                         onMouseLeave:_(this.alertLeave).partial('feed')}, 
-                        React.DOM.i( {className:"icon-twitter"}), " Feed "                    )
+                        React.DOM.i( {className:"icon-twitter"}), " Feed "                    ),
+                    React.DOM.li( {id:"header_login", className:'header_login'}, 
+                        login_link
+                    )
                 ),
                 React.DOM.ul( {className:"nav pull-right"}, 
                     React.DOM.li( {className:'header_about' + (aboutActive ? ' active' : ''),
@@ -267,7 +278,7 @@ var Header = React.createClass({displayName: 'Header',
 
 module.exports = Header;
 
-},{}],6:[function(require,module,exports){
+},{"./gravatar.js":4}],6:[function(require,module,exports){
 /*
  * Cards store the following data:
  * - front: markup appearing on the front of the card
@@ -568,6 +579,5 @@ var Site = React.createClass({displayName: 'Site',
 
 React.renderComponent(Site(null ), document.body);
 
-},{"./about.jsx":1,"./feed.jsx":3,"./header.jsx":5,"./models.js":6,"./review.jsx":7}]},{},[2,3,4,5,6,7,8])
-;
+},{"./about.jsx":1,"./feed.jsx":3,"./header.jsx":5,"./models.js":6,"./review.jsx":7}]},{},[1,2,3,4,5,6,7,8])
 ;
