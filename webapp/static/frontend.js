@@ -138,9 +138,22 @@ var Feed = React.createClass({displayName: 'Feed',
     }
 });
 
-module.exports = Feed
+module.exports = Feed;
 
-},{"./backbonemixin.js":1,"./models.js":3}],3:[function(require,module,exports){
+},{"./backbonemixin.js":1,"./models.js":4}],3:[function(require,module,exports){
+/** @jsx React.DOM */
+var Header = React.createClass({displayName: 'Header',
+    render: function() {
+        return React.DOM.div( {className:"header clearfix"}, 
+            React.DOM.span( {className:"header_home"}, "Home ", React.DOM.i( {className:"icon-home"})),
+            React.DOM.span( {className:"header_page"}, React.DOM.i( {className:"icon-twitter"}),this.props.page)
+        );
+    }
+});
+
+module.exports = Header;
+
+},{}],4:[function(require,module,exports){
 /*
  * Cards store the following data:
  * - front: markup appearing on the front of the card
@@ -163,7 +176,7 @@ module.exports = {
     CardCollection: CardCollection
 };
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 /** @jsx React.DOM */
 /*
  * Interface for review mode
@@ -348,10 +361,11 @@ var MetaButton = React.createClass({displayName: 'MetaButton',
 
 module.exports = Review;
 
-},{"./backbonemixin.js":1,"./models.js":3}],5:[function(require,module,exports){
+},{"./backbonemixin.js":1,"./models.js":4}],6:[function(require,module,exports){
 /** @jsx React.DOM */
 var models = require('./models.js'),
     Review = require('./review.jsx'),
+    Header = require('./header.jsx'),
     Feed = require('./feed.jsx');
 
 var Site = React.createClass({displayName: 'Site',
@@ -362,7 +376,10 @@ var Site = React.createClass({displayName: 'Site',
         } else {
             view = Review( {reviewingStack:this.state.reviewing} );
         }
-        return view;
+        return React.DOM.div(null, 
+            Header( {page:this.state.view} ),
+            view
+        )
     },
     getInitialState: function() {
         // TODO make this real
@@ -381,5 +398,5 @@ var Site = React.createClass({displayName: 'Site',
 
 React.renderComponent(Site(null ), document.body);
 
-},{"./feed.jsx":2,"./models.js":3,"./review.jsx":4}]},{},[1,2,3,4,5])
+},{"./feed.jsx":2,"./header.jsx":3,"./models.js":4,"./review.jsx":5}]},{},[1,2,4,5,6])
 ;

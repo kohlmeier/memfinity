@@ -78,4 +78,4 @@ var Feed = React.createClass({
     }
 });
 
-module.exports = Feed
+module.exports = Feed;

@@ -1,6 +1,7 @@
 /** @jsx React.DOM */
 var models = require('./models.js'),
     Review = require('./review.jsx'),
+    Header = require('./header.jsx'),
     Feed = require('./feed.jsx');
 
 var Site = React.createClass({
@@ -11,7 +12,10 @@ var Site = React.createClass({
         } else {
             view = <Review reviewingStack={this.state.reviewing} />;
         }
-        return view;
+        return <div>
+            <Header page={this.state.view} />
+            {view}
+        </div>
     },
     getInitialState: function() {
         // TODO make this real
