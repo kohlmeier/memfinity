@@ -12,8 +12,10 @@ var Site = React.createClass({
         } else {
             view = <Review reviewingStack={this.state.reviewing} />;
         }
+
+        // TODO not using page in Header
         return <div>
-            <Header page={this.state.view} />
+            <Header page={this.state.view} onNavigate={this.navigate} />
             {view}
         </div>
     },
@@ -29,6 +31,10 @@ var Site = React.createClass({
             reviewing: reviewing,
             globalCollection: globalCollection
         };
+    },
+    navigate: function(page) {
+        console.log(page);
+        this.setState({ view: page });
     }
 });
 

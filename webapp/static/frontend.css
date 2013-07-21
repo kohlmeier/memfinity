@@ -1,8 +1,6 @@
-/*
 body {
-    font-family: 'Helvetica-Neue', Helvetica, sans-serif;
-    font-weight: 200;
-}*/
+    background-color: rgba(0, 0, 0, 0.1) !important;
+}
 
 .navbar-inner {
     border-radius: 0 !important;
@@ -13,12 +11,12 @@ body {
     font-size: 30px;
 }
 
-.header_home, .header_page {
+.header_home, .header_feed {
     color: #fff;
     cursor: pointer;
 }
 
-.header_home.active, .header_page.active {
+.header_home.active, .header_feed.active {
     background-color: #1abc9c;
     border-bottom-color: #16a085;
 }
@@ -28,7 +26,7 @@ body {
     margin-left: 10px;
 }
 
-.header_page {
+.header_feed {
     padding: 10px;
     margin-left: 10px;
 }
@@ -44,6 +42,7 @@ body {
 .filterbar_description {
     float: left;
     font-size: 24px;
+    padding: 5px;
 }
 
 .filtertext {
@@ -56,6 +55,7 @@ body {
     border: 1px solid #3a3a3a;
     float: left;
     clear: right;
+    margin-left: 7px;
 }
 
 .feedbody {
@@ -63,18 +63,47 @@ body {
 }
 
 .feedcard {
+    margin: 10px 0;
+    border-radius: 3px;
+    box-sizing: border-box;
+    background-color: #fff;
+    border: 1px solid #d8d8d8;
+    border-bottom-width: 2px;
+    border-top-width: 0;
+    width: 800px;
+}
+
+.feedcard_meta {
+    width: 278px; /* todo box-sizing or something */
+    float: left;
+}
+
+.feedcard_photo {
+    margin: 10px;
+    height: 120px;
+    width: 120px;
+    border-radius: 50%;
+    background: url(//lh6.googleusercontent.com/-b0Z0kngFdwY/AAAAAAAAAAI/AAAAAAAAAfQ/GAZ0Z7JEA2Q/s120-c/photo.jpg) no-repeat;
+}
+
+.feedcard_username {
+    margin: 10px;
+}
+
+.feedcard_right {
+    width: 500px;
+    float: left;
+}
+
+.feedcard_front, .feedcard_back {
+    padding: 10px 0;
+    margin: 0 10px;
+    border-radius: 2px;
+    background-color: #fff;
 }
 
 .feedcard_front {
-    float: left;
-    padding: 10px;
-    border: 1px solid #3a3a3a;
-}
-
-.feedcard_back {
-    float: left;
-    padding: 10px;
-    border: 1px solid #3a3a3a;
+    border-bottom: 1px solid #d8d8d8;
 }
 
 .review {
@@ -98,9 +127,6 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    font: 16px 'Helvetica Neue';
-    font-weight: 200;
-    color: #3a3a3a;
     position: absolute;
 }
 
@@ -127,16 +153,9 @@ body {
     margin-left: 150px;
 }
 
-.clearfix:before,
-.clearfix:after {
-    content: " ";
-    display: table;
+.choices_hard, .choices_easy {
+    cursor: pointer;
 }
-
-.clearfix:after {
-    clear: both;
-}
-
 
 /* http://meyerweb.com/eric/tools/css/reset/
    v2.0 | 20110126

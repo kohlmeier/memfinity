@@ -70,12 +70,15 @@ var models = require('./models.js');
 var FeedCard = React.createClass({displayName: 'FeedCard',
     mixins: [BackboneMixin],
     render: function() {
-        return React.DOM.div( {className:"feedcard"}, 
-            React.DOM.div( {className:"feedcard_front"}, 
-                this.props.model.get('front')
-            ),
-            React.DOM.div( {className:"feedcard_back"}, 
-                this.props.model.get('back')
+        return React.DOM.div( {className:"feedcard clearfix"}, 
+            FeedCardMeta(null ),
+            React.DOM.div( {className:"feedcard_right"}, 
+                React.DOM.div( {className:"feedcard_front"}, 
+                    this.props.model.get('front')
+                ),
+                React.DOM.div( {className:"feedcard_back"}, 
+                    this.props.model.get('back')
+                )
             )
         );
     },
@@ -84,12 +87,23 @@ var FeedCard = React.createClass({displayName: 'FeedCard',
     }
 });
 
+var FeedCardMeta = React.createClass({displayName: 'FeedCardMeta',
+    render: function() {
+        return React.DOM.div( {className:"feedcard_meta"}, 
+            React.DOM.div( {className:"feedcard_photo"} ),
+            React.DOM.div( {className:"feedcard_desc"}, 
+                React.DOM.div( {className:"feedcard_username"}, "Joel Burget")
+            )
+        );
+    }
+});
+
 // props: collection
 var FeedBody = React.createClass({displayName: 'FeedBody',
     mixins: [BackboneMixin],
     render: function() {
         var feedItems = _(this.props.collection.models).map(function(model) {
-            return React.DOM.li(null, 
+            return React.DOM.li( {className:"clearfix"}, 
                 FeedCard( {model:model, key:model.cid} )
             );
         });
@@ -104,7 +118,8 @@ var FeedBody = React.createClass({displayName: 'FeedBody',
 
 var PracticeButton = React.createClass({displayName: 'PracticeButton',
     render: function() {
-        return React.DOM.div( {className:"practicebutton", onClick:this.props.onClick}, 
+        return React.DOM.div( {className:"practicebutton btn btn-primary",
+                    onClick:this.props.onClick}, 
 " Practice ", this.props.count, " cards "        );
     }
 });
@@ -146,19 +161,20 @@ module.exports = Feed;
 var Header = React.createClass({displayName: 'Header',
     render: function() {
         var homeActive = this.state.home,
-            headerActive = this.state.header;
+            feedActive = this.state.feed;
         return React.DOM.div( {className:"navbar navbar-inverse"}, 
             React.DOM.div( {className:"navbar-inner"}, 
                 React.DOM.ul( {className:"nav"}, 
                     React.DOM.li( {className:'header_home' + (homeActive ? ' active' : ''),
+                        onClick:_(this.props.onNavigate).partial('home'),
                         onMouseEnter:_(this.alertEnter).partial('home'),
                         onMouseLeave:_(this.alertLeave).partial('home')}, 
-                        React.DOM.i( {className:"icon-home"}),"Home "                    ),
-                    React.DOM.li( {className:'header_page' + (headerActive ? ' active' : ''),
-                        onMouseEnter:_(this.alertEnter).partial('header'),
-                        onMouseLeave:_(this.alertLeave).partial('header')}, 
-                        React.DOM.i( {className:"icon-twitter"}),this.props.page
-                    )
+                        React.DOM.i( {className:"icon-home"}), " Practice "                    ),
+                    React.DOM.li( {className:'header_feed' + (feedActive ? ' active' : ''),
+                        onClick:_(this.props.onNavigate).partial('feed'),
+                        onMouseEnter:_(this.alertEnter).partial('feed'),
+                        onMouseLeave:_(this.alertLeave).partial('feed')}, 
+                        React.DOM.i( {className:"icon-twitter"}), " Feed "                    )
                 )
             )
         );
@@ -176,7 +192,7 @@ var Header = React.createClass({displayName: 'Header',
     getInitialState: function() {
         return {
             home: false,
-            header: false
+            feed: false
         };
     }
 });
@@ -406,8 +422,10 @@ var Site = React.createClass({displayName: 'Site',
         } else {
             view = Review( {reviewingStack:this.state.reviewing} );
         }
+
+        // TODO not using page in Header
         return React.DOM.div(null, 
-            Header( {page:this.state.view} ),
+            Header( {page:this.state.view, onNavigate:this.navigate} ),
             view
         )
     },
@@ -423,6 +441,10 @@ var Site = React.createClass({displayName: 'Site',
             reviewing: reviewing,
             globalCollection: globalCollection
         };
+    },
+    navigate: function(page) {
+        console.log(page);
+        this.setState({ view: page });
     }
 });
 

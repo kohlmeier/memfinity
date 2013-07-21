@@ -9,12 +9,15 @@ var models = require('./models.js');
 var FeedCard = React.createClass({
     mixins: [BackboneMixin],
     render: function() {
-        return <div class='feedcard'>
-            <div class='feedcard_front'>
-                {this.props.model.get('front')}
-            </div>
-            <div class='feedcard_back'>
-                {this.props.model.get('back')}
+        return <div class='feedcard clearfix'>
+            <FeedCardMeta />
+            <div class='feedcard_right'>
+                <div class='feedcard_front'>
+                    {this.props.model.get('front')}
+                </div>
+                <div class='feedcard_back'>
+                    {this.props.model.get('back')}
+                </div>
             </div>
         </div>;
     },
@@ -23,12 +26,24 @@ var FeedCard = React.createClass({
     }
 });
 
+var FeedCardMeta = React.createClass({
+    render: function() {
+        return <div class='feedcard_meta'>
+            <div class='feedcard_photo' />
+            <div class='feedcard_desc'>
+                <div class='feedcard_username'>Joel Burget</div>
+                {/* TODO more */}
+            </div>
+        </div>;
+    }
+});
+
 // props: collection
 var FeedBody = React.createClass({
     mixins: [BackboneMixin],
     render: function() {
         var feedItems = _(this.props.collection.models).map(function(model) {
-            return <li>
+            return <li class='clearfix'>
                 <FeedCard model={model} key={model.cid} />
             </li>;
         });
@@ -43,7 +58,8 @@ var FeedBody = React.createClass({
 
 var PracticeButton = React.createClass({
     render: function() {
-        return <div class='practicebutton' onClick={this.props.onClick}>
+        return <div class='practicebutton btn btn-primary'
+                    onClick={this.props.onClick}>
             Practice {this.props.count} cards
         </div>;
     }
