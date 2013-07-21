@@ -7,20 +7,26 @@ var models = require('./models.js');
 
 var About = React.createClass({
     render: function() {
-        return <div class="wrap">
-            <div id="above-fold">
+        return <div>
+        <div id="above-fold">
                 <div class="row">
                     <div class="span3 offset4"><img src="/static/iloop.png" /></div>
                     <div class="span6" id="introbox">
                         <div id="textintro">
-                            <h1>SSRS</h1>
-                            <p id="acronym">Social spaced repetition system.</p>
+                            <h1>Memfinity</h1>
+                            <p id="acronym">A social spaced-repetition system.</p>
                             <p id="tagline">Learn with your friends. Remember, forever.</p>
                         </div>
-                        <button class="btn btn-primary btn-large" id="login-big">Log in with Google now.</button>
+                        <button
+                        	class="btn btn-primary btn-large"
+                        	id="login-big"
+                        	onClick={function(){window.location = '/login'}}>
+                        	Log in with Google now.
+                        </button>
                     </div>
                 </div>
             </div>
+        <div class="wrap">
             <div id="features" class="features container">
                 <p class="intro"><strong>Remember all the things!</strong> We want to do it, too, and now it's possible. <strong>Enter Memfinity, a powerful tool for personal and social learning.</strong></p>
                 <div class="feature">
@@ -44,6 +50,7 @@ var About = React.createClass({
                     <p>Memfinity is built from the ground up as a web-service.  That means the open source communicty can create new apps for phones, browsers, and or any device. Also, with Ocelot your data is never held hostage. We're open source, and you're always free to host your own personal version of Memfinity.  And by learning with Memfinity, you're not only helping yourself learn;  you're also facilitating world-class research on memory.  </p>
                 </div>
             </div>
+        </div>
         </div>;
     }
 });
