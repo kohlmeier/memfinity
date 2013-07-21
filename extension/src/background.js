@@ -1,8 +1,35 @@
 console.log('Background page!')
 
+var Login = {
+	loggedIn: null,
+	username: null,
+	checkLogin: function(callback){
+		var req = new XMLHttpRequest();
+		var self = this;
+		req.open('GET', 'http://khan-ssrs.appspot.com/api/user');
+		req.onload = function(e){
+			var user = JSON.parse(this.responseText);
+			console.log("Login result:", user)
+			if (user === null){
+				self.loggedIn = false;
+				if (callback){ callback(false); }
+				return;
+			}
+			self.loggedIn = true;
+			self.username = user;
+			if (callback){ callback(user); }
+		};
+		req.onerror = console.error;
+		req.send();
+		return req;
+	}
+}
+
+Login.checkLogin();
+
 function uploadCard(card, callback){
 	var req = new XMLHttpRequest();
-	req.open('POST', 'http://localhost:8080/api/card');
+	req.open('POST', 'http://khan-ssrs.appspot.com/api/card');
 	var postdata = JSON.stringify(card);
 	req.setRequestHeader("Content-type", "application/json");
 	req.onload = callback;
@@ -14,7 +41,9 @@ function uploadCard(card, callback){
 var currentCard = null;
 function onPopupClosed() {
     console.log('Popup closed! Current card:', currentCard);
-    uploadCard(request.content, console.log);
+    if (currentCard !== null){
+    	uploadCard(currentCard, function(e){console.log(e, this.responseText)});
+    }
 }
 
 var PopupCloseMonitor = {
@@ -32,20 +61,43 @@ var PopupCloseMonitor = {
 	}
 }
 
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-	console.log('background got message', request);
-
-	if (request.origin === 'content-script'){
-		sendResponse('ok');
-
-		currentCard = request.content;
-
+function gotCardFromContent(card){
+	if (Login.loggedIn){
+		// need some way of invalidating if the request comes
+		// back bad!
+		currentCard = card;
 		chrome.runtime.sendMessage({
 			origin: 'background',
-			content: request.content
+			content: {
+				initialize: 'addCard',
+				data: card
+			}
 		});
+		return;
+	}
+	Login.checkLogin(function(){
+		if (Login.loggedIn){
+			gotCardFromContent(card);
+			return;
+		}
+		currentCard = null;
+		chrome.runtime.sendMessage({
+			origin: 'background',
+			content: {
+				initialize: 'authenticate',
+				data: null
+			}
+		});
+	})
+}
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+	console.log('background got message', request);
+	if (request.origin === 'content-script'){
+		sendResponse('ok');
+		gotCardFromContent(request.content);
 	}else if (request.origin === 'popup'){
-		console.log('got card from popup', request.content);
+		console.log('Got updated card from popup', request.content);
 		currentCard = request.content;
 	}
 });

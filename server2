@@ -1,4 +1,0 @@
-#!/bin/bash
-
-watchify -t reactify webapp/frontend/* -o webapp/static/frontend.js &
-dev_appserver.py webapp

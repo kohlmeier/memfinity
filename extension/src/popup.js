@@ -6,11 +6,17 @@ function ping() {
 }
 ping();
 
-function init(card){
+var Templates = {
+  addCard: $('#add-card').html(),
+  authenticate: $('#authenticate').html()
+}
+
+function addCard(card){
+  $('#content').html(Templates.addCard);
   $('#front').val(card.front);
   $('#back').val(card.back);
 
-  $('#front,#back').change(function(){
+  $('#front,#back').keypress(function(){
     card.front = $('#front').val();
     card.back = $('#back').val()
     chrome.runtime.sendMessage({
@@ -20,13 +26,18 @@ function init(card){
   });
 }
 
+function authenticate(){
+  $('#content').html(Templates.authenticate);
+  $('#login').click(function(){
+    chrome.tabs.create({'url': "http://khan-ssrs.appspot.com"});
+  })
+}
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   console.log('popup got message', request, sender);
 
   if (request.origin === 'background'){
-    var card = request.content;
-    console.log(card);
-    init(card);
+    window[request.content.initialize](request.content.data)
   }
 });
 

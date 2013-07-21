@@ -1,13 +1,16 @@
-.cardlist {
-    /*width: 100000px;
-    left: -50000px;
-    position: absolute;*/
+.cardstack {
+    box-shadow: 10px 10px 0 0 #bbb;
+    border: 1px solid #3a3a3a;
+    width: 400px;
+    height: 300px;
+    position: fixed;
 }
 
 .card {
-    width: 400px;
-    height: 300px;
-    border: 1px solid #3a3a3a;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
     font: 16px 'Helvetica Neue';
     font-weight: 200;
     color: #3a3a3a;
@@ -15,7 +18,6 @@
 }
 
 .cardFront {
-    height: 100%;
     position: absolute;
     top: 0;
     right: 0;
