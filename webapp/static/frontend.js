@@ -8,8 +8,8 @@ var models = require('./models.js');
 
 var About = React.createClass({displayName: 'About',
     render: function() {
-        return React.DOM.div( {className:"wrap"}, 
-            React.DOM.div( {id:"above-fold"}, 
+        return React.DOM.div(null, 
+        React.DOM.div( {id:"above-fold"}, 
                 React.DOM.div( {className:"row"}, 
                     React.DOM.div( {className:"span3 offset4"}, React.DOM.img( {src:"/static/iloop.png"} )),
                     React.DOM.div( {className:"span6", id:"introbox"}, 
@@ -22,6 +22,7 @@ var About = React.createClass({displayName: 'About',
                     )
                 )
             ),
+        React.DOM.div( {className:"wrap"}, 
             React.DOM.div( {id:"features", className:"features container"}, 
                 React.DOM.p( {className:"intro"}, React.DOM.strong(null, "Remember all the things!"), " We want to do it, too, and now it's possible. ", React.DOM.strong(null, "Enter spacelot, the ocelot for your memory.")),
                 React.DOM.div( {className:"feature"}, 
@@ -45,6 +46,7 @@ var About = React.createClass({displayName: 'About',
                     React.DOM.p(null, "Ocelot is built from the ground up as a web-service.  That means the open source communicty can create new apps for phones, browsers, and or any device. Also, with Ocelot your data is never held hostage. We're open source, and you're always free to host your own personal version of Ocelot.  And by learning with Ocelot, you're not only helping yourself learn;  you're also facilitating world-class research on memory. "  )
                 )
             )
+        )
         );
     }
 });

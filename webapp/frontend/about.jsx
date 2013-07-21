@@ -7,8 +7,8 @@ var models = require('./models.js');
 
 var About = React.createClass({
     render: function() {
-        return <div class="wrap">
-            <div id="above-fold">
+        return <div>
+        <div id="above-fold">
                 <div class="row">
                     <div class="span3 offset4"><img src="/static/iloop.png" /></div>
                     <div class="span6" id="introbox">
@@ -21,6 +21,7 @@ var About = React.createClass({
                     </div>
                 </div>
             </div>
+        <div class="wrap">
             <div id="features" class="features container">
                 <p class="intro"><strong>Remember all the things!</strong> We want to do it, too, and now it's possible. <strong>Enter spacelot, the ocelot for your memory.</strong></p>
                 <div class="feature">
@@ -44,6 +45,7 @@ var About = React.createClass({
                     <p>Ocelot is built from the ground up as a web-service.  That means the open source communicty can create new apps for phones, browsers, and or any device. Also, with Ocelot your data is never held hostage. We're open source, and you're always free to host your own personal version of Ocelot.  And by learning with Ocelot, you're not only helping yourself learn;  you're also facilitating world-class research on memory.  </p>
                 </div>
             </div>
+        </div>
         </div>;
     }
 });

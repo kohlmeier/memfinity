@@ -334,7 +334,8 @@ body {
     line-height: 60px;
 }
 #above-fold:first-child{
-    margin-top: 10%;
+    margin-top: 30vh;
+    height: 70vh;
 }
 #introbox{
     height: 220px;
