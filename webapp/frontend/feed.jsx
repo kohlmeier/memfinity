@@ -41,7 +41,13 @@ var FeedCardMeta = React.createClass({
                 </div>
             </div>
             <Tags list={this.props.model.get('tags')} />
+            <div class='stealcard btn btn-primary btn-small' onClick={this.stealCard}>
+                Take this card
+            </div>
         </div>;
+    },
+    stealCard: function() {
+        console.log('TODO');
     }
 });
 
