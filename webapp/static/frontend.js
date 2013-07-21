@@ -99,8 +99,13 @@ var FeedCardMeta = React.createClass({displayName: 'FeedCardMeta',
             React.DOM.div( {className:"feedcard_desc"}, 
                 React.DOM.div( {className:"feedcard_username"}, "Joel Burget")
             ),
-            Tags( {list:this.props.model.get('tags')} )
+            Tags( {list:this.props.model.get('tags')} ),
+            React.DOM.div( {className:"stealcard btn btn-primary btn-small", onClick:this.stealCard}, 
+" Take this card "            )
         );
+    },
+    stealCard: function() {
+        console.log('TODO');
     }
 });
 
