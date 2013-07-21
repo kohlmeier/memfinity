@@ -14,11 +14,15 @@ var About = React.createClass({displayName: 'About',
                     React.DOM.div( {className:"span3 offset4"}, React.DOM.img( {src:"/static/iloop.png"} )),
                     React.DOM.div( {className:"span6", id:"introbox"}, 
                         React.DOM.div( {id:"textintro"}, 
-                            React.DOM.h1(null, "SSRS"),
-                            React.DOM.p( {id:"acronym"}, "Social spaced repetition system."),
+                            React.DOM.h1(null, "Memfinity"),
+                            React.DOM.p( {id:"acronym"}, "A social spaced-repetition system."),
                             React.DOM.p( {id:"tagline"}, "Learn with your friends. Remember, forever.")
                         ),
-                        React.DOM.button( {className:"btn btn-primary btn-large", id:"login-big"}, "Log in with Google now.")
+                        React.DOM.button(
+                        	{className:"btn btn-primary btn-large",
+                        	id:"login-big",
+                        	onClick:function(){window.location = '/login'}}, 
+" Log in with Google now. "                        )
                     )
                 )
             ),

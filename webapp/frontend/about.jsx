@@ -13,11 +13,16 @@ var About = React.createClass({
                     <div class="span3 offset4"><img src="/static/iloop.png" /></div>
                     <div class="span6" id="introbox">
                         <div id="textintro">
-                            <h1>SSRS</h1>
-                            <p id="acronym">Social spaced repetition system.</p>
+                            <h1>Memfinity</h1>
+                            <p id="acronym">A social spaced-repetition system.</p>
                             <p id="tagline">Learn with your friends. Remember, forever.</p>
                         </div>
-                        <button class="btn btn-primary btn-large" id="login-big">Log in with Google now.</button>
+                        <button
+                        	class="btn btn-primary btn-large"
+                        	id="login-big"
+                        	onClick={function(){window.location = '/login'}}>
+                        	Log in with Google now.
+                        </button>
                     </div>
                 </div>
             </div>
