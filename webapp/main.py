@@ -116,6 +116,7 @@ class ApiHandler(webapp2.RequestHandler):
 
 application = webapp2.WSGIApplication([
     ('/', MainPage),
-    ('/login', )
+    ('/login', LoginHandler),
+    ('/logout', LoginHandler),
     ('/api/.*', ApiHandler),
     ], debug=True)
