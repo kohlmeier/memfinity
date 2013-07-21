@@ -28,7 +28,7 @@ var About = React.createClass({displayName: 'About',
             ),
         React.DOM.div( {className:"wrap"}, 
             React.DOM.div( {id:"features", className:"features container"}, 
-                React.DOM.p( {className:"intro"}, React.DOM.strong(null, "Remember all the things!"), " We want to do it, too, and now it's possible. ", React.DOM.strong(null, "Enter spacelot, the ocelot for your memory.")),
+                React.DOM.p( {className:"intro"}, React.DOM.strong(null, "Remember all the things!"), " We want to do it, too, and now it's possible. ", React.DOM.strong(null, "Enter Memfinity, a powerful tool for personal and social learning.")),
                 React.DOM.div( {className:"feature"}, 
                     React.DOM.h2(null, "Turbocharge your brain."),
                     React.DOM.h3(null, "Spaced repetition is a game changer for personal learning."),
@@ -47,7 +47,7 @@ var About = React.createClass({displayName: 'About',
                 React.DOM.div( {className:"feature"}, 
                     React.DOM.h2(null, "Built for openess."),
                     React.DOM.h3(null),
-                    React.DOM.p(null, "Ocelot is built from the ground up as a web-service.  That means the open source communicty can create new apps for phones, browsers, and or any device. Also, with Ocelot your data is never held hostage. We're open source, and you're always free to host your own personal version of Ocelot.  And by learning with Ocelot, you're not only helping yourself learn;  you're also facilitating world-class research on memory. "  )
+                    React.DOM.p(null, "Memfinity is built from the ground up as a web-service.  That means the open source communicty can create new apps for phones, browsers, and or any device. Also, with Ocelot your data is never held hostage. We're open source, and you're always free to host your own personal version of Memfinity.  And by learning with Memfinity, you're not only helping yourself learn;  you're also facilitating world-class research on memory. "  )
                 )
             )
         )
@@ -378,17 +378,17 @@ var Review = React.createClass({displayName: 'Review',
             }
         }.bind(this);
 
-        return React.DOM.div(null, 
+        return React.DOM.div( {className:"review_workspace"}, 
             ReviewedStack( {collection:hardStack,
-                           position:{x: 100, y: 100},
+                           position:{x: 800, y: 90},
                            name:"Hard"} ),
             ReviewedStack( {collection:easyStack,
-                           position:{x: 600, y: 100},
+                           position:{x: 800, y: 310},
                            name:"Easy"} ),
 
             ReviewingStack( {collection:this.props.reviewingStack,
                             rate:rate,
-                            position:{x: 160, y: 410}} )
+                            position:{x: 50, y: 90}} )
         );
     }
 });
@@ -642,7 +642,7 @@ var Site = React.createClass({displayName: 'Site',
         var globalCollection = new models.CardCollection(
             modelify(window.globalCards));
         return {
-            view: 'home',
+            view: window.username? 'home':'about',
             reviewing: reviewing,
             globalCollection: globalCollection
         };
@@ -654,5 +654,5 @@ var Site = React.createClass({displayName: 'Site',
 
 React.renderComponent(Site(null ), document.body);
 
-},{"./about.jsx":1,"./feed.jsx":3,"./header.jsx":5,"./models.js":6,"./review.jsx":7}]},{},[1,2,3,4,5,6,7,8])
+},{"./about.jsx":1,"./feed.jsx":3,"./header.jsx":5,"./models.js":6,"./review.jsx":7}]},{},[2,3,4,5,6,7,8])
 ;

@@ -26,7 +26,7 @@ class MainPage(webapp2.RequestHandler):
         if user:
             user_data = models.UserData.get_for_user_id(user.user_id())
         else:
-            user_data = None
+            return self.redirect('/login')
 
         if user_data:
             user_cards, global_cards = yield (
