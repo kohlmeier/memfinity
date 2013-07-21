@@ -141,7 +141,9 @@ def card_add(handler):
     # TODO(jace) remove the following hack for quick gravatar support
     user = users.get_current_user() or FakeUser()
     card.user_email = user.email()
-    card.user_nickname = user.nickname()
+    nickname = user.nickname()
+    nickname = nickname[nickname.find('@')+1:]  # trim the @domain, if present
+    card.user_nickname = nickname
 
     card.put()
 
