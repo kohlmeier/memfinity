@@ -4,6 +4,7 @@
  */
 var BackboneMixin = require('./backbonemixin.js');
 var models = require('./models.js');
+var gravatar = require('./gravatar.js');
 
 // props: model
 var FeedCard = React.createClass({
@@ -28,11 +29,14 @@ var FeedCard = React.createClass({
 
 var FeedCardMeta = React.createClass({
     render: function() {
+        // TODO get this info from google
+        // http://stackoverflow.com/q/3591278/2121468
+        var userImage = gravatar(username, 120),
+            photoStyle = {background: 'url(' + userImage + ') no-repeat'};
         return <div class='feedcard_meta'>
-            <div class='feedcard_photo' />
+            <div class='feedcard_photo' style={photoStyle} />
             <div class='feedcard_desc'>
                 <div class='feedcard_username'>Joel Burget</div>
-                {/* TODO more */}
             </div>
         </div>;
     }
@@ -43,7 +47,7 @@ var FeedBody = React.createClass({
     mixins: [BackboneMixin],
     render: function() {
         var feedItems = _(this.props.collection.models).map(function(model) {
-            return <li class='clearfix'>
+            return <li>
                 <FeedCard model={model} key={model.cid} />
             </li>;
         });

@@ -27,13 +27,12 @@ var Site = React.createClass({
         var globalCollection = new models.CardCollection();
         globalCollection.fetch();
         return {
-            view: 'feed',
+            view: 'home',
             reviewing: reviewing,
             globalCollection: globalCollection
         };
     },
     navigate: function(page) {
-        console.log(page);
         this.setState({ view: page });
     }
 });
