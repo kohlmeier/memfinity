@@ -28,8 +28,7 @@ class MainPage(webapp2.RequestHandler):
         if user:
             user_data = models.UserData.get_for_user_id(user.user_id())
         else:
-            raise ndb.Return(self.redirect('/login'))
-            #user_data = None
+            user_data = None
 
         if user_data:
             user_cards, global_cards = yield (
