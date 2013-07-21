@@ -657,7 +657,7 @@ var Site = React.createClass({displayName: 'Site',
         var globalCollection = new models.CardCollection(
             modelify(window.globalCards));
         return {
-            view: 'home',
+            view: window.username? 'home':'about',
             reviewing: reviewing,
             globalCollection: globalCollection
         };
