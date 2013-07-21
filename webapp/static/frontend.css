@@ -275,6 +275,38 @@ body {
     cursor: pointer;
 }
 
+#above-fold{
+
+}
+#above-fold h1{
+    font-size: 60px;
+    line-height: 60px;
+}
+#above-fold:first-child{
+    margin-top: 10%;
+}
+#introbox{
+    height: 220px;
+}
+#textintro{
+    height: 140px;
+    margin-left: 20px;
+}
+#acronym{
+    color: #666;
+    font-variant: small-caps;
+    font-size: 18px;
+    margin-top: -20px;
+}
+#tagline{
+    margin-top: 20px;
+    font-size: 22px;
+}
+#login-big{
+    width: 430px;
+    margin-left: 20px;
+}
+
 /* http://meyerweb.com/eric/tools/css/reset/
    v2.0 | 20110126
    License: none (public domain)

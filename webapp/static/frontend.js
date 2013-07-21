@@ -9,7 +9,22 @@ var models = require('./models.js');
 var About = React.createClass({displayName: 'About',
     render: function() {
         return React.DOM.div(null, 
-" This is the About page! "        );
+        	React.DOM.div( {id:"above-fold"}, 
+        		React.DOM.div( {className:"row"}, 
+        			React.DOM.div( {className:"span3 offset4"}, React.DOM.img( {src:"/static/iloop.png"} )),
+        			React.DOM.div( {className:"span6", id:"introbox"}, 
+        				React.DOM.div( {id:"textintro"}, 
+        					React.DOM.h1(null, "SSRS"),
+        					React.DOM.p( {id:"acronym"}, "Social spaced repetition system."),
+        					React.DOM.p( {id:"tagline"}, "Learn with your friends. Remember, forever.")
+        				),
+        				React.DOM.button( {className:"btn btn-primary btn-large", id:"login-big"}, "Log in with Google now.")
+        			)
+        		)
+        	)
+
+
+        );
     }
 });
 
@@ -604,5 +619,5 @@ var Site = React.createClass({displayName: 'Site',
 
 React.renderComponent(Site(null ), document.body);
 
-},{"./about.jsx":1,"./feed.jsx":3,"./header.jsx":5,"./models.js":6,"./review.jsx":7}]},{},[1,7,6,8,2,5,3,4])
+},{"./about.jsx":1,"./feed.jsx":3,"./header.jsx":5,"./models.js":6,"./review.jsx":7}]},{},[1,5,6,7,8,3,2,4])
 ;
