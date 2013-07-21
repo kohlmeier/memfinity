@@ -3,8 +3,7 @@ var models = require('./models.js'),
     Review = require('./review.jsx'),
     Header = require('./header.jsx'),
     Feed = require('./feed.jsx'),
-    About = require('./about.jsx')
-    ;
+    About = require('./about.jsx');
 
 var Site = React.createClass({
     render: function() {
@@ -24,12 +23,15 @@ var Site = React.createClass({
         </div>
     },
     getInitialState: function() {
-        // TODO make this real
-        var reviewing = new models.CardCollection();
-        reviewing.fetch();
-
-        var globalCollection = new models.CardCollection();
-        globalCollection.fetch();
+        var modelify = function(cards) {
+            return _(cards).map(function(card) {
+                return new models.CardModel(card);
+            });
+        };
+        var reviewing = new models.CardCollection(
+            modelify(window.userCards));
+        var globalCollection = new models.CardCollection(
+            modelify(window.globalCards));
         return {
             view: 'home',
             reviewing: reviewing,

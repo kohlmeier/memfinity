@@ -32,3 +32,8 @@ indexes:
   - name: user_key
   - name: added
     direction: desc
+
+- kind: Card
+  properties:
+  - name: user_key
+  - name: next_review

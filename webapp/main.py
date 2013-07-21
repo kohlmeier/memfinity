@@ -1,13 +1,15 @@
 import os
 import re
 
+from google.appengine.ext import ndb
 from google.appengine.api import users
 
 import jinja2
 import webapp2
 
 import api
-
+import jsonify
+import models
 
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
@@ -17,12 +19,33 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 
 class MainPage(webapp2.RequestHandler):
 
+    @ndb.toplevel
     def get(self):
         user = users.get_current_user()
+        if user:
+            user_data = models.UserData.get_for_user_id(user.user_id())
+        else:
+            user_data = None
+
+        if user_data:
+            user_cards, global_cards = yield (
+                (models.Card
+                    .query(models.Card.user_key ==
+                        ndb.Key(urlsafe=user_data.key.urlsafe()))
+                    .order(models.Card.next_review)
+                    .fetch_async(500)),
+                models.Card.query().fetch_async(500),
+                )
+        else:
+            user_cards = []
+            global_cards = models.Card.query().fetch(1000)
+
         template = JINJA_ENVIRONMENT.get_template('index.html')
         env = {
-            'user': user,
+            'user': user_data,
             'users': users,
+            'user_cards': jsonify.jsonify(user_cards),
+            'global_cards': jsonify.jsonify(global_cards),
         }
         self.response.write(template.render(env))
 

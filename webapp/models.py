@@ -117,7 +117,7 @@ class Card(ndb.Model):
     front = ndb.TextProperty()
     # the content for the 'back' of the card
     back = ndb.TextProperty()
-    # the content for the  
+    # the content for the
     info = ndb.TextProperty()
 
     reversible = ndb.BooleanProperty(default=False, indexed=False)
@@ -189,4 +189,4 @@ class Card(ndb.Model):
 
     @classmethod
     def get_for_user(cls, user_data):
-        return cls.query(cls.user_key == user_data.key())
+        return cls.query(cls.user_key == user_data.key)

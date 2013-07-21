@@ -330,15 +330,15 @@ var Review = React.createClass({displayName: 'Review',
 
         return React.DOM.div(null, 
             ReviewedStack( {collection:hardStack,
-                           position:{x: 100, y: 50},
+                           position:{x: 100, y: 100},
                            name:"Hard"} ),
             ReviewedStack( {collection:easyStack,
-                           position:{x: 600, y: 50},
+                           position:{x: 600, y: 100},
                            name:"Easy"} ),
 
             ReviewingStack( {collection:this.props.reviewingStack,
                             rate:rate,
-                            position:{x: 160, y: 360}} )
+                            position:{x: 160, y: 410}} )
         );
     }
 });
@@ -562,8 +562,7 @@ var models = require('./models.js'),
     Review = require('./review.jsx'),
     Header = require('./header.jsx'),
     Feed = require('./feed.jsx'),
-    About = require('./about.jsx')
-    ;
+    About = require('./about.jsx');
 
 var Site = React.createClass({displayName: 'Site',
     render: function() {
@@ -583,12 +582,15 @@ var Site = React.createClass({displayName: 'Site',
         )
     },
     getInitialState: function() {
-        // TODO make this real
-        var reviewing = new models.CardCollection();
-        reviewing.fetch();
-
-        var globalCollection = new models.CardCollection();
-        globalCollection.fetch();
+        var modelify = function(cards) {
+            return _(cards).map(function(card) {
+                return new models.CardModel(card);
+            });
+        };
+        var reviewing = new models.CardCollection(
+            modelify(window.userCards));
+        var globalCollection = new models.CardCollection(
+            modelify(window.globalCards));
         return {
             view: 'home',
             reviewing: reviewing,

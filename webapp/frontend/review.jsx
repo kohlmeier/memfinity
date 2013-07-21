@@ -26,15 +26,15 @@ var Review = React.createClass({
 
         return <div>
             <ReviewedStack collection={hardStack}
-                           position={{x: 100, y: 50}}
+                           position={{x: 100, y: 100}}
                            name='Hard' />
             <ReviewedStack collection={easyStack}
-                           position={{x: 600, y: 50}}
+                           position={{x: 600, y: 100}}
                            name='Easy' />
 
             <ReviewingStack collection={this.props.reviewingStack}
                             rate={rate}
-                            position={{x: 160, y: 360}} />
+                            position={{x: 160, y: 410}} />
         </div>;
     }
 });
