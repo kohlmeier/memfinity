@@ -19,12 +19,13 @@ body {
     font-size: 30px;
 }
 
-.header_home, .header_feed, .header_about {
+
+.header_home, .header_feed, .header_login, .header_about {
     color: #fff;
     cursor: pointer;
 }
 
-.header_home.active, .header_feed.active, .header_about.active {
+.header_home.active, .header_feed.active, .header_login.active, .header_about.active {
     background-color: #1abc9c;
     border-bottom-color: #16a085;
 }
@@ -42,6 +43,23 @@ body {
 .header_about {
     padding: 10px;
     margin-left: 10px;
+}
+
+#header_login{
+    padding: 10px;
+    margin-left: 10px;
+}
+#header_login > a{
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+#header_login img {
+    display: inline-block;
+    margin-right: 5px;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
 }
 
 .feed {
@@ -161,10 +179,23 @@ body {
     text-align: center;
 }
 
-.reviewingstack {
-    width: 550px;
+.reviewingstackall {
+    width: 700px;
     height: 400px;
     position: absolute;
+}
+
+.reviewingstackmeta {
+    float: left;
+    width: 140px;;
+    height: 400px;
+}
+
+.reviewingstack {
+    position: relative;
+    float: left;
+    width: 550px;
+    height: 400px;
     background-color: #fff;
     border-radius: 2px;
     box-sizing: border-box;
@@ -211,6 +242,7 @@ body {
     left: 0;
     right: 0;
     position: absolute;
+    padding: 10px;
     border-radius: 2px;
     background-color: #fff;
 }
@@ -242,7 +274,6 @@ body {
 .choices_hard, .choices_easy {
     cursor: pointer;
 }
-
 
 .wrap {
     width: 960px;
@@ -287,6 +318,37 @@ body {
     text-align: justify;
 }
 
+#above-fold{
+
+}
+#above-fold h1{
+    font-size: 60px;
+    line-height: 60px;
+}
+#above-fold:first-child{
+    margin-top: 10%;
+}
+#introbox{
+    height: 220px;
+}
+#textintro{
+    height: 140px;
+    margin-left: 20px;
+}
+#acronym{
+    color: #666;
+    font-variant: small-caps;
+    font-size: 18px;
+    margin-top: -20px;
+}
+#tagline{
+    margin-top: 20px;
+    font-size: 22px;
+}
+#login-big{
+    width: 430px;
+    margin-left: 20px;
+}
 
 /* http://meyerweb.com/eric/tools/css/reset/
    v2.0 | 20110126

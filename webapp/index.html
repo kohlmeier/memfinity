@@ -13,10 +13,11 @@
     </head>
     <body>
         <script>
-            var username = '{{user}}',
+            var username = '{{user.name}}',
                 loginUrl = '{{users.create_login_url('/')}}',
-                logoutUrl = '{{users.create_logout_url('/')}}';
-            // TODO login/logout + put this in header
+                logoutUrl = '{{users.create_logout_url('/')}}',
+                userCards = {{user_cards}},
+                globalCards = {{global_cards}};
         </script>
         <script src="/static/frontend.js"></script>
     </body>

@@ -238,12 +238,20 @@ module.exports = getGravatar
 
 },{}],5:[function(require,module,exports){
 /** @jsx React.DOM */
+var gravatar = require('./gravatar.js');
+
 var Header = React.createClass({displayName: 'Header',
     render: function() {
         var homeActive = this.state.home,
             feedActive = this.state.feed,
             aboutActive = this.state.about;
-        
+
+        var login_link;
+        if (window.username === "None"){
+            login_link = React.DOM.a( {href:"/login"}, "Login");
+        }else{
+            login_link = React.DOM.span(null, React.DOM.img( {src:gravatar(window.username + '@gmail.com')} ),React.DOM.a( {href:"/logout"}, "Logout"));
+        }
         return React.DOM.div( {className:"navbar navbar-inverse"}, 
             React.DOM.div( {className:"navbar-inner"}, 
                 React.DOM.ul( {className:"nav pull-left"}, 
@@ -263,7 +271,10 @@ var Header = React.createClass({displayName: 'Header',
                         onClick:_(this.props.onNavigate).partial('about'),
                         onMouseEnter:_(this.alertEnter).partial('about'),
                         onMouseLeave:_(this.alertLeave).partial('about')}, 
-                        React.DOM.i( {className:"icon-info"}), " About "                    )
+                        React.DOM.i( {className:"icon-info"}), " About "                    ),
+                    React.DOM.li( {id:"header_login", className:'header_login'}, 
+                        login_link
+                    )
                 )
             )
         );
@@ -289,7 +300,7 @@ var Header = React.createClass({displayName: 'Header',
 
 module.exports = Header;
 
-},{}],6:[function(require,module,exports){
+},{"./gravatar.js":4}],6:[function(require,module,exports){
 /*
  * Cards store the following data:
  * - front: markup appearing on the front of the card
@@ -341,21 +352,21 @@ var Review = React.createClass({displayName: 'Review',
 
         return React.DOM.div(null, 
             ReviewedStack( {collection:hardStack,
-                           position:{x: 100, y: 50},
+                           position:{x: 100, y: 100},
                            name:"Hard"} ),
             ReviewedStack( {collection:easyStack,
-                           position:{x: 600, y: 50},
+                           position:{x: 600, y: 100},
                            name:"Easy"} ),
 
             ReviewingStack( {collection:this.props.reviewingStack,
                             rate:rate,
-                            position:{x: 255, y: 360}} )
+                            position:{x: 160, y: 410}} )
         );
     }
 });
 
-// TODO handle size = 0
 var stackSides = function (primary, secondary, size, times) {
+    times = 1;
     var ret = [];
     _(times).times(function(n) {
         n += 1; // 1-indexed
@@ -374,14 +385,19 @@ var ReviewingStack = React.createClass({displayName: 'ReviewingStack',
         var currentCard = this.state.cardNum;
         var topCardModel = this.props.collection.models[this.state.cardNum];
         var sideLayers = Math.max(1, this.props.collection.models.length);
-        var style = {
+        var allstyle = {
             left: this.props.position.x,
-            top: this.props.position.y,
+            top: this.props.position.y
+        };
+        var stackstyle = {
             'box-shadow': stackSides('#2C3E50', '#BDC3C7', 2, sideLayers)
         };
+
+        var stack;
         if (!topCardModel) { // empty stack
             // TODO
-            return React.DOM.div( {className:"reviewingstack emptyreviewingstack", style:style}, 
+            stack = React.DOM.div( {className:"reviewingstack emptyreviewingstack",
+                        style:stackstyle}, 
                 React.DOM.h2(null, "Congratulations!"),
 
                 React.DOM.p(null, "you're done for the day"),
@@ -391,10 +407,16 @@ var ReviewingStack = React.createClass({displayName: 'ReviewingStack',
             var topCard = Card( {model:topCardModel,
                                 rate:this.props.rate,
                                 key:topCardModel.cid} );
-            return React.DOM.div( {className:"reviewingstack", style:style}, 
+            stack = React.DOM.div( {className:"reviewingstack", style:stackstyle}, 
                 topCard
             );
         }
+        return React.DOM.div( {className:"reviewingstackall", style:allstyle}, 
+            ReviewingStackMeta(
+                    {count:this.props.collection.models.length,
+                    name:"Remaining"} ),
+            stack
+        );
     },
     getInitialState: function() {
         return { cardNum: 0 };
@@ -404,6 +426,18 @@ var ReviewingStack = React.createClass({displayName: 'ReviewingStack',
     },*/
     getBackboneModels: function() {
         return [this.props.collection];
+    }
+});
+
+var ReviewingStackMeta = React.createClass({displayName: 'ReviewingStackMeta',
+    render: function() {
+        var count = this.props.count,
+            word = this.props.count === 1 ? 'card' : 'cards',
+            phrase = count + ' ' + word;
+        return React.DOM.div( {className:"reviewingstackmeta"}, 
+            React.DOM.h3(null, this.props.name),
+            React.DOM.h4(null, phrase)
+        );
     }
 });
 
@@ -550,8 +584,7 @@ var models = require('./models.js'),
     Review = require('./review.jsx'),
     Header = require('./header.jsx'),
     Feed = require('./feed.jsx'),
-    About = require('./about.jsx')
-    ;
+    About = require('./about.jsx');
 
 var Site = React.createClass({displayName: 'Site',
     render: function() {
@@ -571,12 +604,15 @@ var Site = React.createClass({displayName: 'Site',
         )
     },
     getInitialState: function() {
-        // TODO make this real
-        var reviewing = new models.CardCollection();
-        reviewing.fetch();
-
-        var globalCollection = new models.CardCollection();
-        globalCollection.fetch();
+        var modelify = function(cards) {
+            return _(cards).map(function(card) {
+                return new models.CardModel(card);
+            });
+        };
+        var reviewing = new models.CardCollection(
+            modelify(window.userCards));
+        var globalCollection = new models.CardCollection(
+            modelify(window.globalCards));
         return {
             view: 'home',
             reviewing: reviewing,
@@ -590,5 +626,9 @@ var Site = React.createClass({displayName: 'Site',
 
 React.renderComponent(Site(null ), document.body);
 
+<<<<<<< HEAD
 },{"./about.jsx":1,"./feed.jsx":3,"./header.jsx":5,"./models.js":6,"./review.jsx":7}]},{},[1,2,3,4,5,6,7,8])
+=======
+},{"./about.jsx":1,"./feed.jsx":3,"./header.jsx":5,"./models.js":6,"./review.jsx":7}]},{},[1,5,6,7,8,3,2,4])
+>>>>>>> 74a46eef524efc21c7a2dff89b7b32718e7671be
 ;
