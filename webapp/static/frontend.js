@@ -8,8 +8,30 @@ var models = require('./models.js');
 
 var About = React.createClass({displayName: 'About',
     render: function() {
-        return React.DOM.div(null, 
-" This is the About page! "        );
+        return React.DOM.div( {id:"features", className:"features container"}, 
+            React.DOM.p( {className:"intro"}, React.DOM.strong(null, "Remember all the things!"), " We want to do it, too, and now it's possible. ", React.DOM.strong(null, "Enter spacelot, the ocelot for your memory.")),
+            React.DOM.div( {className:"feature"}, 
+                React.DOM.h2(null, "Turbocharge your brain."),
+                React.DOM.h3(null, "Spaced repetition is a game changer for personal learning."),
+                React.DOM.p(null, "Using spaced repetition algorithms makes sure you can review the things you need to review, at just the right time to maximize your efficiency.")
+            ),
+            React.DOM.div( {className:"feature"}, 
+                React.DOM.h2(null, "Create cards on-the-fly."),
+                React.DOM.h3(null, "Use our killer Chrome extension to effortlessly create cards."),
+                React.DOM.p(null, "See an interesting vocab work while reading online? Clip it. Want to remember the main point or an article you just read?  Clip it. Just learned an awesome keyboard shortcut, math concept, or piece of ridculous trivia?  Clip it!  With card creation this simple, it takes just seconds file knowledge away for permanent recall.")
+            ),
+            React.DOM.div( {className:"feature"}, 
+                React.DOM.h2(null, "Learn out loud."),
+                React.DOM.h3(null, "Follow friends, and see what the world is learning."),
+                React.DOM.p(null, "Now that you can easily create your own cards and master them, how can you find even more fascinating and useful knowledge?  By following the feeds of people that share your learning interests.  See a realtime feed of what others are learning, and seamlessly grab cards you want to learn, too.")
+            ),
+            React.DOM.div( {className:"feature"}, 
+                React.DOM.h2(null, "Built for openess."),
+                React.DOM.h3(null),
+                React.DOM.p(null, "Ocelot is built from the ground up as a web-service.  That means the open source communicty can create new apps for phones, browsers, and or any device. Also, with Ocelot your data is never held hostage. We're open source, and you're always free to host your own personal version of Ocelot.  And by learning with Ocelot, you're not only helping yourself learn;  you're also facilitating world-class research on memory. "  )
+            )
+        )
+
     }
 });
 
@@ -568,6 +590,5 @@ var Site = React.createClass({displayName: 'Site',
 
 React.renderComponent(Site(null ), document.body);
 
-},{"./about.jsx":1,"./feed.jsx":3,"./header.jsx":5,"./models.js":6,"./review.jsx":7}]},{},[2,3,4,5,6,7,8])
-;
+},{"./about.jsx":1,"./feed.jsx":3,"./header.jsx":5,"./models.js":6,"./review.jsx":7}]},{},[1,2,3,4,5,6,7,8])
 ;
