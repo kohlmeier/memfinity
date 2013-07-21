@@ -3,39 +3,64 @@
  * Interface for review mode
  */
 var BackboneMixin = require('./backbonemixin.js');
+var models = require('./models.js');
 
-/*
- * Cards store the following data:
- * - front: markup appearing on the front of the card
- * - back: markup appearing on the back of the card
- * - tags: list of tag names
- * - ... meta ...
- */
-var CardModel = Backbone.Model.extend({
-    rate: function(rating) { console.log('rated ' + rating); }
+var CardModel = models.CardModel,
+    CardCollection = models.CardCollection;
+
+var Review = React.createClass({
+    render: function() {
+        var hardStack = new CardCollection(),
+            easyStack = new CardCollection();
+
+        var rate = function(cid, rating) {
+            var reviewingStack = this.props.reviewingStack,
+                model = reviewingStack.get(cid);
+            reviewingStack.remove(model);
+            if (rating === 'easy') {
+                easyStack.add(model);
+            } else { // hard
+                hardStack.add(model);
+            }
+        }.bind(this);
+
+        return <div>
+            <ReviewedStack collection={hardStack}
+                           position={{x: 200, y: 50}}
+                           scale={0.6} />
+            <ReviewedStack collection={easyStack}
+                           position={{x: 600, y: 50}}
+                           scale={0.6} />
+
+            <ReviewingStack collection={this.props.reviewingStack}
+                            rate={rate}
+                            position={{x: 400, y: 400}}
+                            scale={1} />
+        </div>;
+    }
 });
 
-var CardCollection = Backbone.Collection.extend({
-    model: CardModel,
-    url: '/api/cards/' // TODO
-    // TODO - comparator
-});
-
-// props: collection, position ({x, y})?
-var CardStack = React.createClass({
+// props: collection, position ({x, y})?, scale, rate
+var ReviewingStack = React.createClass({
     mixins: [BackboneMixin],
     render: function() {
         var currentCard = this.state.cardNum;
         var topCardModel = this.props.collection.models[this.state.cardNum];
+        var style = {
+            left: this.props.position.x,
+            top: this.props.position.y,
+            '-webkit-transform': 'scale(' + this.props.scale + ')'
+        };
         if (!topCardModel) { // empty stack
-            return <div class='emptycardstack'>
+            // TODO
+            return <div class='stack' style={style}>
                 empty stack!
             </div>;
         } else {
             var topCard = <Card model={topCardModel}
-                                nextCard={this.nextCard}
+                                rate={this.props.rate}
                                 key={topCardModel.cid} />;
-            return <div class='cardstack' style={{left: '300px'}}>
+            return <div class='stack' style={style}>
                 {topCard}
             </div>;
         }
@@ -44,8 +69,26 @@ var CardStack = React.createClass({
     getInitialState: function() {
         return { cardNum: 0 };
     },
-    nextCard: function() {
+    /*nextCard: function() {
         this.setState({cardNum: this.state.cardNum + 1});
+    },*/
+    getBackboneModels: function() {
+        return [this.props.collection];
+    }
+});
+
+// props: collection, position, scale, (some handler)
+var ReviewedStack = React.createClass({
+    mixins: [BackboneMixin],
+    render: function() {
+        var style = {
+            left: this.props.position.x,
+            top: this.props.position.y,
+            '-webkit-transform': 'scale(' + this.props.scale + ')'
+        };
+        return <div class='stack' style={style}>
+            {this.props.collection.models.length}
+        </div>;
     },
     getBackboneModels: function() {
         return [this.props.collection];
@@ -56,11 +99,14 @@ var CardStack = React.createClass({
 // TODO this should probably take state as as prop
 var Card = React.createClass({
     render: function() {
-        var stateView,
+        var stateView;
+            /*
             rate = function(rating) {
-                this.props.model.rate(rating);
-                this.props.nextCard();
+                this.props.rate(rating);
+                // this.props.model.rate(rating);
+                // this.props.nextCard();
             }.bind(this);
+            */
         if (this.state.state === 'front') {
             var clickHandler = function() {
                 this.setState({state: 'back'});
@@ -71,7 +117,7 @@ var Card = React.createClass({
         } else if (this.state.state === 'back') {
             stateView = <CardBack
                 content={this.props.model.get('back')}
-                rate={rate} />;
+                rate={_(this.props.rate).partial(this.props.model.cid)} />;
         } else { // meta
             stateView = <CardMeta info={this.props.model.get('meta')} />;
         }
@@ -137,7 +183,4 @@ var MetaButton = React.createClass({
     }
 });
 
-module.exports = {
-    CardCollection: CardCollection,
-    CardStack: CardStack
-};
+module.exports = Review;

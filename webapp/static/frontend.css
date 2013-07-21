@@ -1,9 +1,51 @@
-.cardstack {
+.feed {
+}
+
+.filtertext {
+    min-width: 500px;
+    float: left;
+}
+
+.practicebutton {
+    padding: 3px;
+    border: 1px solid #3a3a3a;
+    float: left;
+    clear: right;
+}
+
+.feedbody {
+    list-style-type: none;
+}
+
+.feedcard {
+}
+
+.feedcard_front {
+    float: left;
+    padding: 10px;
+    border: 1px solid #3a3a3a;
+}
+
+.feedcard_back {
+    float: left;
+    padding: 10px;
+    border: 1px solid #3a3a3a;
+}
+
+.review {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.stack {
     box-shadow: 10px 10px 0 0 #bbb;
     border: 1px solid #3a3a3a;
     width: 400px;
     height: 300px;
-    position: fixed;
+    position: absolute;
 }
 
 .card {
@@ -42,8 +84,8 @@
 
 .clearfix:before,
 .clearfix:after {
-    content: " "; /* 1 */
-    display: table; /* 2 */
+    content: " ";
+    display: table;
 }
 
 .clearfix:after {

@@ -63,16 +63,84 @@ module.exports = BackboneMixin;
 /*
  * Interface for feed mode
  */
-
-module.exports = null;
-
-},{}],3:[function(require,module,exports){
-/** @jsx React.DOM */
-/*
- * Interface for review mode
- */
 var BackboneMixin = require('./backbonemixin.js');
+var models = require('./models.js');
 
+// props: model
+var FeedCard = React.createClass({displayName: 'FeedCard',
+    mixins: [BackboneMixin],
+    render: function() {
+        return React.DOM.div( {className:"feedcard"}, 
+            React.DOM.div( {className:"feedcard_front"}, 
+                this.props.model.get('front')
+            ),
+            React.DOM.div( {className:"feedcard_back"}, 
+                this.props.model.get('back')
+            )
+        );
+    },
+    getBackboneModels: function() {
+        return [this.props.model];
+    }
+});
+
+// props: collection
+var FeedBody = React.createClass({displayName: 'FeedBody',
+    mixins: [BackboneMixin],
+    render: function() {
+        var feedItems = _(this.props.collection.models).map(function(model) {
+            return React.DOM.li(null, 
+                FeedCard( {model:model, key:model.cid} )
+            );
+        });
+        return React.DOM.ol( {className:"feedbody"}, 
+            feedItems
+        );
+    },
+    getBackboneModels: function() {
+        return [this.props.collection];
+    }
+});
+
+var PracticeButton = React.createClass({displayName: 'PracticeButton',
+    render: function() {
+        return React.DOM.div( {className:"practicebutton", onClick:this.props.onClick}, 
+" Practice ", this.props.count, " cards "        );
+    }
+});
+
+// props: onFilterChange, onPractice, count
+var FilterBar = React.createClass({displayName: 'FilterBar',
+    render: function() {
+        return React.DOM.div( {className:"filterbar clearfix"}, 
+            React.DOM.input( {type:"text",
+                   className:"filtertext",
+                   value:this.props.value,
+                   onChange:this.handleChange} ),
+            PracticeButton( {count:this.props.count,
+                            onClick:this.props.onPractice} )
+        );
+    },
+    handleChange: function(event) {
+        // '/api/cards?tag=tag1,tag2'
+        console.log(event.nativeEvent);
+    }
+});
+
+// props: collection, onPractice?
+var Feed = React.createClass({displayName: 'Feed',
+    render: function() {
+        var collection = this.props.collection;
+        return React.DOM.div( {className:"feed clearfix"}, 
+            FilterBar( {onPractice:$.noop, count:collection.models.length} ),
+            FeedBody( {collection:collection} )
+        );
+    }
+});
+
+module.exports = Feed
+
+},{"./backbonemixin.js":1,"./models.js":3}],3:[function(require,module,exports){
 /*
  * Cards store the following data:
  * - front: markup appearing on the front of the card
@@ -90,20 +158,74 @@ var CardCollection = Backbone.Collection.extend({
     // TODO - comparator
 });
 
-// props: collection, position ({x, y})?
-var CardStack = React.createClass({displayName: 'CardStack',
+module.exports = {
+    CardModel: CardModel,
+    CardCollection: CardCollection
+};
+
+},{}],4:[function(require,module,exports){
+/** @jsx React.DOM */
+/*
+ * Interface for review mode
+ */
+var BackboneMixin = require('./backbonemixin.js');
+var models = require('./models.js');
+
+var CardModel = models.CardModel,
+    CardCollection = models.CardCollection;
+
+var Review = React.createClass({displayName: 'Review',
+    render: function() {
+        var hardStack = new CardCollection(),
+            easyStack = new CardCollection();
+
+        var rate = function(cid, rating) {
+            var reviewingStack = this.props.reviewingStack,
+                model = reviewingStack.get(cid);
+            reviewingStack.remove(model);
+            if (rating === 'easy') {
+                easyStack.add(model);
+            } else { // hard
+                hardStack.add(model);
+            }
+        }.bind(this);
+
+        return React.DOM.div(null, 
+            ReviewedStack( {collection:hardStack,
+                           position:{x: 200, y: 50},
+                           scale:0.6} ),
+            ReviewedStack( {collection:easyStack,
+                           position:{x: 600, y: 50},
+                           scale:0.6} ),
+
+            ReviewingStack( {collection:this.props.reviewingStack,
+                            rate:rate,
+                            position:{x: 400, y: 400},
+                            scale:1} )
+        );
+    }
+});
+
+// props: collection, position ({x, y})?, scale, rate
+var ReviewingStack = React.createClass({displayName: 'ReviewingStack',
     mixins: [BackboneMixin],
     render: function() {
         var currentCard = this.state.cardNum;
         var topCardModel = this.props.collection.models[this.state.cardNum];
+        var style = {
+            left: this.props.position.x,
+            top: this.props.position.y,
+            '-webkit-transform': 'scale(' + this.props.scale + ')'
+        };
         if (!topCardModel) { // empty stack
-            return React.DOM.div( {className:"emptycardstack"}, 
+            // TODO
+            return React.DOM.div( {className:"stack", style:style}, 
 " empty stack! "            );
         } else {
             var topCard = Card( {model:topCardModel,
-                                nextCard:this.nextCard,
+                                rate:this.props.rate,
                                 key:topCardModel.cid} );
-            return React.DOM.div( {className:"cardstack", style:{left: '300px'}}, 
+            return React.DOM.div( {className:"stack", style:style}, 
                 topCard
             );
         }
@@ -112,8 +234,26 @@ var CardStack = React.createClass({displayName: 'CardStack',
     getInitialState: function() {
         return { cardNum: 0 };
     },
-    nextCard: function() {
+    /*nextCard: function() {
         this.setState({cardNum: this.state.cardNum + 1});
+    },*/
+    getBackboneModels: function() {
+        return [this.props.collection];
+    }
+});
+
+// props: collection, position, scale, (some handler)
+var ReviewedStack = React.createClass({displayName: 'ReviewedStack',
+    mixins: [BackboneMixin],
+    render: function() {
+        var style = {
+            left: this.props.position.x,
+            top: this.props.position.y,
+            '-webkit-transform': 'scale(' + this.props.scale + ')'
+        };
+        return React.DOM.div( {className:"stack", style:style}, 
+            this.props.collection.models.length
+        );
     },
     getBackboneModels: function() {
         return [this.props.collection];
@@ -124,11 +264,14 @@ var CardStack = React.createClass({displayName: 'CardStack',
 // TODO this should probably take state as as prop
 var Card = React.createClass({displayName: 'Card',
     render: function() {
-        var stateView,
+        var stateView;
+            /*
             rate = function(rating) {
-                this.props.model.rate(rating);
-                this.props.nextCard();
+                this.props.rate(rating);
+                // this.props.model.rate(rating);
+                // this.props.nextCard();
             }.bind(this);
+            */
         if (this.state.state === 'front') {
             var clickHandler = function() {
                 this.setState({state: 'back'});
@@ -139,7 +282,7 @@ var Card = React.createClass({displayName: 'Card',
         } else if (this.state.state === 'back') {
             stateView = CardBack(
                 {content:this.props.model.get('back'),
-                rate:rate} );
+                rate:_(this.props.rate).partial(this.props.model.cid)} );
         } else { // meta
             stateView = CardMeta( {info:this.props.model.get('meta')} );
         }
@@ -203,20 +346,40 @@ var MetaButton = React.createClass({displayName: 'MetaButton',
     }
 });
 
-module.exports = {
-    CardCollection: CardCollection,
-    CardStack: CardStack
-};
+module.exports = Review;
 
-},{"./backbonemixin.js":1}],4:[function(require,module,exports){
+},{"./backbonemixin.js":1,"./models.js":3}],5:[function(require,module,exports){
 /** @jsx React.DOM */
-var review = require('./review.jsx'),
-    feed = require('./feed.jsx');
+var models = require('./models.js'),
+    Review = require('./review.jsx'),
+    Feed = require('./feed.jsx');
 
-var CardStack = review.CardStack;
-var cards = new review.CardCollection();
-cards.fetch();
-React.renderComponent(CardStack( {collection:cards} ), document.body);
+var Site = React.createClass({displayName: 'Site',
+    render: function() {
+        var view;
+        if (this.state.view === 'feed') {
+            view = Feed( {collection:this.state.globalCollection} );
+        } else {
+            view = Review( {reviewingStack:this.state.reviewing} );
+        }
+        return view;
+    },
+    getInitialState: function() {
+        // TODO make this real
+        var reviewing = new models.CardCollection();
+        reviewing.fetch();
 
-},{"./feed.jsx":2,"./review.jsx":3}]},{},[1,2,3,4])
+        var globalCollection = new models.CardCollection();
+        globalCollection.fetch();
+        return {
+            view: 'feed',
+            reviewing: reviewing,
+            globalCollection: globalCollection
+        };
+    }
+});
+
+React.renderComponent(Site(null ), document.body);
+
+},{"./feed.jsx":2,"./models.js":3,"./review.jsx":4}]},{},[1,2,3,4,5])
 ;

@@ -1,8 +1,31 @@
 /** @jsx React.DOM */
-var review = require('./review.jsx'),
-    feed = require('./feed.jsx');
+var models = require('./models.js'),
+    Review = require('./review.jsx'),
+    Feed = require('./feed.jsx');
 
-var CardStack = review.CardStack;
-var cards = new review.CardCollection();
-cards.fetch();
-React.renderComponent(<CardStack collection={cards} />, document.body);
+var Site = React.createClass({
+    render: function() {
+        var view;
+        if (this.state.view === 'feed') {
+            view = <Feed collection={this.state.globalCollection} />;
+        } else {
+            view = <Review reviewingStack={this.state.reviewing} />;
+        }
+        return view;
+    },
+    getInitialState: function() {
+        // TODO make this real
+        var reviewing = new models.CardCollection();
+        reviewing.fetch();
+
+        var globalCollection = new models.CardCollection();
+        globalCollection.fetch();
+        return {
+            view: 'feed',
+            reviewing: reviewing,
+            globalCollection: globalCollection
+        };
+    }
+});
+
+React.renderComponent(<Site />, document.body);
