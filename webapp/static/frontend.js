@@ -125,14 +125,21 @@ var gravatar = require('./gravatar.js');
 var FeedCard = React.createClass({displayName: 'FeedCard',
     mixins: [BackboneMixin],
     render: function() {
-        return React.DOM.div( {className:"feedcard clearfix"}, 
+        return React.DOM.div( {className:"feedcard row-fluid"}, 
             FeedCardMeta( {model:this.props.model} ),
-            React.DOM.div( {className:"feedcard_right"}, 
+            React.DOM.div( {className:"feedcard_right span10"}, 
                 React.DOM.div( {className:"feedcard_front"}, 
                     this.props.model.get('front')
                 ),
                 React.DOM.div( {className:"feedcard_back"}, 
                     this.props.model.get('back')
+                ),
+                React.DOM.div( {className:"feedcard_meta row-fluid"}, 
+                    Tags( {list:this.props.model.get('tags')} ),
+                    React.DOM.div( {className:"span3 l_stealcard_container"}, 
+                        React.DOM.div( {className:"stealcard btn btn-primary btn-small", onClick:this.stealCard}, 
+" Take this card "                        )
+                    )
                 )
             )
         );
@@ -146,18 +153,15 @@ var FeedCardMeta = React.createClass({displayName: 'FeedCardMeta',
     render: function() {
         // TODO get this info from google
         // http://stackoverflow.com/q/3591278/2121468
-        var userImage = gravatar(this.props.model.get('user_email'), 120),
+        var userImage = gravatar(this.props.model.get('user_email'), 60),
             photoStyle = {background: 'url(' + userImage + ') no-repeat'};
-        return React.DOM.div( {className:"feedcard_meta"}, 
+        return React.DOM.div( {className:"feedcard_userinfo span2"}, 
             React.DOM.div( {className:"feedcard_photo", style:photoStyle} ),
             React.DOM.div( {className:"feedcard_desc"}, 
                 React.DOM.div( {className:"feedcard_username"}, 
                     this.props.model.get('user_nickname')
                 )
-            ),
-            Tags( {list:this.props.model.get('tags')} ),
-            React.DOM.div( {className:"stealcard btn btn-primary btn-small", onClick:this.stealCard}, 
-" Take this card "            )
+            )
         );
     },
     stealCard: function() {
@@ -170,8 +174,8 @@ var Tags = React.createClass({displayName: 'Tags',
         var tags = _(this.props.list).map(function(tag) {
             return React.DOM.span( {className:"label label-info"}, tag);
         });
-        return React.DOM.div( {className:"tags"}, 
-            tags
+        return React.DOM.div( {className:"tags span9"}, 
+" Tags: ", tags
         );
     }
 });
@@ -181,7 +185,7 @@ var FeedBody = React.createClass({displayName: 'FeedBody',
     mixins: [BackboneMixin],
     render: function() {
         var feedItems = _(this.props.collection.models).map(function(model) {
-            return React.DOM.li(null, 
+            return React.DOM.li( {className:"l-feedcard-container"}, 
                 FeedCard( {model:model, key:model.cid} )
             );
         });
@@ -205,14 +209,18 @@ var PracticeButton = React.createClass({displayName: 'PracticeButton',
 // props: onFilterChange, onPractice, count
 var FilterBar = React.createClass({displayName: 'FilterBar',
     render: function() {
-        return React.DOM.div( {className:"filterbar clearfix"}, 
-            React.DOM.span( {className:"filterbar_description"}, "Filter"),
+        return React.DOM.div( {className:"filterbar row-fluid"}, 
+            React.DOM.div( {className:"span9"}, 
             React.DOM.input( {type:"text",
                    className:"filtertext",
                    value:this.props.value,
-                   onChange:this.handleChange} ),
+                   placeholder:"Filter",
+                   onChange:this.handleChange} )
+            ),
+            React.DOM.div( {className:"span3"}, 
             PracticeButton( {count:this.props.count,
                             onClick:this.props.onPractice} )
+            )
         );
     },
     handleChange: function(event) {
