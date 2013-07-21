@@ -22,7 +22,7 @@ var About = React.createClass({
                 </div>
             </div>
             <div id="features" class="features container">
-                <p class="intro"><strong>Remember all the things!</strong> We want to do it, too, and now it's possible. <strong>Enter spacelot, the ocelot for your memory.</strong></p>
+                <p class="intro"><strong>Remember all the things!</strong> We want to do it, too, and now it's possible. <strong>Enter Memfinity, a powerful tool for personal and social learning.</strong></p>
                 <div class="feature">
                     <h2>Turbocharge your brain.</h2>
                     <h3>Spaced repetition is a game changer for personal learning.</h3>
@@ -41,7 +41,7 @@ var About = React.createClass({
                 <div class="feature">
                     <h2>Built for openess.</h2>
                     <h3></h3>
-                    <p>Ocelot is built from the ground up as a web-service.  That means the open source communicty can create new apps for phones, browsers, and or any device. Also, with Ocelot your data is never held hostage. We're open source, and you're always free to host your own personal version of Ocelot.  And by learning with Ocelot, you're not only helping yourself learn;  you're also facilitating world-class research on memory.  </p>
+                    <p>Memfinity is built from the ground up as a web-service.  That means the open source communicty can create new apps for phones, browsers, and or any device. Also, with Ocelot your data is never held hostage. We're open source, and you're always free to host your own personal version of Memfinity.  And by learning with Memfinity, you're not only helping yourself learn;  you're also facilitating world-class research on memory.  </p>
                 </div>
             </div>
         </div>;
