@@ -78,6 +78,9 @@ class ApiHandler(webapp2.RequestHandler):
         if re.match('/api/card/.+/import', path):
             # import a card to the current user's feed
             response = api.card_import(self)
+        if re.match('/api/card/.+/review', path):
+            # record a review done on a card
+            response = api.card_update(self, review=True)
         elif path.startswith('/api/card/'):
             # update an individual card
             response = api.card_update(self)

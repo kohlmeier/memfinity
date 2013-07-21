@@ -1,4 +1,36 @@
+import datetime
+
 from google.appengine.ext import ndb
+
+TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S'
+
+
+class Grades(object):
+    VALID_VALUES = ['easy', 'hard']
+
+
+class LeitnerAlgorithm(object):
+    name = "Leitner"  # used as a key in card algo_data
+    BOX_INTERVALS = [1, 5, 25, 125, 625]  # box interval lengths (in days)
+
+    @classmethod
+    def compute_next_interval(cls, result, card):
+        data = card.algo_data.setdefault(cls.name, {})
+
+        current_box = data.setdefault('box', 0)
+        if result == 'easy' and datetime.datetime.now() > card.next_review:
+            # Note we don't advance the scheduled review if this review
+            # was done premturely.
+            current_box += 1
+        else:
+            current_box -= 1
+        current_box = max(0, current_box)
+        current_box = min(len(cls.BOX_INTERVALS) - 1, current_box)
+
+        data['box'] = current_box
+
+        # return the suggested interval until the next review in seconds
+        return cls.BOX_INTERVALS[current_box] * 24 * 60 * 60
 
 
 class UserData(ndb.Model):
@@ -94,18 +126,51 @@ class Card(ndb.Model):
 
     # stores a list of dicts, each dict represents a presentation
     # of this problem for review, and what happened.  The list is sorted,
-    # with the most recent activity first.  E.g., 
+    # with the most recent activity first.  E.g.,
     # review_history = [
     #     {
     #         "timestamp": <python datetime>,
-    #         "result": <"easy"|"hard">
+    #         "grade": <"easy"|"hard">
     #     },
     #     {
     #         "timestamp": <python datetime>,
-    #         "result": <"easy"|"hard">
+    #         "grade": <"easy"|"hard">
     #     }
     # ]
-    review_history = ndb.JsonProperty()
+    review_history = ndb.JsonProperty(default=[])
+    # Catch-all where algorithms are allowed to store derived metadata.
+    # A dictionary, where top-level keys are the name of the algorithm.
+    algo_data = ndb.JsonProperty(default={})
+
+    # Date of the last review
+    last_review = ndb.DateTimeProperty()
+    # Date of the next suggested review
+    next_review = ndb.DateTimeProperty(auto_now_add=True)
+
+    def record_review(self, grade):
+        """Record a review attempt on this card.
+
+        Inputs:
+            grade : string. Must be in Grades.VALID_VALUES.
+
+        Note: does not call put on the Card.
+        """
+        if not grade in Grades.VALID_VALUES:
+            return
+
+        # TODO(jace) Allow different algorithms based on user settings.
+        now = datetime.datetime.now()
+        next_interval_seconds = LeitnerAlgorithm.compute_next_interval(
+                grade, self)
+        self.next_review = datetime.datetime.now() + (
+            datetime.timedelta(seconds=next_interval_seconds))
+
+        self.last_review = now
+
+        self.review_history.append({
+                "timestamp": now.strftime(TIMESTAMP_FORMAT),
+                "grade": grade
+            })
 
     def update_from_dict(self, data):
         """Update this entity from data in a dict."""
@@ -116,6 +181,7 @@ class Card(ndb.Model):
         self.reversible = data.get('reversible', self.reversible)
         self.tags = data.get('tags', self.tags)
         self.source_url = data.get('source_url', self.source_url)
+        # TODO(jace) Allow updating of last/next_review?
 
     @classmethod
     def get_for_user(cls, user_data):

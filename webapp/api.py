@@ -9,6 +9,12 @@ import jsonify
 import models
 
 
+# STOPSHIP(jace) remove - was for debugging
+class FakeUser(object):
+    def user_id(self):
+        return "example@example.com"
+
+
 def get_oauth_user():
     """Return the OAuth authenticated user, else raise an exception."""
     try:
@@ -28,7 +34,8 @@ def get_current_user():
     user = users.get_current_user()
 
     if not user:
-        raise Exception("Login required for this call.")
+        user = FakeUser()
+        #raise Exception("Login required for this call.")
 
     return user
 
@@ -129,7 +136,7 @@ def card_add(handler):
     return card.key.urlsafe()
 
 
-def card_update(handler, delete=False):
+def card_update(handler, delete=False, review=False):
     """Update or Delete an exisiting Card."""
     user = get_current_user()
     user_data = models.UserData.get_for_user_id(user.user_id())
@@ -144,6 +151,9 @@ def card_update(handler, delete=False):
         return err_response
 
     card_key = path[len(route_root):]
+    if card_key.endswith('/review'):
+        card_key = card_key[:-len('/review')]
+
     card = ndb.Key(urlsafe=card_key).get()
     if not card:
         return err_response
@@ -157,6 +167,11 @@ def card_update(handler, delete=False):
     if delete:
         card_tags_updated = set()
         card.key.delete()
+    elif review:
+        data = json.loads(handler.request.body)
+        card.record_review(data.get('grade'))
+        card_tags_updated = set(card.tags)  # unchanged in this case
+        card.put()
     else:
         data = json.loads(handler.request.body)
         card.update_from_dict(data)
