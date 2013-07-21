@@ -19,26 +19,29 @@ class MainPage(webapp2.RequestHandler):
 
     def get(self):
         path = self.request.path
+        user = users.get_current_user()
+        template = JINJA_ENVIRONMENT.get_template('index.html')
+        env = {
+            'user': user,
+            'users': users,
+        }
+        self.response.write(template.render(env))
+        # if user:
+        #     greeting = ('Welcome, %s! (<a href="%s">sign out</a>)' %
+        #                 (user.nickname(), users.create_logout_url('/')))
+        # else:
+        #     greeting = ('<a href="%s">Sign in or register</a>.' %
+        #                 users.create_login_url('/'))
 
-        if path.startswith('/login'):
+        # self.response.out.write('<html><body>%s</body></html>' % greeting)
+
+class LoginHandler(webapp2.RequestHandler):
+    def get(self):
+        user = users.get_current_user() 
+        if self.request.path.startswith('/login'):
             return self.redirect(users.create_login_url('/'))
-        else:
-            user = users.get_current_user()
-            template = JINJA_ENVIRONMENT.get_template('index.html')
-            env = {
-                'user': user,
-                'users': users,
-            }
-            self.response.write(template.render(env))
-            # if user:
-            #     greeting = ('Welcome, %s! (<a href="%s">sign out</a>)' %
-            #                 (user.nickname(), users.create_logout_url('/')))
-            # else:
-            #     greeting = ('<a href="%s">Sign in or register</a>.' %
-            #                 users.create_login_url('/'))
-
-            # self.response.out.write('<html><body>%s</body></html>' % greeting)
-
+        if self.request.path.startswith('/logout'):
+            return self.redirect(users.create_logout_url('/'))
 
 class ApiHandler(webapp2.RequestHandler):
 
@@ -113,5 +116,6 @@ class ApiHandler(webapp2.RequestHandler):
 
 application = webapp2.WSGIApplication([
     ('/', MainPage),
+    ('/login', )
     ('/api/.*', ApiHandler),
     ], debug=True)
