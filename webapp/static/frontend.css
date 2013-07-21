@@ -91,7 +91,6 @@ body {
     height: 120px;
     width: 120px;
     border-radius: 50%;
-    /*background: url(//lh6.googleusercontent.com/-b0Z0kngFdwY/AAAAAAAAAAI/AAAAAAAAAfQ/GAZ0Z7JEA2Q/s120-c/photo.jpg) no-repeat;*/
 }
 
 .feedcard_username {
@@ -123,11 +122,13 @@ body {
 }
 
 .stack {
-    box-shadow: 10px 10px 0 0 #bbb;
-    border: 1px solid #3a3a3a;
+    box-shadow: 2px 2px #d8d8d8, 4px 4px #bbb, 6px 6px #d8d8d8, 8px 8px #bbb, 10px 10px #d8d8d8;
     width: 400px;
     height: 300px;
     position: absolute;
+    background-color: #fff;
+    border-radius: 2px;
+    box-sizing: border-box;
     background-color: #fff;
 }
 
@@ -137,6 +138,7 @@ body {
     left: 0;
     right: 0;
     position: absolute;
+    border-radius: 2px;
     background-color: #fff;
 }
 
