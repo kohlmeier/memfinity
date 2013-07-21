@@ -29,7 +29,7 @@ function addCard(card){
 function authenticate(){
   $('#content').html(Templates.authenticate);
   $('#login').click(function(){
-    chrome.tabs.create({'url': "http://khan-ssrs.appspot.com"});
+    chrome.tabs.create({'url': "http://khan-ssrs.appspot.com/login"});
   })
 }
 
