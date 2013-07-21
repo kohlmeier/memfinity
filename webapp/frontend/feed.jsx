@@ -40,6 +40,18 @@ var FeedCardMeta = React.createClass({
                     {this.props.model.get('user_nickname')}
                 </div>
             </div>
+            <Tags list={this.props.model.get('tags')} />
+        </div>;
+    }
+});
+
+var Tags = React.createClass({
+    render: function() {
+        var tags = _(this.props.list).map(function(tag) {
+            return <span class='label label-info'>{tag}</span>;
+        });
+        return <div class='tags'>
+            {tags}
         </div>;
     }
 });
