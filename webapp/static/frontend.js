@@ -9,21 +9,48 @@ var models = require('./models.js');
 var About = React.createClass({displayName: 'About',
     render: function() {
         return React.DOM.div(null, 
-        	React.DOM.div( {id:"above-fold"}, 
-        		React.DOM.div( {className:"row"}, 
-        			React.DOM.div( {className:"span3 offset4"}, React.DOM.img( {src:"/static/iloop.png"} )),
-        			React.DOM.div( {className:"span6", id:"introbox"}, 
-        				React.DOM.div( {id:"textintro"}, 
-        					React.DOM.h1(null, "Memfinity"),
-        					React.DOM.p( {id:"acronym"}, "Social spaced repetition system."),
-        					React.DOM.p( {id:"tagline"}, "Learn with your friends. Remember, forever.")
-        				),
-        				React.DOM.button( {className:"btn btn-primary btn-large", id:"login-big"}, "Log in with Google now.")
-        			)
-        		)
-        	)
-
-
+        React.DOM.div( {id:"above-fold"}, 
+                React.DOM.div( {className:"row"}, 
+                    React.DOM.div( {className:"span3 offset4"}, React.DOM.img( {src:"/static/iloop.png"} )),
+                    React.DOM.div( {className:"span6", id:"introbox"}, 
+                        React.DOM.div( {id:"textintro"}, 
+                            React.DOM.h1(null, "Memfinity"),
+                            React.DOM.p( {id:"acronym"}, "A social spaced-repetition system."),
+                            React.DOM.p( {id:"tagline"}, "Learn with your friends. Remember, forever.")
+                        ),
+                        React.DOM.button(
+                        	{className:"btn btn-primary btn-large",
+                        	id:"login-big",
+                        	onClick:function(){window.location = '/login'}}, 
+" Log in with Google now. "                        )
+                    )
+                )
+            ),
+        React.DOM.div( {className:"wrap"}, 
+            React.DOM.div( {id:"features", className:"features container"}, 
+                React.DOM.p( {className:"intro"}, React.DOM.strong(null, "Remember all the things!"), " We want to do it, too, and now it's possible. ", React.DOM.strong(null, "Enter spacelot, the ocelot for your memory.")),
+                React.DOM.div( {className:"feature"}, 
+                    React.DOM.h2(null, "Turbocharge your brain."),
+                    React.DOM.h3(null, "Spaced repetition is a game changer for personal learning."),
+                    React.DOM.p(null, "Using spaced repetition algorithms makes sure you can review the things you need to review, at just the right time to maximize your efficiency.")
+                ),
+                React.DOM.div( {className:"feature"}, 
+                    React.DOM.h2(null, "Create cards on-the-fly."),
+                    React.DOM.h3(null, "Use our killer Chrome extension to effortlessly create cards."),
+                    React.DOM.p(null, "See an interesting vocab work while reading online? Clip it. Want to remember the main point or an article you just read?  Clip it. Just learned an awesome keyboard shortcut, math concept, or piece of ridculous trivia?  Clip it!  With card creation this simple, it takes just seconds file knowledge away for permanent recall.")
+                ),
+                React.DOM.div( {className:"feature"}, 
+                    React.DOM.h2(null, "Learn out loud."),
+                    React.DOM.h3(null, "Follow friends, and see what the world is learning."),
+                    React.DOM.p(null, "Now that you can easily create your own cards and master them, how can you find even more fascinating and useful knowledge?  By following the feeds of people that share your learning interests.  See a realtime feed of what others are learning, and seamlessly grab cards you want to learn, too.")
+                ),
+                React.DOM.div( {className:"feature"}, 
+                    React.DOM.h2(null, "Built for openess."),
+                    React.DOM.h3(null),
+                    React.DOM.p(null, "Ocelot is built from the ground up as a web-service.  That means the open source communicty can create new apps for phones, browsers, and or any device. Also, with Ocelot your data is never held hostage. We're open source, and you're always free to host your own personal version of Ocelot.  And by learning with Ocelot, you're not only helping yourself learn;  you're also facilitating world-class research on memory. "  )
+                )
+            )
+        )
         );
     }
 });
@@ -104,14 +131,21 @@ var gravatar = require('./gravatar.js');
 var FeedCard = React.createClass({displayName: 'FeedCard',
     mixins: [BackboneMixin],
     render: function() {
-        return React.DOM.div( {className:"feedcard clearfix"}, 
+        return React.DOM.div( {className:"feedcard row-fluid"}, 
             FeedCardMeta( {model:this.props.model} ),
-            React.DOM.div( {className:"feedcard_right"}, 
+            React.DOM.div( {className:"feedcard_right span10"}, 
                 React.DOM.div( {className:"feedcard_front"}, 
                     this.props.model.get('front')
                 ),
                 React.DOM.div( {className:"feedcard_back"}, 
                     this.props.model.get('back')
+                ),
+                React.DOM.div( {className:"feedcard_meta row-fluid"}, 
+                    Tags( {list:this.props.model.get('tags')} ),
+                    React.DOM.div( {className:"span3 l_stealcard_container"}, 
+                        React.DOM.div( {className:"stealcard btn btn-primary btn-small", onClick:this.stealCard}, 
+" Take this card "                        )
+                    )
                 )
             )
         );
@@ -125,18 +159,15 @@ var FeedCardMeta = React.createClass({displayName: 'FeedCardMeta',
     render: function() {
         // TODO get this info from google
         // http://stackoverflow.com/q/3591278/2121468
-        var userImage = gravatar(this.props.model.get('user_email'), 120),
+        var userImage = gravatar(this.props.model.get('user_email'), 60),
             photoStyle = {background: 'url(' + userImage + ') no-repeat'};
-        return React.DOM.div( {className:"feedcard_meta"}, 
+        return React.DOM.div( {className:"feedcard_userinfo span2"}, 
             React.DOM.div( {className:"feedcard_photo", style:photoStyle} ),
             React.DOM.div( {className:"feedcard_desc"}, 
                 React.DOM.div( {className:"feedcard_username"}, 
                     this.props.model.get('user_nickname')
                 )
-            ),
-            Tags( {list:this.props.model.get('tags')} ),
-            React.DOM.div( {className:"stealcard btn btn-primary btn-small", onClick:this.stealCard}, 
-" Take this card "            )
+            )
         );
     },
     stealCard: function() {
@@ -149,8 +180,8 @@ var Tags = React.createClass({displayName: 'Tags',
         var tags = _(this.props.list).map(function(tag) {
             return React.DOM.span( {className:"label label-info"}, tag);
         });
-        return React.DOM.div( {className:"tags"}, 
-            tags
+        return React.DOM.div( {className:"tags span9"}, 
+" Tags: ", tags
         );
     }
 });
@@ -160,7 +191,7 @@ var FeedBody = React.createClass({displayName: 'FeedBody',
     mixins: [BackboneMixin],
     render: function() {
         var feedItems = _(this.props.collection.models).map(function(model) {
-            return React.DOM.li(null, 
+            return React.DOM.li( {className:"l-feedcard-container"}, 
                 FeedCard( {model:model, key:model.cid} )
             );
         });
@@ -184,14 +215,18 @@ var PracticeButton = React.createClass({displayName: 'PracticeButton',
 // props: onFilterChange, onPractice, count
 var FilterBar = React.createClass({displayName: 'FilterBar',
     render: function() {
-        return React.DOM.div( {className:"filterbar clearfix"}, 
-            React.DOM.span( {className:"filterbar_description"}, "Filter"),
+        return React.DOM.div( {className:"filterbar row-fluid"}, 
+            React.DOM.div( {className:"span9"}, 
             React.DOM.input( {type:"text",
                    className:"filtertext",
                    value:this.props.value,
-                   onChange:this.handleChange} ),
+                   placeholder:"Filter",
+                   onChange:this.handleChange} )
+            ),
+            React.DOM.div( {className:"span3"}, 
             PracticeButton( {count:this.props.count,
                             onClick:this.props.onPractice} )
+            )
         );
     },
     handleChange: function(event) {
@@ -619,5 +654,5 @@ var Site = React.createClass({displayName: 'Site',
 
 React.renderComponent(Site(null ), document.body);
 
-},{"./about.jsx":1,"./feed.jsx":3,"./header.jsx":5,"./models.js":6,"./review.jsx":7}]},{},[1,5,6,7,8,2,3,4])
+},{"./about.jsx":1,"./feed.jsx":3,"./header.jsx":5,"./models.js":6,"./review.jsx":7}]},{},[1,2,3,4,5,6,7,8])
 ;

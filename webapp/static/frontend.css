@@ -275,6 +275,49 @@ body {
     cursor: pointer;
 }
 
+.wrap {
+    width: 960px;
+    margin: 0 auto;
+}
+
+.features {
+    display: block;
+    margin: 0 auto;
+    padding: 40px;
+    overflow: hidden;
+    line-height: 1.3; 
+}
+.features p.intro {
+    font-weight: 400;
+    font-size: 26px;
+    text-align: justify;
+    color: #666;
+}
+.features p.intro strong {
+    font-weight: 400;
+    color: #444; 
+}
+.features .feature {
+    margin-top: 40px; 
+}
+.features .feature h2 {
+    font-weight: 400;
+    font-size: 32px;
+}
+.features .feature h3 {
+    font-weight: 400;
+    font-size: 28px;
+    color: #999;
+    margin-top: -5px;
+    margin-bottom: 5px;
+}
+.features .feature p {
+    font-weight: 400;
+    font-size: 22px;
+    color: #666;
+    text-align: justify;
+}
+
 #above-fold{
 
 }
@@ -283,7 +326,8 @@ body {
     line-height: 60px;
 }
 #above-fold:first-child{
-    margin-top: 10%;
+    margin-top: 30vh;
+    height: 70vh;
 }
 #introbox{
     height: 220px;
