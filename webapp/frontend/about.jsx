@@ -13,7 +13,7 @@ var About = React.createClass({
         			<div class="span3 offset4"><img src="/static/iloop.png" /></div>
         			<div class="span6" id="introbox">
         				<div id="textintro">
-        					<h1>SSRS</h1>
+        					<h1>Memfinity</h1>
         					<p id="acronym">Social spaced repetition system.</p>
         					<p id="tagline">Learn with your friends. Remember, forever.</p>
         				</div>
