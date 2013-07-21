@@ -156,15 +156,53 @@ body {
     right: 0;
 }
 
-.stack {
-    box-shadow: 2px 2px #d8d8d8, 4px 4px #bbb, 6px 6px #d8d8d8, 8px 8px #bbb, 10px 10px #d8d8d8;
-    width: 400px;
-    height: 300px;
+.emptyreviewingstack {
+    padding-top: 100px;
+    text-align: center;
+}
+
+.reviewingstack {
+    width: 550px;
+    height: 400px;
     position: absolute;
     background-color: #fff;
     border-radius: 2px;
     box-sizing: border-box;
     background-color: #fff;
+}
+
+.reviewedstackall {
+    width: 400px;
+    height: 200px;
+    position: absolute;
+}
+
+.reviewedstackmeta {
+    width: 60px;
+    float: left;
+    height: 200px;
+}
+
+.reviewedstack {
+    width: 300px;
+    height: 200px;
+    /*position: absolute;*/
+    background-color: #fff;
+    border-radius: 2px;
+    box-sizing: border-box;
+    background-color: #fff;
+    float: left;
+    position: relative;
+}
+
+.topcardcover {
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 1001;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 300px;
+    height: 200px;
 }
 
 .card {
@@ -198,7 +236,7 @@ body {
 
 .choices_hard {
     margin-right: 20px;
-    margin-left: 150px;
+    margin-left: 230px;
 }
 
 .choices_hard, .choices_easy {

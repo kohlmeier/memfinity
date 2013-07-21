@@ -319,45 +319,61 @@ var Review = React.createClass({displayName: 'Review',
 
         return React.DOM.div(null, 
             ReviewedStack( {collection:hardStack,
-                           position:{x: 200, y: 50},
-                           scale:0.6} ),
+                           position:{x: 100, y: 50},
+                           name:"Hard"} ),
             ReviewedStack( {collection:easyStack,
                            position:{x: 600, y: 50},
-                           scale:0.6} ),
+                           name:"Easy"} ),
 
             ReviewingStack( {collection:this.props.reviewingStack,
                             rate:rate,
-                            position:{x: 400, y: 400},
-                            scale:1} )
+                            position:{x: 255, y: 360}} )
         );
     }
 });
 
-// props: collection, position ({x, y})?, scale, rate
+// TODO handle size = 0
+var stackSides = function (primary, secondary, size, times) {
+    var ret = [];
+    _(times).times(function(n) {
+        n += 1; // 1-indexed
+        var color = n % 2 === 0 ? primary : secondary,
+            sz = (size * n) + 'px ';
+        ret.push(sz + sz + color);
+    });
+    ret = ret.join(', ');
+    return ret;
+};
+
+// props: collection, position ({x, y})?, rate
 var ReviewingStack = React.createClass({displayName: 'ReviewingStack',
     mixins: [BackboneMixin],
     render: function() {
         var currentCard = this.state.cardNum;
         var topCardModel = this.props.collection.models[this.state.cardNum];
+        var sideLayers = Math.max(1, this.props.collection.models.length);
         var style = {
             left: this.props.position.x,
             top: this.props.position.y,
-            '-webkit-transform': 'scale(' + this.props.scale + ')'
+            'box-shadow': stackSides('#2C3E50', '#BDC3C7', 2, sideLayers)
         };
         if (!topCardModel) { // empty stack
             // TODO
-            return React.DOM.div( {className:"stack", style:style}, 
-" empty stack! "            );
+            return React.DOM.div( {className:"reviewingstack emptyreviewingstack", style:style}, 
+                React.DOM.h2(null, "Congratulations!"),
+
+                React.DOM.p(null, "you're done for the day"),
+                React.DOM.p(null, React.DOM.a(null, "make more"), " or ", React.DOM.a(null, "continue practicing"))
+            );
         } else {
             var topCard = Card( {model:topCardModel,
                                 rate:this.props.rate,
                                 key:topCardModel.cid} );
-            return React.DOM.div( {className:"stack", style:style}, 
+            return React.DOM.div( {className:"reviewingstack", style:style}, 
                 topCard
             );
         }
     },
-    // TODO - does this have to be a function?
     getInitialState: function() {
         return { cardNum: 0 };
     },
@@ -369,21 +385,52 @@ var ReviewingStack = React.createClass({displayName: 'ReviewingStack',
     }
 });
 
-// props: collection, position, scale, (some handler)
+// props: collection, position, (some handler)
 var ReviewedStack = React.createClass({displayName: 'ReviewedStack',
     mixins: [BackboneMixin],
     render: function() {
-        var style = {
+        var sideLayers = this.props.collection.models.length;
+        var allstyle = {
             left: this.props.position.x,
-            top: this.props.position.y,
-            '-webkit-transform': 'scale(' + this.props.scale + ')'
+            top: this.props.position.y
         };
-        return React.DOM.div( {className:"stack", style:style}, 
-            this.props.collection.models.length
+
+        var stackstyle = {
+            'box-shadow': stackSides('#2C3E50', '#BDC3C7', 2, sideLayers)
+        };
+
+        var topCardModel = _(this.props.collection.models).last();
+        if (topCardModel) {
+            // TODO way to view this card
+            topCard = Card( {model:topCardModel,
+                            rate:$.noop,
+                            key:topCardModel.cid} );
+        } else {
+            topCard = null;
+        }
+        return React.DOM.div( {className:"reviewedstackall", style:allstyle}, 
+            ReviewedStackMeta( {count:this.props.collection.models.length,
+                               name:this.props.name} ),
+            React.DOM.div( {className:"reviewedstack", style:stackstyle}, 
+                React.DOM.div( {className:"topcardcover"} ),
+                topCard
+            )
         );
     },
     getBackboneModels: function() {
         return [this.props.collection];
+    }
+});
+
+var ReviewedStackMeta = React.createClass({displayName: 'ReviewedStackMeta',
+    render: function() {
+        var count = this.props.count,
+            word = this.props.count === 1 ? 'card' : 'cards',
+            phrase = count + ' ' + word;
+        return React.DOM.div( {className:"reviewedstackmeta"}, 
+            React.DOM.h4(null, this.props.name),
+            phrase
+        );
     }
 });
 

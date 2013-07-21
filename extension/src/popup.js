@@ -13,10 +13,12 @@ var Templates = {
   authenticate: $('#authenticate').html()
 }
 
-function addCard(card){
+function addCard(data){
+  var card = data.card;
   $('#content').html(Templates.addCard);
   $('#front').val(card.front);
   $('#back').val(card.back);
+  $('#who').attr({src: getGravatar(data.user + '@gmail.com')});
 
   function update(){
     chrome.runtime.sendMessage({
@@ -96,14 +98,24 @@ function authenticate(){
   })
 }
 
+function flash(){
+  $('#flash').fadeOut(250, function(){
+        $(this).css({display: 'none'});
+      });
+}
+
 if (window.location.protocol == 'file:'){
   addCard({
-    front: 'Hello, world!',
-    back: '',
-    info: '',
-    tags: [],
-    source_url: ''
-  })
+    card: {
+      front: 'Hello, world!',
+      back: '',
+      info: '',
+      tags: [],
+      source_url: ''
+    },
+    user: 'sam.m.birch'
+  });
+  flash();
 }else{
   // http://stackoverflow.com/questions/3907804/how-to-detect-when-action-popup-gets-closed
   // unload events don't work for popups.
@@ -117,7 +129,8 @@ if (window.location.protocol == 'file:'){
     console.log('popup got message', request, sender);
 
     if (request.origin === 'background'){
-      window[request.content.initialize](request.content.data)
+      window[request.content.initialize](request.content.data);
+      flash();
     }
   });
 
