@@ -2,13 +2,17 @@
 var models = require('./models.js'),
     Review = require('./review.jsx'),
     Header = require('./header.jsx'),
-    Feed = require('./feed.jsx');
+    Feed = require('./feed.jsx'),
+    About = require('./about.jsx')
+    ;
 
 var Site = React.createClass({
     render: function() {
         var view;
         if (this.state.view === 'feed') {
             view = <Feed collection={this.state.globalCollection} />;
+        } else if (this.state.view === 'about') {
+            view = <About />;
         } else {
             view = <Review reviewingStack={this.state.reviewing} />;
         }

@@ -2,10 +2,12 @@
 var Header = React.createClass({
     render: function() {
         var homeActive = this.state.home,
-            feedActive = this.state.feed;
+            feedActive = this.state.feed,
+            aboutActive = this.state.about;
+        
         return <div class='navbar navbar-inverse'>
             <div class='navbar-inner'>
-                <ul class='nav'>
+                <ul class='nav pull-left'>
                     <li class={'header_home' + (homeActive ? ' active' : '')}
                         onClick={_(this.props.onNavigate).partial('home')}
                         onMouseEnter={_(this.alertEnter).partial('home')}
@@ -17,6 +19,14 @@ var Header = React.createClass({
                         onMouseEnter={_(this.alertEnter).partial('feed')}
                         onMouseLeave={_(this.alertLeave).partial('feed')}>
                         <i class='icon-twitter'></i> Feed
+                    </li>
+                </ul>
+                <ul class='nav pull-right'>
+                    <li class={'header_about' + (aboutActive ? ' active' : '')}
+                        onClick={_(this.props.onNavigate).partial('about')}
+                        onMouseEnter={_(this.alertEnter).partial('about')}
+                        onMouseLeave={_(this.alertLeave).partial('about')}>
+                        <i class='icon-info'></i> About
                     </li>
                 </ul>
             </div>
@@ -35,7 +45,8 @@ var Header = React.createClass({
     getInitialState: function() {
         return {
             home: false,
-            feed: false
+            feed: false,
+            about: false
         };
     }
 });

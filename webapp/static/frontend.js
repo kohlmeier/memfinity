@@ -1,4 +1,22 @@
 ;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
+/** @jsx React.DOM */
+/*
+ * Interface for the About page
+ */
+var BackboneMixin = require('./backbonemixin.js');
+var models = require('./models.js');
+
+var About = React.createClass({displayName: 'About',
+    render: function() {
+        return React.DOM.div(null, 
+" This is the About page! "        );
+    }
+});
+
+
+module.exports = About;
+
+},{"./backbonemixin.js":2,"./models.js":6}],2:[function(require,module,exports){
 var _validateModelArray = function(backboneModels) {
     if (!_.isArray(backboneModels)) {
         throw new Error('getBackboneModels must return an array, ' +
@@ -58,7 +76,7 @@ var BackboneMixin = {
 
 module.exports = BackboneMixin;
 
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 /** @jsx React.DOM */
 /*
  * Interface for feed mode
@@ -180,7 +198,7 @@ var Feed = React.createClass({displayName: 'Feed',
 
 module.exports = Feed;
 
-},{"./backbonemixin.js":1,"./gravatar.js":3,"./models.js":5}],3:[function(require,module,exports){
+},{"./backbonemixin.js":2,"./gravatar.js":4,"./models.js":6}],4:[function(require,module,exports){
 function getGravatar(email, size) {
     email = email || 'example@example.com';
 
@@ -196,15 +214,17 @@ function getGravatar(email, size) {
 
 module.exports = getGravatar
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 /** @jsx React.DOM */
 var Header = React.createClass({displayName: 'Header',
     render: function() {
         var homeActive = this.state.home,
-            feedActive = this.state.feed;
+            feedActive = this.state.feed,
+            aboutActive = this.state.about;
+        
         return React.DOM.div( {className:"navbar navbar-inverse"}, 
             React.DOM.div( {className:"navbar-inner"}, 
-                React.DOM.ul( {className:"nav"}, 
+                React.DOM.ul( {className:"nav pull-left"}, 
                     React.DOM.li( {className:'header_home' + (homeActive ? ' active' : ''),
                         onClick:_(this.props.onNavigate).partial('home'),
                         onMouseEnter:_(this.alertEnter).partial('home'),
@@ -215,6 +235,13 @@ var Header = React.createClass({displayName: 'Header',
                         onMouseEnter:_(this.alertEnter).partial('feed'),
                         onMouseLeave:_(this.alertLeave).partial('feed')}, 
                         React.DOM.i( {className:"icon-twitter"}), " Feed "                    )
+                ),
+                React.DOM.ul( {className:"nav pull-right"}, 
+                    React.DOM.li( {className:'header_about' + (aboutActive ? ' active' : ''),
+                        onClick:_(this.props.onNavigate).partial('about'),
+                        onMouseEnter:_(this.alertEnter).partial('about'),
+                        onMouseLeave:_(this.alertLeave).partial('about')}, 
+                        React.DOM.i( {className:"icon-info"}), " About "                    )
                 )
             )
         );
@@ -232,14 +259,15 @@ var Header = React.createClass({displayName: 'Header',
     getInitialState: function() {
         return {
             home: false,
-            feed: false
+            feed: false,
+            about: false
         };
     }
 });
 
 module.exports = Header;
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 /*
  * Cards store the following data:
  * - front: markup appearing on the front of the card
@@ -262,7 +290,7 @@ module.exports = {
     CardCollection: CardCollection
 };
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 /** @jsx React.DOM */
 /*
  * Interface for review mode
@@ -447,18 +475,22 @@ var MetaButton = React.createClass({displayName: 'MetaButton',
 
 module.exports = Review;
 
-},{"./backbonemixin.js":1,"./models.js":5}],7:[function(require,module,exports){
+},{"./backbonemixin.js":2,"./models.js":6}],8:[function(require,module,exports){
 /** @jsx React.DOM */
 var models = require('./models.js'),
     Review = require('./review.jsx'),
     Header = require('./header.jsx'),
-    Feed = require('./feed.jsx');
+    Feed = require('./feed.jsx'),
+    About = require('./about.jsx')
+    ;
 
 var Site = React.createClass({displayName: 'Site',
     render: function() {
         var view;
         if (this.state.view === 'feed') {
             view = Feed( {collection:this.state.globalCollection} );
+        } else if (this.state.view === 'about') {
+            view = About(null );
         } else {
             view = Review( {reviewingStack:this.state.reviewing} );
         }
@@ -489,5 +521,6 @@ var Site = React.createClass({displayName: 'Site',
 
 React.renderComponent(Site(null ), document.body);
 
-},{"./feed.jsx":2,"./header.jsx":4,"./models.js":5,"./review.jsx":6}]},{},[1,2,3,4,5,6,7])
+},{"./about.jsx":1,"./feed.jsx":3,"./header.jsx":5,"./models.js":6,"./review.jsx":7}]},{},[2,3,4,5,6,7,8])
+;
 ;

@@ -19,12 +19,12 @@ body {
     font-size: 30px;
 }
 
-.header_home, .header_feed {
+.header_home, .header_feed, .header_about {
     color: #fff;
     cursor: pointer;
 }
 
-.header_home.active, .header_feed.active {
+.header_home.active, .header_feed.active, .header_about.active {
     background-color: #1abc9c;
     border-bottom-color: #16a085;
 }
@@ -35,6 +35,11 @@ body {
 }
 
 .header_feed {
+    padding: 10px;
+    margin-left: 10px;
+}
+
+.header_about {
     padding: 10px;
     margin-left: 10px;
 }
