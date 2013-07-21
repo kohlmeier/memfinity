@@ -1,4 +1,5 @@
 function getGravatar(email, size) {
+    email = email || 'example@example.com';
 
     // MD5 (Message-Digest Algorithm) by WebToolkit
     //

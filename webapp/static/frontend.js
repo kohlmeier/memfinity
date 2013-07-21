@@ -163,6 +163,7 @@ module.exports = Feed;
 
 },{"./backbonemixin.js":1,"./gravatar.js":3,"./models.js":5}],3:[function(require,module,exports){
 function getGravatar(email, size) {
+    email = email || 'example@example.com';
 
     // MD5 (Message-Digest Algorithm) by WebToolkit
     //
