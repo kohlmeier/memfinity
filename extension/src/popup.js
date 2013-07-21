@@ -24,6 +24,13 @@ function addCard(card){
       content: card
     });
   });
+  $('#cancel').click(function(){
+    chrome.runtime.sendMessage({
+      origin: 'popup',
+      content: null
+    });
+    window.close();
+  })
 }
 
 function authenticate(){

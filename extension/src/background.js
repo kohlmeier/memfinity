@@ -3,7 +3,7 @@ console.log('Background page!')
 var Login = {
 	loggedIn: null,
 	username: null,
-	checkLogin: function(callback){
+	checkLogin: function(callback, ecallback){
 		var req = new XMLHttpRequest();
 		var self = this;
 		req.open('GET', 'http://khan-ssrs.appspot.com/api/user');
@@ -19,7 +19,10 @@ var Login = {
 			self.username = user;
 			if (callback){ callback(user); }
 		};
-		req.onerror = console.error;
+		req.onerror = function(){
+			console.error(arguments);
+			if (ecallback) {ecallback.apply(this, arguments);}
+		};
 		req.send();
 		return req;
 	}
@@ -33,7 +36,7 @@ function uploadCard(card, callback){
 	var postdata = JSON.stringify(card);
 	req.setRequestHeader("Content-type", "application/json");
 	req.onload = callback;
-	req.onerror = console.error;
+	req.onerror = function(){console.error(arguments);};
 	req.send(postdata);
 	return req;
 }
@@ -65,6 +68,7 @@ function gotCardFromContent(card){
 	if (Login.loggedIn){
 		// need some way of invalidating if the request comes
 		// back bad!
+		console.log('sending card to popup')
 		currentCard = card;
 		chrome.runtime.sendMessage({
 			origin: 'background',
@@ -75,7 +79,7 @@ function gotCardFromContent(card){
 		});
 		return;
 	}
-	Login.checkLogin(function(){
+	function handleLoginResult(){
 		if (Login.loggedIn){
 			gotCardFromContent(card);
 			return;
@@ -88,7 +92,8 @@ function gotCardFromContent(card){
 				data: null
 			}
 		});
-	})
+	}
+	Login.checkLogin(handleLoginResult, handleLoginResult);
 }
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
