@@ -10,10 +10,14 @@ var CardModel = Backbone.Model.extend({
         return '/api/card/' + this.get('key') + '/';
     },
     rate: function(rating) {
-        var url = '/api/card/' + key + '/review'
-        // 'easy' or 'hard'
-        var data = {
-        };
+        $.ajax({
+            url: this.url() + 'review',
+            data: { grade: rating },
+            contentType: 'application/json; charset=utf-8',
+            type: 'PUT'
+        })
+            .done(function() { console.log('success'); })
+            .fail(function() { console.log('fail'); });
     }
 });
 

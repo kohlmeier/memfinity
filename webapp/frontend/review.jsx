@@ -16,6 +16,7 @@ var Review = React.createClass({
         var rate = function(cid, rating) {
             var reviewingStack = this.props.reviewingStack,
                 model = reviewingStack.get(cid);
+            model.rate(rating);
             reviewingStack.remove(model);
             if (rating === 'easy') {
                 easyStack.add(model);
@@ -56,8 +57,7 @@ var stackSides = function (primary, secondary, size, times) {
 var ReviewingStack = React.createClass({
     mixins: [BackboneMixin],
     render: function() {
-        var currentCard = this.state.cardNum;
-        var topCardModel = this.props.collection.models[this.state.cardNum];
+        var topCardModel = _(this.props.collection.models).first();
         var sideLayers = Math.max(1, this.props.collection.models.length);
         var allstyle = {
             left: this.props.position.x,
@@ -92,12 +92,6 @@ var ReviewingStack = React.createClass({
             {stack}
         </div>;
     },
-    getInitialState: function() {
-        return { cardNum: 0 };
-    },
-    /*nextCard: function() {
-        this.setState({cardNum: this.state.cardNum + 1});
-    },*/
     getBackboneModels: function() {
         return [this.props.collection];
     }
@@ -133,7 +127,6 @@ var ReviewedStack = React.createClass({
         if (topCardModel) {
             // TODO way to view this card
             topCard = <Card model={topCardModel}
-                            rate={$.noop}
                             key={topCardModel.cid} />;
         } else {
             topCard = null;
@@ -169,13 +162,6 @@ var ReviewedStackMeta = React.createClass({
 var Card = React.createClass({
     render: function() {
         var stateView;
-            /*
-            rate = function(rating) {
-                this.props.rate(rating);
-                // this.props.model.rate(rating);
-                // this.props.nextCard();
-            }.bind(this);
-            */
         if (this.state.state === 'front') {
             var clickHandler = function() {
                 this.setState({state: 'back'});
