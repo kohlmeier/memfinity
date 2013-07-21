@@ -13,7 +13,7 @@
     </head>
     <body>
         <script>
-            var username = '{{user.name}}',
+            var username = {{username}},
                 loginUrl = '{{users.create_login_url('/')}}',
                 logoutUrl = '{{users.create_logout_url('/')}}',
                 userCards = {{user_cards}},

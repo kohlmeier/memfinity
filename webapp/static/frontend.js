@@ -275,7 +275,7 @@ var Header = React.createClass({displayName: 'Header',
             aboutActive = this.state.about;
 
         var login_link;
-        if (window.username === "None"){
+        if (window.username === null){
             login_link = React.DOM.a( {href:"/login"}, "Login");
         }else{
             login_link = React.DOM.span(null, React.DOM.img( {src:gravatar(window.username + '@gmail.com')} ),React.DOM.a( {href:"/logout"}, "Logout"));

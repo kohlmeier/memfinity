@@ -1,3 +1,4 @@
+import json
 import os
 import re
 
@@ -43,6 +44,7 @@ class MainPage(webapp2.RequestHandler):
         template = JINJA_ENVIRONMENT.get_template('index.html')
         env = {
             'user': user_data,
+            'username': json.dumps(user_data.name),
             'users': users,
             'user_cards': jsonify.jsonify(user_cards),
             'global_cards': jsonify.jsonify(global_cards),

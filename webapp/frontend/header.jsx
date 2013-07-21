@@ -8,7 +8,7 @@ var Header = React.createClass({
             aboutActive = this.state.about;
 
         var login_link;
-        if (window.username === "None"){
+        if (window.username === null){
             login_link = <a href="/login">Login</a>;
         }else{
             login_link = <span><img src={gravatar(window.username + '@gmail.com')} /><a href="/logout">Logout</a></span>;
