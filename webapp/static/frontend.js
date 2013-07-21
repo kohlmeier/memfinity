@@ -14,7 +14,7 @@ var About = React.createClass({displayName: 'About',
         			React.DOM.div( {className:"span3 offset4"}, React.DOM.img( {src:"/static/iloop.png"} )),
         			React.DOM.div( {className:"span6", id:"introbox"}, 
         				React.DOM.div( {id:"textintro"}, 
-        					React.DOM.h1(null, "SSRS"),
+        					React.DOM.h1(null, "Memfinity"),
         					React.DOM.p( {id:"acronym"}, "Social spaced repetition system."),
         					React.DOM.p( {id:"tagline"}, "Learn with your friends. Remember, forever.")
         				),
@@ -619,5 +619,5 @@ var Site = React.createClass({displayName: 'Site',
 
 React.renderComponent(Site(null ), document.body);
 
-},{"./about.jsx":1,"./feed.jsx":3,"./header.jsx":5,"./models.js":6,"./review.jsx":7}]},{},[1,5,6,7,8,3,2,4])
+},{"./about.jsx":1,"./feed.jsx":3,"./header.jsx":5,"./models.js":6,"./review.jsx":7}]},{},[1,5,6,7,8,2,3,4])
 ;
