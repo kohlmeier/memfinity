@@ -98,7 +98,19 @@ var FeedCardMeta = React.createClass({displayName: 'FeedCardMeta',
             React.DOM.div( {className:"feedcard_photo", style:photoStyle} ),
             React.DOM.div( {className:"feedcard_desc"}, 
                 React.DOM.div( {className:"feedcard_username"}, "Joel Burget")
-            )
+            ),
+            Tags( {list:this.props.model.get('tags')} )
+        );
+    }
+});
+
+var Tags = React.createClass({displayName: 'Tags',
+    render: function() {
+        var tags = _(this.props.list).map(function(tag) {
+            return React.DOM.span( {className:"label label-info"}, tag);
+        });
+        return React.DOM.div( {className:"tags"}, 
+            tags
         );
     }
 });
