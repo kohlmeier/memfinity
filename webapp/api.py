@@ -75,38 +75,30 @@ def card_view(handler):
 def card_query(handler):
     """Query for multiple cards.
 
-    '/api/cards' -> returns all cards, ordered by date added desc
-    '/api/cards/' -> returns all cards, ordered by date added desc
-    '/api/cards?tag=tag1,tag2' -> as above, but with tag filtering
-    '/api/cards/<user_key>' -> returns cards for a single user
-    '/api/cards/<user_key>?tag=tag1,tag2' -> w/ tag filtering
+    See main.py for usage examples.
 
     TODO(jace): return a query cursor, too?
     """
-    path = handler.request.path
-    root = '/api/cards/'
-
-    tag = None
-    user_key = None
-    if path == root[:-1] or path == root:
-        pass
-    elif path.startswith(root):
-        user_key = path[len(root):]
-    else:
-        raise Exception("Invalid route in card_query.")
-
+    user_key = handler.request.get('user', None)
     tag = handler.request.get("tag", None)
     tag_list = tag.split(',') if tag else None
+    review = handler.request.get('review', None)
 
     query = models.Card.query()
     if user_key:
         query = query.filter(models.Card.user_key == ndb.Key(urlsafe=user_key))
     if tag_list:
         query = query.filter(models.Card.tags.IN(tag_list))
-    query = query.order(-models.Card.added)
+
+    if review:
+        # For review mode, we sort by next scheduled review
+        query = query.order(models.Card.next_review)
+    else:
+        query = query.order(-models.Card.added)
+
     results = query.fetch(100)
 
-    response = '{}'
+    response = '[]'
     if results:
         response = jsonify.jsonify(results, pretty_print=True)
 

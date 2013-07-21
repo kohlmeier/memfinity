@@ -43,13 +43,14 @@ class ApiHandler(webapp2.RequestHandler):
         if path.startswith('/api/card/'):
             # retrieve an individual card
             response = api.card_view(self)
-        elif path.startswith('/api/cards'):
+        elif path == '/api/cards':
             # query for many cards
             # '/api/cards' -> returns all cards, ordered by date added desc
-            # '/api/cards/' -> returns all cards, ordered by date added desc
             # '/api/cards?tag=tag1,tag2' -> as above, but with tag filtering
-            # '/api/cards/<user_key>' -> returns cards for a single user
-            # '/api/cards/<user_key>?tags=tag1,tag2' -> w/ tag filtering
+            # '/api/cards?user=<user_key> -> returns cards for a single user
+            # '/api/cards?user=user_key&tags=tag1,tag2' -> obvious
+            # '/api/cards?user=<user_key>&review=1' -> all cards for the
+            #      user but sorted by next_review
             response = api.card_query(self)
         elif path == '/api/user':
             response = api.user_view_current(self)            

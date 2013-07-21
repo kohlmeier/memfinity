@@ -15,3 +15,14 @@ indexes:
   - name: tags
   - name: added
     direction: desc
+
+- kind: Card
+  properties:
+  - name: tags
+  - name: next_review
+
+- kind: Card
+  properties:
+  - name: tags
+  - name: next_review
+    direction: desc
