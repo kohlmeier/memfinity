@@ -6,7 +6,8 @@
     <link href="flatui/flat-ui.css" rel="stylesheet">
     <style>
       body{
-        margin: 30px;
+        margin: 20px;
+        margin-bottom: 5px;
         /* border: 1px dashed #000; */
       }
       textarea{
@@ -29,10 +30,13 @@
         line-height: 41px;
       }
       #cancel{
-        display: inline;
+        
       }
       #add-card-ui{
         width: 460px;
+      }
+      #add-card-card{
+        padding: 5px;
       }
       #authenticate-ui{
         width: 460px;
@@ -48,18 +52,40 @@
       }
       #tags_tagsinput{
         border: 2px solid #bdc3c7;
+        margin-bottom: 5px;
+      }
+      #who{
+        margin-right: 10px;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+      }
+      #whobit{
+        width: 100%;
+        text-align: left;
+        font-size: 16px;
+        color: #ccc;
+        line-height: 50px;
+        margin-bottom: 5px;
+        font-variant: small-caps;
       }
     </style>
   </head>
   <body>
     <script id="add-card" type="text/x-handlebars-template">
       <div id="add-card-ui">
-        <textarea class="span6" id="front" placeholder="Front of card..."></textarea>
-        <textarea class="span6" id="back" placeholder="Back of card..."></textarea>
-        <input name="tags" id="tags" class="taginput" value="" style="display: none;" />
+        <div id="whobit">
+          <img id="who" src="http://lh6.googleusercontent.com/-b0Z0kngFdwY/AAAAAAAAAAI/AAAAAAAAAfQ/GAZ0Z7JEA2Q/s120-c/photo.jpg" />
+          wants to remember:
+        </div>
+        <div id="add-card-card">
+          <textarea class="span6" id="front" placeholder="Front of card..."></textarea>
+          <textarea class="span6" id="back" placeholder="Back of card..."></textarea>
+          <input name="tags" id="tags" class="taginput" value="" style="display: none;" />
+        </div>
         <div class="row">
           <p class="span4" id="close-notif">The card will be added when this dialog closes.</p>
-          <button class="span2 btn btn-danger" id="cancel">Cancel</button>
+          <button class="span2 btn btn-danger" id="cancel"><span class="fui-cross"></span>Cancel</button>
         </div>
       </div>
     </script>
