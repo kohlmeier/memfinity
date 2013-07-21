@@ -99,10 +99,8 @@ var FilterBar = React.createClass({
         return <div class='filterbar row-fluid'>
             <div class="span9">
             <input type='text'
-                   class='filtertext'
-                   value={this.props.value}
-                   placeholder="Filter"
-                   onChange={this.handleChange} />
+                   class='filtertext taginput'
+                   ref='filter' />
             </div>
             <div class="span3">
             <PracticeButton count={this.props.count}
@@ -110,20 +108,39 @@ var FilterBar = React.createClass({
             </div>
         </div>;
     },
-    handleChange: function(event) {
-        // '/api/cards?tag=tag1,tag2'
-        console.log(event.nativeEvent);
+    componentDidMount: function(elem) {
+        var self = this;
+        $(elem).find('.taginput').tagsInput({
+            onChange: function(event){
+                var $input = $(self.refs.filter.getDOMNode());
+                var tags = $input.val()
+                self.props.onFilterChange(tags);
+            }
+        });
     }
 });
 
 // props: collection, onPractice?
 var Feed = React.createClass({
+    mixins: [BackboneMixin],
     render: function() {
         var collection = this.props.collection;
         return <div class='feed clearfix'>
-            <FilterBar onPractice={$.noop} count={collection.models.length} />
+            <FilterBar onPractice={$.noop}
+                       onFilterChange={this.onFilterChange}
+                       count={collection.models.length} />
             <FeedBody collection={collection} />
         </div>;
+    },
+    getBackboneModels: function() {
+        return [this.props.collection];
+    },
+    onFilterChange: function(filters) {
+        var self = this;
+        var filterQuery = !!filters ? ('?tag=' + filters) : '';
+        $.get('/api/cards' + filterQuery, function(newCards) {
+            self.props.collection.reset(JSON.parse(newCards));
+        });
     }
 });
 

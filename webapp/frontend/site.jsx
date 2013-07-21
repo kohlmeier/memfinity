@@ -20,7 +20,7 @@ var Site = React.createClass({
         return <div>
             <Header page={this.state.view} onNavigate={this.navigate} />
             {view}
-        </div>
+        </div>;
     },
     getInitialState: function() {
         var modelify = function(cards) {
