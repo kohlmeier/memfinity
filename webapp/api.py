@@ -142,7 +142,8 @@ def card_add(handler):
     user = users.get_current_user() or FakeUser()
     card.user_email = user.email()
     nickname = user.nickname()
-    nickname = nickname[nickname.find('@')+1:]  # trim the @domain, if present
+    if nickname.find('@') > 0:
+        nickname = nickname[:nickname.find('@')]
     card.user_nickname = nickname
 
     card.put()
