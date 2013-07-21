@@ -24,17 +24,17 @@ var Review = React.createClass({
             }
         }.bind(this);
 
-        return <div>
+        return <div class="review_workspace">
             <ReviewedStack collection={hardStack}
-                           position={{x: 100, y: 100}}
+                           position={{x: 800, y: 90}}
                            name='Hard' />
             <ReviewedStack collection={easyStack}
-                           position={{x: 600, y: 100}}
+                           position={{x: 800, y: 310}}
                            name='Easy' />
 
             <ReviewingStack collection={this.props.reviewingStack}
                             rate={rate}
-                            position={{x: 160, y: 410}} />
+                            position={{x: 50, y: 90}} />
         </div>;
     }
 });

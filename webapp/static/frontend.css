@@ -67,10 +67,6 @@ body {
     width: 800px;
 }
 
-.filterbar {
-
-}
-
 .filterbar_description {
     font-size: 24px;
     padding: 5px;
@@ -90,10 +86,6 @@ body {
 .feedbody {
     list-style-type: none;
     margin-left: 0;
-}
-
-.l-feedcard-container {
-
 }
 
 .feedcard {
@@ -203,7 +195,7 @@ body {
     position: relative;
     float: left;
     width: 550px;
-    height: 400px;
+    height: 420px;
     background-color: #fff;
     border-radius: 2px;
     box-sizing: border-box;
