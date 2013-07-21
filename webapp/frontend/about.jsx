@@ -7,7 +7,7 @@ var models = require('./models.js');
 
 var About = React.createClass({
     render: function() {
-        return <div>
+        return <div class="wrap">
             <div id="above-fold">
                 <div class="row">
                     <div class="span3 offset4"><img src="/static/iloop.png" /></div>

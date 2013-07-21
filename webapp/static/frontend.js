@@ -8,7 +8,7 @@ var models = require('./models.js');
 
 var About = React.createClass({displayName: 'About',
     render: function() {
-        return React.DOM.div(null, 
+        return React.DOM.div( {className:"wrap"}, 
             React.DOM.div( {id:"above-fold"}, 
                 React.DOM.div( {className:"row"}, 
                     React.DOM.div( {className:"span3 offset4"}, React.DOM.img( {src:"/static/iloop.png"} )),
