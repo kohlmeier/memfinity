@@ -23,10 +23,13 @@ class MainPage(webapp2.RequestHandler):
     @ndb.toplevel
     def get(self):
         user = users.get_current_user()
+        import logging
+        logging.error("'" + str(user) + "'")
         if user:
             user_data = models.UserData.get_for_user_id(user.user_id())
         else:
-            return self.redirect('/login')
+            raise ndb.Return(self.redirect('/login'))
+            #user_data = None
 
         if user_data:
             user_cards, global_cards = yield (

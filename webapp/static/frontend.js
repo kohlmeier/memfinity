@@ -654,5 +654,5 @@ var Site = React.createClass({displayName: 'Site',
 
 React.renderComponent(Site(null ), document.body);
 
-},{"./about.jsx":1,"./feed.jsx":3,"./header.jsx":5,"./models.js":6,"./review.jsx":7}]},{},[2,3,4,5,6,7,8])
+},{"./about.jsx":1,"./feed.jsx":3,"./header.jsx":5,"./models.js":6,"./review.jsx":7}]},{},[1,2,3,4,5,6,7,8])
 ;
