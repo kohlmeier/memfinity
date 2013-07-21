@@ -45,7 +45,7 @@ class MainPage(webapp2.RequestHandler):
             global_cards = models.Card.query().fetch(1000)
 
         if user_data:
-            username = user_data.name
+            username = str(user)
         else:
             username = None
 
