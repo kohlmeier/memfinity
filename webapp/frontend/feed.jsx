@@ -53,6 +53,7 @@ var PracticeButton = React.createClass({
 var FilterBar = React.createClass({
     render: function() {
         return <div class='filterbar clearfix'>
+            <span class='filterbar_description'>Filter</span>
             <input type='text'
                    class='filtertext'
                    value={this.props.value}

@@ -7,14 +7,17 @@
         <script src="http://underscorejs.org/underscore.js"></script>
         <script src="http://backbonejs.org/backbone.js"></script>
         <link rel="stylesheet" href="/static/frontend.css">
+        <link rel="stylesheet" href="/static/bootstrap.css">
+        <link rel="stylesheet" href="/static/flat-ui.css">
         <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
     </head>
     <body>
-        {% if user -%}
-        Welcome, {{user.nickname()}}! (<a href="{{users.create_logout_url('/')}}">sign out</a>)
-        {%- else -%}
-        <a href="{{users.create_login_url('/')}}">Sign in or register</a>.
-        {%- endif %}
+        <script>
+            var username = '{{user}}',
+                loginUrl = '{{users.create_login_url('/')}}',
+                logoutUrl = '{{users.create_logout_url('/')}}';
+            // TODO login/logout + put this in header
+        </script>
         <script src="/static/frontend.js"></script>
     </body>
 </html>

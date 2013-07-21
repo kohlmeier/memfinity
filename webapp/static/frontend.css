@@ -1,6 +1,11 @@
+/*
 body {
     font-family: 'Helvetica-Neue', Helvetica, sans-serif;
     font-weight: 200;
+}*/
+
+.navbar-inner {
+    border-radius: 0 !important;
 }
 
 .header {
@@ -8,18 +13,37 @@ body {
     font-size: 30px;
 }
 
+.header_home, .header_page {
+    color: #fff;
+    cursor: pointer;
+}
+
+.header_home.active, .header_page.active {
+    background-color: #1abc9c;
+    border-bottom-color: #16a085;
+}
+
 .header_home {
     padding: 10px;
+    margin-left: 10px;
 }
 
 .header_page {
     padding: 10px;
     margin-left: 10px;
-    border-left: 1px solid;
 }
 
 .feed {
     margin-top: 50px;
+}
+
+.filterbar {
+    margin-left: 20px;
+}
+
+.filterbar_description {
+    float: left;
+    font-size: 24px;
 }
 
 .filtertext {

@@ -113,6 +113,7 @@ var PracticeButton = React.createClass({displayName: 'PracticeButton',
 var FilterBar = React.createClass({displayName: 'FilterBar',
     render: function() {
         return React.DOM.div( {className:"filterbar clearfix"}, 
+            React.DOM.span( {className:"filterbar_description"}, "Filter"),
             React.DOM.input( {type:"text",
                    className:"filtertext",
                    value:this.props.value,
@@ -144,10 +145,39 @@ module.exports = Feed;
 /** @jsx React.DOM */
 var Header = React.createClass({displayName: 'Header',
     render: function() {
-        return React.DOM.div( {className:"header clearfix"}, 
-            React.DOM.span( {className:"header_home"}, "Home ", React.DOM.i( {className:"icon-home"})),
-            React.DOM.span( {className:"header_page"}, React.DOM.i( {className:"icon-twitter"}),this.props.page)
+        var homeActive = this.state.home,
+            headerActive = this.state.header;
+        return React.DOM.div( {className:"navbar navbar-inverse"}, 
+            React.DOM.div( {className:"navbar-inner"}, 
+                React.DOM.ul( {className:"nav"}, 
+                    React.DOM.li( {className:'header_home' + (homeActive ? ' active' : ''),
+                        onMouseEnter:_(this.alertEnter).partial('home'),
+                        onMouseLeave:_(this.alertLeave).partial('home')}, 
+                        React.DOM.i( {className:"icon-home"}),"Home "                    ),
+                    React.DOM.li( {className:'header_page' + (headerActive ? ' active' : ''),
+                        onMouseEnter:_(this.alertEnter).partial('header'),
+                        onMouseLeave:_(this.alertLeave).partial('header')}, 
+                        React.DOM.i( {className:"icon-twitter"}),this.props.page
+                    )
+                )
+            )
         );
+    },
+    alertEnter: function(target) {
+        var state = {};
+        state[target] = true;
+        this.setState(state);
+    },
+    alertLeave: function(target) {
+        var state = {};
+        state[target] = false;
+        this.setState(state);
+    },
+    getInitialState: function() {
+        return {
+            home: false,
+            header: false
+        };
     }
 });
 
@@ -167,7 +197,7 @@ var CardModel = Backbone.Model.extend({
 
 var CardCollection = Backbone.Collection.extend({
     model: CardModel,
-    url: '/api/cards/' // TODO
+    url: '/api/cards' // TODO
     // TODO - comparator
 });
 
@@ -398,5 +428,5 @@ var Site = React.createClass({displayName: 'Site',
 
 React.renderComponent(Site(null ), document.body);
 
-},{"./feed.jsx":2,"./header.jsx":3,"./models.js":4,"./review.jsx":5}]},{},[1,2,4,5,6])
+},{"./feed.jsx":2,"./header.jsx":3,"./models.js":4,"./review.jsx":5}]},{},[1,2,3,4,5,6])
 ;
