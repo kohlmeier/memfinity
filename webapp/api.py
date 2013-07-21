@@ -79,7 +79,7 @@ def card_query(handler):
     '/api/cards/' -> returns all cards, ordered by date added desc
     '/api/cards?tag=tag1,tag2' -> as above, but with tag filtering
     '/api/cards/<user_key>' -> returns cards for a single user
-    '/api/cards/<user_key>?tags=tag1,tag2' -> w/ tag filtering
+    '/api/cards/<user_key>?tag=tag1,tag2' -> w/ tag filtering
 
     TODO(jace): return a query cursor, too?
     """
@@ -95,15 +95,14 @@ def card_query(handler):
     else:
         raise Exception("Invalid route in card_query.")
 
-    logging.warning("Attempting to get tag.")
     tag = handler.request.get("tag", None)
-    logging.warning("got tag = " + str(tag))
+    tag_list = tag.split(',') if tag else None
 
     query = models.Card.query()
     if user_key:
         query = query.filter(models.Card.user_key == ndb.Key(urlsafe=user_key))
-    if tag:
-        query = query.filter(models.Card.tags == tag)
+    if tag_list:
+        query = query.filter(models.Card.tags.IN(tag_list))
     query = query.order(-models.Card.added)
     results = query.fetch(100)
 
