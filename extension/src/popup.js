@@ -1,4 +1,12 @@
+Mousetrap._stopCallback = Mousetrap.stopCallback;
+Mousetrap.stopCallback = function(e, element, combo){
 
+  if (element.id === 'tags_tag'){
+    return false;
+  }
+
+  return Mousetrap._stopCallback(e, element, combo);
+}
 
 var Templates = {
   addCard: $('#add-card').html(),
@@ -17,6 +25,13 @@ function addCard(card){
     });
   }
 
+  function nullOut(){
+    chrome.runtime.sendMessage({
+      origin: 'popup',
+      content: null
+    });
+  }
+
   $('#front,#back').keypress(function(){
     card.front = $('#front').val();
     card.back = $('#back').val();
@@ -26,14 +41,40 @@ function addCard(card){
     $(this).css({height: '150px'});
   })
   $('#back').blur(function(){
-    $(this).css({height: '40px'});
+    if (this.value == ''){
+      $(this).css({height: '40px'});
+    }
   })
   $('#cancel').click(function(){
-    chrome.runtime.sendMessage({
-      origin: 'popup',
-      content: null
-    });
+    nullOut()
     window.close();
+  });
+  $('#save').click(function(){
+    update();
+    window.close();
+  })
+
+  Mousetrap.bind(['ctrl+s', 'command+s'], function(e) {
+    e.preventDefault();
+    update();
+    window.close();
+  });
+
+  Mousetrap.bind('esc', function(e) {
+    e.preventDefault();
+    nullOut();
+    window.close();
+  });
+
+  Mousetrap.bind('up up down down', function(e) {
+    var front = $('#front').val();
+    var back = $('#back').val();
+    $('#front').val(back);
+    $('#back').val(front);
+
+    if (front !== ''){
+      $('#back').css({height: '150px'});
+    }
   });
 
   $(".taginput").tagsInput({
@@ -42,6 +83,10 @@ function addCard(card){
       update();
     }
   });
+
+  $('#front').focus();
+  $('#front')[0].selectionStart = card.front.length;
+  $('#front')[0].selectionEnd = card.front.length;
 }
 
 function authenticate(){
@@ -51,35 +96,33 @@ function authenticate(){
   })
 }
 
-/*
-addCard({
-  front: 'Hello, world!',
-  back: '',
-  info: '',
-  tags: [],
-  source_url: ''
-})
-*/
-
-
-// http://stackoverflow.com/questions/3907804/how-to-detect-when-action-popup-gets-closed
-// unload events don't work for popups.
-function ping() {
-    chrome.extension.getBackgroundPage().PopupCloseMonitor.popupPing();
-    setTimeout(ping, 500);
-}
-ping();
-
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  console.log('popup got message', request, sender);
-
-  if (request.origin === 'background'){
-    window[request.content.initialize](request.content.data)
+if (window.location.protocol == 'file:'){
+  addCard({
+    front: 'Hello, world!',
+    back: '',
+    info: '',
+    tags: [],
+    source_url: ''
+  })
+}else{
+  // http://stackoverflow.com/questions/3907804/how-to-detect-when-action-popup-gets-closed
+  // unload events don't work for popups.
+  function ping() {
+      chrome.extension.getBackgroundPage().PopupCloseMonitor.popupPing();
+      setTimeout(ping, 500);
   }
-});
+  ping();
 
-// Set everything in motion via the content script
-chrome.tabs.getSelected(null, function(tab) {
-  chrome.tabs.executeScript(null, {file: 'inject.js'});
-});
+  chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    console.log('popup got message', request, sender);
 
+    if (request.origin === 'background'){
+      window[request.content.initialize](request.content.data)
+    }
+  });
+
+  // Set everything in motion via the content script
+  chrome.tabs.getSelected(null, function(tab) {
+    chrome.tabs.executeScript(null, {file: 'inject.js'});
+  });
+}

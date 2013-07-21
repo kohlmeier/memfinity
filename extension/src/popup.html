@@ -7,7 +7,6 @@
     <style>
       body{
         margin: 20px;
-        margin-bottom: 5px;
         /* border: 1px dashed #000; */
       }
       textarea{
@@ -22,12 +21,6 @@
       }
       #back{
         height: 40px;
-      }
-      #close-notif{
-        font-size: small;
-        text-align: center;
-        height: 41px;
-        line-height: 41px;
       }
       #cancel{
         
@@ -63,11 +56,17 @@
       #whobit{
         width: 100%;
         text-align: left;
-        font-size: 16px;
+        font-size: 18px;
         color: #ccc;
         line-height: 50px;
         margin-bottom: 5px;
         font-variant: small-caps;
+      }
+      .tinytext{
+        font-size: 15px;
+        display: inline-block;
+        margin-left: 4px;
+        color: rgba(255, 255, 255, .75);
       }
     </style>
   </head>
@@ -79,13 +78,19 @@
           wants to remember:
         </div>
         <div id="add-card-card">
-          <textarea class="span6" id="front" placeholder="Front of card..."></textarea>
-          <textarea class="span6" id="back" placeholder="Back of card..."></textarea>
-          <input name="tags" id="tags" class="taginput" value="" style="display: none;" />
+          <textarea class="span6 mousetrap" id="front" placeholder="Front of card..."></textarea>
+          <textarea class="span6 mousetrap" id="back" placeholder="Back of card..."></textarea>
+          <input name="tags" id="tags" class="taginput mousetrap" value="" style="display: none;" />
         </div>
         <div class="row">
-          <p class="span4" id="close-notif">The card will be added when this dialog closes.</p>
-          <button class="span2 btn btn-danger" id="cancel"><span class="fui-cross"></span>Cancel</button>
+          <button class="span2 offset1 btn btn-danger" id="cancel">
+            <span class="fui-cross"></span>Cancel
+            <span class="tinytext">(Esc)</span>
+          </button>
+          <button class="span3 btn btn-success" id="save">
+            <span class="fui-check"></span>OK
+            <span class="tinytext">(Ctrl-S)</span>
+          </button>
         </div>
       </div>
     </script>
@@ -100,6 +105,7 @@
     </div>
     <script src="jquery-2.0.3.min.js"></script>
     <script src="jquery.tagsinput.js"></script>
+    <script src="mousetrap.min.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>
