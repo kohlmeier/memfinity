@@ -74,7 +74,7 @@ function gotCardFromContent(card){
 			origin: 'background',
 			content: {
 				initialize: 'addCard',
-				data: card
+				data: {card: card, user: Login.username}
 			}
 		});
 		return;
@@ -102,7 +102,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 		sendResponse('ok');
 		gotCardFromContent(request.content);
 	}else if (request.origin === 'popup'){
-		console.log('Got updated card from popup', request.content);
+		//console.log('Got updated card from popup', request.content);
 		currentCard = request.content;
 	}
 });
