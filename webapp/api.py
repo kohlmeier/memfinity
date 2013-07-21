@@ -29,15 +29,16 @@ def get_oauth_user():
     return user
 
 
-def get_current_user():
-    """Return the OAuth authenticated user, else raise an exception."""
+def get_current_user(handler):
+    """Return the UserData for the currently logged in user (or None)."""
     user = users.get_current_user()
 
     if not user:
-        user = FakeUser()
-        #raise Exception("Login required for this call.")
+        #user = FakeUser()
+        handler.error(401)
+        return None
 
-    return user
+    return models.UserData.get_for_user_id(user.user_id())
 
 
 def entity_view(handler, route_root):
@@ -115,10 +116,9 @@ def card_query(handler):
 
 def card_add(handler):
     """Add a new Card."""
-    user = get_current_user()
-    user_data = models.UserData.get_for_user_id(user.user_id())
+    user_data = get_current_user(handler)
     if not user_data:
-        raise Exception("No UserData found.")
+        return
 
     data = json.loads(handler.request.body)
 
@@ -138,10 +138,9 @@ def card_add(handler):
 
 def card_update(handler, delete=False, review=False):
     """Update or Delete an exisiting Card."""
-    user = get_current_user()
-    user_data = models.UserData.get_for_user_id(user.user_id())
+    user_data = get_current_user(handler)
     if not user_data:
-        raise Exception("No UserData found.")
+        return
 
     path = handler.request.path
     route_root = '/api/card/'
@@ -192,10 +191,9 @@ def card_import(handler):
 
     Called with the form: /api/card/<card_id>/import
     """
-    user = get_current_user()
-    user_data = models.UserData.get_for_user_id(user.user_id())
+    user_data = get_current_user(handler)
     if not user_data:
-        raise Exception("No UserData found.")
+        return
 
     path = handler.request.path
     err_response = '{}'
@@ -226,10 +224,9 @@ def card_import(handler):
 
 def user_update(handler):
     """Update and exisiting Card."""
-    user = get_current_user()
-    user_data = models.UserData.get_for_user_id(user.user_id())
+    user_data = get_current_user(handler)
     if not user_data:
-        raise Exception("No UserData found.")
+        return
 
     path = handler.request.path
     route_root = '/api/user/'
