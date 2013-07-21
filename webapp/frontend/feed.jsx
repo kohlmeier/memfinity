@@ -10,14 +10,22 @@ var gravatar = require('./gravatar.js');
 var FeedCard = React.createClass({
     mixins: [BackboneMixin],
     render: function() {
-        return <div class='feedcard clearfix'>
+        return <div class='feedcard row-fluid'>
             <FeedCardMeta model={this.props.model} />
-            <div class='feedcard_right'>
+            <div class='feedcard_right span10'>
                 <div class='feedcard_front'>
                     {this.props.model.get('front')}
                 </div>
                 <div class='feedcard_back'>
                     {this.props.model.get('back')}
+                </div>
+                <div class="feedcard_meta row-fluid">
+                    <Tags list={this.props.model.get('tags')} />
+                    <div class="span3 l_stealcard_container">
+                        <div class='stealcard btn btn-primary btn-small' onClick={this.stealCard}>
+                            Take this card
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>;
@@ -31,18 +39,14 @@ var FeedCardMeta = React.createClass({
     render: function() {
         // TODO get this info from google
         // http://stackoverflow.com/q/3591278/2121468
-        var userImage = gravatar(this.props.model.get('user_email'), 120),
+        var userImage = gravatar(this.props.model.get('user_email'), 60),
             photoStyle = {background: 'url(' + userImage + ') no-repeat'};
-        return <div class='feedcard_meta'>
+        return <div class='feedcard_userinfo span2'>
             <div class='feedcard_photo' style={photoStyle} />
             <div class='feedcard_desc'>
                 <div class='feedcard_username'>
                     {this.props.model.get('user_nickname')}
                 </div>
-            </div>
-            <Tags list={this.props.model.get('tags')} />
-            <div class='stealcard btn btn-primary btn-small' onClick={this.stealCard}>
-                Take this card
             </div>
         </div>;
     },
@@ -56,8 +60,8 @@ var Tags = React.createClass({
         var tags = _(this.props.list).map(function(tag) {
             return <span class='label label-info'>{tag}</span>;
         });
-        return <div class='tags'>
-            {tags}
+        return <div class='tags span9'>
+            Tags: {tags}
         </div>;
     }
 });
@@ -67,7 +71,7 @@ var FeedBody = React.createClass({
     mixins: [BackboneMixin],
     render: function() {
         var feedItems = _(this.props.collection.models).map(function(model) {
-            return <li>
+            return <li class="l-feedcard-container">
                 <FeedCard model={model} key={model.cid} />
             </li>;
         });
@@ -92,14 +96,18 @@ var PracticeButton = React.createClass({
 // props: onFilterChange, onPractice, count
 var FilterBar = React.createClass({
     render: function() {
-        return <div class='filterbar clearfix'>
-            <span class='filterbar_description'>Filter</span>
+        return <div class='filterbar row-fluid'>
+            <div class="span9">
             <input type='text'
                    class='filtertext'
                    value={this.props.value}
+                   placeholder="Filter"
                    onChange={this.handleChange} />
+            </div>
+            <div class="span3">
             <PracticeButton count={this.props.count}
                             onClick={this.props.onPractice} />
+            </div>
         </div>;
     },
     handleChange: function(event) {
