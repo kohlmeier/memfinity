@@ -41,10 +41,15 @@ class MainPage(webapp2.RequestHandler):
             user_cards = []
             global_cards = models.Card.query().fetch(1000)
 
+        if user_data:
+            username = json.dumps(user_data.name)
+        else:
+            username = None
+
         template = JINJA_ENVIRONMENT.get_template('index.html')
         env = {
             'user': user_data,
-            'username': json.dumps(user_data.name),
+            'username': username,
             'users': users,
             'user_cards': jsonify.jsonify(user_cards),
             'global_cards': jsonify.jsonify(global_cards),
