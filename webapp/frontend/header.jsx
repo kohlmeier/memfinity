@@ -28,9 +28,6 @@ var Header = React.createClass({
                         onMouseLeave={_(this.alertLeave).partial('feed')}>
                         <i class='icon-twitter'></i> Feed
                     </li>
-                    <li id="header_login" class={'header_login'}>
-                        {login_link}
-                    </li>
                 </ul>
                 <ul class='nav pull-right'>
                     <li class={'header_about' + (aboutActive ? ' active' : '')}
@@ -38,6 +35,9 @@ var Header = React.createClass({
                         onMouseEnter={_(this.alertEnter).partial('about')}
                         onMouseLeave={_(this.alertLeave).partial('about')}>
                         <i class='icon-info'></i> About
+                    </li>
+                    <li id="header_login" class={'header_login'}>
+                        {login_link}
                     </li>
                 </ul>
             </div>

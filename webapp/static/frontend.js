@@ -242,17 +242,17 @@ var Header = React.createClass({displayName: 'Header',
                         onClick:_(this.props.onNavigate).partial('feed'),
                         onMouseEnter:_(this.alertEnter).partial('feed'),
                         onMouseLeave:_(this.alertLeave).partial('feed')}, 
-                        React.DOM.i( {className:"icon-twitter"}), " Feed "                    ),
-                    React.DOM.li( {id:"header_login", className:'header_login'}, 
-                        login_link
-                    )
+                        React.DOM.i( {className:"icon-twitter"}), " Feed "                    )
                 ),
                 React.DOM.ul( {className:"nav pull-right"}, 
                     React.DOM.li( {className:'header_about' + (aboutActive ? ' active' : ''),
                         onClick:_(this.props.onNavigate).partial('about'),
                         onMouseEnter:_(this.alertEnter).partial('about'),
                         onMouseLeave:_(this.alertLeave).partial('about')}, 
-                        React.DOM.i( {className:"icon-info"}), " About "                    )
+                        React.DOM.i( {className:"icon-info"}), " About "                    ),
+                    React.DOM.li( {id:"header_login", className:'header_login'}, 
+                        login_link
+                    )
                 )
             )
         );
@@ -602,5 +602,5 @@ var Site = React.createClass({displayName: 'Site',
 
 React.renderComponent(Site(null ), document.body);
 
-},{"./about.jsx":1,"./feed.jsx":3,"./header.jsx":5,"./models.js":6,"./review.jsx":7}]},{},[1,2,3,4,5,6,7,8])
+},{"./about.jsx":1,"./feed.jsx":3,"./header.jsx":5,"./models.js":6,"./review.jsx":7}]},{},[1,7,6,8,2,5,3,4])
 ;

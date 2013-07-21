@@ -2,10 +2,6 @@ body {
     background-color: rgba(0, 0, 0, 0.1) !important;
 }
 
-.nav{
-    width: 100%;
-}
-
 .navbar, .filterbar_description {
     font-weight: lighter !important;
 }
@@ -52,7 +48,6 @@ body {
 #header_login{
     padding: 10px;
     margin-left: 10px;
-    float: right;
 }
 #header_login > a{
     margin: 0;
