@@ -72,7 +72,7 @@ var FeedCard = React.createClass({displayName: 'FeedCard',
     mixins: [BackboneMixin],
     render: function() {
         return React.DOM.div( {className:"feedcard clearfix"}, 
-            FeedCardMeta(null ),
+            FeedCardMeta( {model:this.props.model} ),
             React.DOM.div( {className:"feedcard_right"}, 
                 React.DOM.div( {className:"feedcard_front"}, 
                     this.props.model.get('front')
@@ -92,7 +92,7 @@ var FeedCardMeta = React.createClass({displayName: 'FeedCardMeta',
     render: function() {
         // TODO get this info from google
         // http://stackoverflow.com/q/3591278/2121468
-        var userImage = gravatar(username, 120),
+        var userImage = gravatar(this.props.model.get('user_email'), 120),
             photoStyle = {background: 'url(' + userImage + ') no-repeat'};
         return React.DOM.div( {className:"feedcard_meta"}, 
             React.DOM.div( {className:"feedcard_photo", style:photoStyle} ),

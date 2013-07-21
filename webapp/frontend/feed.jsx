@@ -11,7 +11,7 @@ var FeedCard = React.createClass({
     mixins: [BackboneMixin],
     render: function() {
         return <div class='feedcard clearfix'>
-            <FeedCardMeta />
+            <FeedCardMeta model={this.props.model} />
             <div class='feedcard_right'>
                 <div class='feedcard_front'>
                     {this.props.model.get('front')}
@@ -31,7 +31,7 @@ var FeedCardMeta = React.createClass({
     render: function() {
         // TODO get this info from google
         // http://stackoverflow.com/q/3591278/2121468
-        var userImage = gravatar(username, 120),
+        var userImage = gravatar(this.props.model.get('user_email'), 120),
             photoStyle = {background: 'url(' + userImage + ') no-repeat'};
         return <div class='feedcard_meta'>
             <div class='feedcard_photo' style={photoStyle} />

@@ -132,6 +132,8 @@ def card_add(handler):
 
     card = models.Card(user_key=user_data.key)
     card.update_from_dict(data)
+    # TODO(jace) remove the following hack for quick gravatar support
+    card.user_email = users.get_current_user().email()
     card.put()
 
     # Update the list of all known tags for this user
