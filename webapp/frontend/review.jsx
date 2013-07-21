@@ -34,13 +34,13 @@ var Review = React.createClass({
 
             <ReviewingStack collection={this.props.reviewingStack}
                             rate={rate}
-                            position={{x: 255, y: 360}} />
+                            position={{x: 160, y: 360}} />
         </div>;
     }
 });
 
-// TODO handle size = 0
 var stackSides = function (primary, secondary, size, times) {
+    times = 1;
     var ret = [];
     _(times).times(function(n) {
         n += 1; // 1-indexed
@@ -59,14 +59,19 @@ var ReviewingStack = React.createClass({
         var currentCard = this.state.cardNum;
         var topCardModel = this.props.collection.models[this.state.cardNum];
         var sideLayers = Math.max(1, this.props.collection.models.length);
-        var style = {
+        var allstyle = {
             left: this.props.position.x,
-            top: this.props.position.y,
+            top: this.props.position.y
+        };
+        var stackstyle = {
             'box-shadow': stackSides('#2C3E50', '#BDC3C7', 2, sideLayers)
         };
+
+        var stack;
         if (!topCardModel) { // empty stack
             // TODO
-            return <div class='reviewingstack emptyreviewingstack' style={style}>
+            stack = <div class='reviewingstack emptyreviewingstack'
+                        style={stackstyle}>
                 <h2>Congratulations!</h2>
 
                 <p>you're done for the day</p>
@@ -76,10 +81,16 @@ var ReviewingStack = React.createClass({
             var topCard = <Card model={topCardModel}
                                 rate={this.props.rate}
                                 key={topCardModel.cid} />;
-            return <div class='reviewingstack' style={style}>
+            stack = <div class='reviewingstack' style={stackstyle}>
                 {topCard}
             </div>;
         }
+        return <div class='reviewingstackall' style={allstyle}>
+            <ReviewingStackMeta
+                    count={this.props.collection.models.length}
+                    name='Remaining' />
+            {stack}
+        </div>;
     },
     getInitialState: function() {
         return { cardNum: 0 };
@@ -89,6 +100,18 @@ var ReviewingStack = React.createClass({
     },*/
     getBackboneModels: function() {
         return [this.props.collection];
+    }
+});
+
+var ReviewingStackMeta = React.createClass({
+    render: function() {
+        var count = this.props.count,
+            word = this.props.count === 1 ? 'card' : 'cards',
+            phrase = count + ' ' + word;
+        return <div class='reviewingstackmeta'>
+            <h3>{this.props.name}</h3>
+            <h4>{phrase}</h4>
+        </div>;
     }
 });
 
