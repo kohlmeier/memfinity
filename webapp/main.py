@@ -93,6 +93,12 @@ class ApiHandler(webapp2.RequestHandler):
         elif path.startswith('/api/card/'):
             # update an individual card
             response = api.card_update(self)
+        elif re.match('/api/user/.+/follow', path):
+            # record a review done on a card
+            response = api.user_follow_unfollow(self, 'follow')
+        elif re.match('/api/user/.+/unfollow', path):
+            # record a review done on a card
+            response = api.user_follow_unfollow(self, 'unfollow')
         elif path.startswith('/api/user/'):
             # update an individual user
             response = api.user_update(self)

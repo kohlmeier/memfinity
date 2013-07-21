@@ -26,3 +26,9 @@ indexes:
   - name: tags
   - name: next_review
     direction: desc
+
+- kind: Card
+  properties:
+  - name: user_key
+  - name: added
+    direction: desc

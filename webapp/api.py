@@ -1,5 +1,4 @@
 import json
-import logging
 
 from google.appengine.api import oauth
 from google.appengine.api import users
@@ -12,7 +11,7 @@ import models
 # STOPSHIP(jace) remove - was for debugging
 class FakeUser(object):
     def user_id(self):
-        return "example@example.com"
+        return "xxxexample@example.com"
 
 
 def get_oauth_user():
@@ -34,9 +33,9 @@ def get_current_user(handler):
     user = users.get_current_user()
 
     if not user:
-        #user = FakeUser()
-        handler.error(401)
-        return None
+        user = FakeUser()
+        #handler.error(401)
+        #return None
 
     return models.UserData.get_for_user_id(user.user_id())
 
@@ -83,10 +82,28 @@ def card_query(handler):
     tag = handler.request.get("tag", None)
     tag_list = tag.split(',') if tag else None
     review = handler.request.get('review', None)
+    include_followers = handler.request.get('include_followers', None)
+
+    if review and include_followers:
+        handler.error(400)
+        return "'review' and 'include_followers' cannot be used together."
+
+    if include_followers and not user_key:
+        handler.error(400)
+        return "'review' and 'include_followers' cannot be used together."
 
     query = models.Card.query()
-    if user_key:
+
+    if include_followers:
+        user_data = ndb.Key(urlsafe=user_key).get()
+        if not user_data:
+            handler.error(500)
+            return "UserData not found."
+        user_list = user_data.following + [ndb.Key(urlsafe=user_key)]
+        query = query.filter(models.Card.user_key.IN(user_list))
+    elif user_key:
         query = query.filter(models.Card.user_key == ndb.Key(urlsafe=user_key))
+
     if tag_list:
         query = query.filter(models.Card.tags.IN(tag_list))
 
@@ -187,7 +204,6 @@ def card_import(handler):
         return
 
     path = handler.request.path
-    err_response = '{}'
 
     card_key = path[len('/api/card/'):-len('/import')]
     card = ndb.Key(urlsafe=card_key).get()
@@ -235,5 +251,47 @@ def user_update(handler):
     data = json.loads(handler.request.body)
     user_data.update_from_dict(data)
     user_data.put()  # TODO(jace): only put if necessary
+
+    return user_data.key.urlsafe()
+
+
+def user_follow_unfollow(handler, follow_or_unfollow):
+    """Follow a new user."""
+    user_data = get_current_user(handler)
+    if not user_data:
+        return
+
+    path = handler.request.path
+
+    suffix = '/' + follow_or_unfollow
+    # path form is '/api/user/<user_key>/[un]follow'
+    follow_user_key = ndb.Key(urlsafe=path[len('/api/user/'):-len(suffix)])
+    follow_user = follow_user_key.get()
+
+    if not follow_user:
+        handler.error(500)
+        return "User to follow not found."
+
+    if follow_user_key == user_data.key:
+        handler.error(500)
+        return "Users may not follow themselves."
+
+    if follow_or_unfollow == 'follow':
+        if follow_user_key not in user_data.following:
+            user_data.following.append(follow_user_key)
+            user_data.put()
+
+            if user_data.key not in follow_user.followers:
+                follow_user.followers.append(user_data.key)
+                follow_user.put()
+
+    elif follow_or_unfollow == 'unfollow':
+        if follow_user_key in user_data.following:
+            user_data.following.remove(follow_user_key)
+            user_data.put()
+
+            if user_data.key in follow_user.followers:
+                follow_user.followers.remove(user_data.key)
+                follow_user.put()
 
     return user_data.key.urlsafe()
