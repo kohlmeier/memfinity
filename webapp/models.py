@@ -105,8 +105,10 @@ class UserData(ndb.Model):
 
 class Card(ndb.Model):
     user_key = ndb.KeyProperty(required=True)
-    # TODO(jace): Remove this hack put in for quick gravatar support on cards
+
+    # TODO(jace): Remove this hack for quick gravatar/nickname support on cards
     user_email = ndb.StringProperty()
+    user_nickname = ndb.StringProperty()
 
     # TODO(jace): what type should the content properties
     # be?  TextProperty just for now

@@ -10,8 +10,13 @@ import models
 
 # STOPSHIP(jace) remove - was for debugging
 class FakeUser(object):
+    user = "joelburget@gmail.com"
     def user_id(self):
-        return "xxxexample@example.com"
+        return FakeUser.user
+    def email(self):
+        return FakeUser.user
+    def nickname(self):
+        return FakeUser.user
 
 
 def get_oauth_user():
@@ -33,9 +38,9 @@ def get_current_user(handler):
     user = users.get_current_user()
 
     if not user:
-        user = FakeUser()
-        #handler.error(401)
-        #return None
+        #user = FakeUser()
+        handler.error(401)
+        return None
 
     return models.UserData.get_for_user_id(user.user_id())
 
@@ -132,8 +137,12 @@ def card_add(handler):
 
     card = models.Card(user_key=user_data.key)
     card.update_from_dict(data)
+
     # TODO(jace) remove the following hack for quick gravatar support
-    card.user_email = users.get_current_user().email()
+    user = users.get_current_user() or FakeUser()
+    card.user_email = user.email()
+    card.user_nickname = user.nickname()
+
     card.put()
 
     # Update the list of all known tags for this user

@@ -36,7 +36,9 @@ var FeedCardMeta = React.createClass({
         return <div class='feedcard_meta'>
             <div class='feedcard_photo' style={photoStyle} />
             <div class='feedcard_desc'>
-                <div class='feedcard_username'>Joel Burget</div>
+                <div class='feedcard_username'>
+                    {this.props.model.get('user_nickname')}
+                </div>
             </div>
         </div>;
     }
