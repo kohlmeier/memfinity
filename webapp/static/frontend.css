@@ -242,6 +242,7 @@ body {
     left: 0;
     right: 0;
     position: absolute;
+    padding: 10px;
     border-radius: 2px;
     background-color: #fff;
 }
