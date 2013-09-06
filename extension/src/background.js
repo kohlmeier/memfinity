@@ -6,7 +6,7 @@ var Login = {
 	checkLogin: function(callback, ecallback){
 		var req = new XMLHttpRequest();
 		var self = this;
-		req.open('GET', 'http://khan-ssrs.appspot.com/api/user');
+		req.open('GET', 'http://localhost:8080/api/user');
 		req.onload = function(e){
 			var user = JSON.parse(this.responseText);
 			console.log("Login result:", user)
@@ -32,7 +32,7 @@ Login.checkLogin();
 
 function uploadCard(card, callback){
 	var req = new XMLHttpRequest();
-	req.open('POST', 'http://khan-ssrs.appspot.com/api/card');
+	req.open('POST', 'http://localhost:8080/api/card');
 	var postdata = JSON.stringify(card);
 	req.setRequestHeader("Content-type", "application/json");
 	req.onload = callback;
@@ -52,7 +52,7 @@ function onPopupClosed() {
 var PopupCloseMonitor = {
 	timeoutId: 0,
 	popupPing: function() {
-	    if(this.timeoutId != 0) {
+		if(this.timeoutId != 0) {
 	        clearTimeout(this.timeoutId);
 	    }
 

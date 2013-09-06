@@ -6,12 +6,12 @@ Mousetrap.stopCallback = function(e, element, combo){
   }
 
   return Mousetrap._stopCallback(e, element, combo);
-}
+};
 
 var Templates = {
   addCard: $('#add-card').html(),
   authenticate: $('#authenticate').html()
-}
+};
 
 function addCard(data){
   var card = data.card;
@@ -34,27 +34,27 @@ function addCard(data){
     });
   }
 
-  $('#front,#back').keypress(function(){
+  $('#front,#back').keypress(function() {
     card.front = $('#front').val();
     card.back = $('#back').val();
     update();
   });
-  $('#back').focus(function(){
+  $('#back').focus(function() {
     $(this).css({height: '150px'});
-  })
-  $('#back').blur(function(){
-    if (this.value == ''){
+  });
+  $('#back').blur(function() {
+    if (this.value === ''){
       $(this).css({height: '40px'});
     }
-  })
-  $('#cancel').click(function(){
-    nullOut()
+  });
+  $('#cancel').click(function() {
+    nullOut();
     window.close();
   });
   $('#save').click(function(){
     update();
     window.close();
-  })
+  });
 
   Mousetrap.bind(['ctrl+s', 'command+s'], function(e) {
     e.preventDefault();
@@ -94,8 +94,8 @@ function addCard(data){
 function authenticate(){
   $('#content').html(Templates.authenticate);
   $('#login').click(function(){
-    chrome.tabs.create({'url': "http://khan-ssrs.appspot.com/login"});
-  })
+    chrome.tabs.create({'url': "http://localhost:8080/login"});
+  });
 }
 
 function flash(){
@@ -116,7 +116,7 @@ if (window.location.protocol == 'file:'){
     user: 'sam.m.birch'
   });
   flash();
-}else{
+} else {
   // http://stackoverflow.com/questions/3907804/how-to-detect-when-action-popup-gets-closed
   // unload events don't work for popups.
   function ping() {
