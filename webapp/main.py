@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import re
 
@@ -23,8 +24,7 @@ class MainPage(webapp2.RequestHandler):
     @ndb.toplevel
     def get(self):
         user = users.get_current_user()
-        import logging
-        logging.error("'" + str(user) + "'")
+        logging.info("Debug User: '" + str(user) + "'")
         if user:
             user_data = models.UserData.get_for_user_id(user.user_id())
         else:
@@ -130,6 +130,7 @@ class ApiHandler(webapp2.RequestHandler):
         self.response.out.write(response)
 
     def delete(self):
+        logging.warning("DELETE handler executing")
         path = self.request.path
         if path.startswith('/api/card/'):
             # delete an individual card

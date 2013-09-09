@@ -142,9 +142,11 @@ var FeedCard = React.createClass({displayName: 'FeedCard',
                 ),
                 React.DOM.div( {className:"feedcard_meta row-fluid"}, 
                     Tags( {list:this.props.model.get('tags')} ),
-                    React.DOM.div( {className:"span3 l_stealcard_container"}, 
-                        React.DOM.div( {className:"stealcard btn btn-primary btn-small", onClick:this.stealCard}, 
-" Take this card "                        )
+                    React.DOM.div( {className:"span3 l_takecard_container"}, 
+                        React.DOM.div( {className:"deletecard btn btn-primary btn-small", onClick:this.deleteCard}, 
+" Delete "                        ),
+                        React.DOM.div( {className:"takecard btn btn-primary btn-small", onClick:this.takeCard}, 
+" Take "                        )
                     )
                 )
             )
@@ -152,7 +154,14 @@ var FeedCard = React.createClass({displayName: 'FeedCard',
     },
     getBackboneModels: function() {
         return [this.props.model];
+    },
+    deleteCard: function() {
+        this.props.model.deleteCard();
+    },
+    takeCard: function() {
+        this.props.model.takeCard();
     }
+
 });
 
 var FeedCardMeta = React.createClass({displayName: 'FeedCardMeta',
@@ -170,7 +179,7 @@ var FeedCardMeta = React.createClass({displayName: 'FeedCardMeta',
             )
         );
     },
-    stealCard: function() {
+    takeCard: function() {
         console.log('TODO');
     }
 });
@@ -355,18 +364,34 @@ module.exports = Header;
  */
 var CardModel = Backbone.Model.extend({
     url: function() {
-        return '/api/card/' + this.get('key') + '/';
+        return '/api/card/' + this.get('key');
     },
     rate: function(rating) {
         $.ajax({
-            url: this.url() + 'review',
+            url: this.url() + '/review',
             data: { grade: rating },
             contentType: 'application/json; charset=utf-8',
             type: 'PUT'
         })
             .done(function() { console.log('success'); })
             .fail(function() { console.log('fail'); });
-    }
+    },
+    deleteCard: function() {
+        $.ajax({
+            url: this.url(),
+            type: 'DELETE'
+        })
+            .done(function() { console.log('card delete success'); })
+            .fail(function() { console.log('card delete fail'); });
+    },
+    takeCard: function() {
+        $.ajax({
+            url: this.url() + '/import',
+            type: 'PUT'
+        })
+            .done(function() { console.log('card import success'); })
+            .fail(function() { console.log('card import fail'); });
+    },
 });
 
 var CardCollection = Backbone.Collection.extend({
@@ -669,5 +694,5 @@ var Site = React.createClass({displayName: 'Site',
 
 React.renderComponent(Site(null ), document.body);
 
-},{"./about.jsx":1,"./feed.jsx":3,"./header.jsx":5,"./models.js":6,"./review.jsx":7}]},{},[2,1,3,4,5,6,7,8])
+},{"./about.jsx":1,"./feed.jsx":3,"./header.jsx":5,"./models.js":6,"./review.jsx":7}]},{},[1,2,3,4,5,6,7,8])
 ;

@@ -7,18 +7,34 @@
  */
 var CardModel = Backbone.Model.extend({
     url: function() {
-        return '/api/card/' + this.get('key') + '/';
+        return '/api/card/' + this.get('key');
     },
     rate: function(rating) {
         $.ajax({
-            url: this.url() + 'review',
+            url: this.url() + '/review',
             data: { grade: rating },
             contentType: 'application/json; charset=utf-8',
             type: 'PUT'
         })
             .done(function() { console.log('success'); })
             .fail(function() { console.log('fail'); });
-    }
+    },
+    deleteCard: function() {
+        $.ajax({
+            url: this.url(),
+            type: 'DELETE'
+        })
+            .done(function() { console.log('card delete success'); })
+            .fail(function() { console.log('card delete fail'); });
+    },
+    takeCard: function() {
+        $.ajax({
+            url: this.url() + '/import',
+            type: 'PUT'
+        })
+            .done(function() { console.log('card import success'); })
+            .fail(function() { console.log('card import fail'); });
+    },
 });
 
 var CardCollection = Backbone.Collection.extend({

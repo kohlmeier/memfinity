@@ -21,9 +21,12 @@ var FeedCard = React.createClass({
                 </div>
                 <div class="feedcard_meta row-fluid">
                     <Tags list={this.props.model.get('tags')} />
-                    <div class="span3 l_stealcard_container">
-                        <div class='stealcard btn btn-primary btn-small' onClick={this.stealCard}>
-                            Take this card
+                    <div class="span3 l_takecard_container">
+                        <div class='deletecard btn btn-primary btn-small' onClick={this.deleteCard}>
+                            Delete
+                        </div>
+                        <div class='takecard btn btn-primary btn-small' onClick={this.takeCard}>
+                            Take
                         </div>
                     </div>
                 </div>
@@ -32,7 +35,14 @@ var FeedCard = React.createClass({
     },
     getBackboneModels: function() {
         return [this.props.model];
+    },
+    deleteCard: function() {
+        this.props.model.deleteCard();
+    },
+    takeCard: function() {
+        this.props.model.takeCard();
     }
+
 });
 
 var FeedCardMeta = React.createClass({
@@ -50,7 +60,7 @@ var FeedCardMeta = React.createClass({
             </div>
         </div>;
     },
-    stealCard: function() {
+    takeCard: function() {
         console.log('TODO');
     }
 });

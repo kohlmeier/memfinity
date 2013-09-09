@@ -137,7 +137,7 @@ body {
 }
 
 .tags,
-.l_stealcard_container {
+.l_takecard_container {
     padding: 10px 0 10px 10px;
 }
 
@@ -145,7 +145,7 @@ body {
     /*padding: 15px 9px 14px !important;*/
 }
 
-.stealcard {
+.takecard {
     float: right;
 }
 
