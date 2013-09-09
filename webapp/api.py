@@ -9,17 +9,6 @@ import jsonify
 import models
 
 
-# STOPSHIP(jace) remove - was for debugging
-class FakeUser(object):
-    user = "joelburget@gmail.com"
-    def user_id(self):
-        return FakeUser.user
-    def email(self):
-        return FakeUser.user
-    def nickname(self):
-        return FakeUser.user
-
-
 def get_oauth_user():
     """Return the OAuth authenticated user, else raise an exception."""
     try:
@@ -41,7 +30,7 @@ def get_current_user(handler):
     if not user:
         # STOPSHIP(jace) whooooa!
         if handler.request.get('no_auth', None):
-            user = FakeUser()
+            user = models.FakeUser()
         else:
             handler.error(401)
             return None
@@ -141,14 +130,7 @@ def card_add(handler):
 
     card = models.Card(user_key=user_data.key)
     card.update_from_dict(data)
-
-    # TODO(jace) remove the following hack for quick gravatar support
-    user = users.get_current_user() or FakeUser()
-    card.user_email = user.email()
-    nickname = user.nickname()
-    if nickname.find('@') > 0:
-        nickname = nickname[:nickname.find('@')]
-    card.user_nickname = nickname
+    card.update_email_and_nickname()
 
     card.put()
 
@@ -236,6 +218,7 @@ def card_import(handler):
     new_card = models.Card()
     new_card.populate(**card.to_dict())
     new_card.user_key = user_data.key
+    new_card.update_email_and_nickname()
     new_card.put()
 
     # Update the list of all known tags for this user

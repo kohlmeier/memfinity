@@ -1,6 +1,7 @@
 import datetime
 
 from google.appengine.ext import ndb
+from google.appengine.api import users
 
 TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S'
 
@@ -33,6 +34,17 @@ class LeitnerAlgorithm(object):
         return cls.BOX_INTERVALS[current_box] * 24 * 60 * 60
 
 
+# STOPSHIP(jace) remove - was for debugging
+class FakeUser(object):
+    user = "joelburget@gmail.com"
+    def user_id(self):
+        return FakeUser.user
+    def email(self):
+        return FakeUser.user
+    def nickname(self):
+        return FakeUser.user
+
+
 class UserData(ndb.Model):
     user_id = ndb.StringProperty(required=True, indexed=True)
 
@@ -57,7 +69,7 @@ class UserData(ndb.Model):
     def update_from_dict(self, data):
         """Update this entity from data in a dict."""
         # Note that we never update user_id here.
-        # Also, tags are currently only changes via actions on Cards.
+        # Also, tags are currently only changed via actions on Cards.
         # Adding/deleting followings also has it's own API.
         self.name = data.get('name', self.name)
 
@@ -186,6 +198,18 @@ class Card(ndb.Model):
         self.tags = data.get('tags', self.tags)
         self.source_url = data.get('source_url', self.source_url)
         # TODO(jace) Allow updating of last/next_review?
+
+    def update_email_and_nickname(self, user=None):
+        # TODO(jace) remove the hack of storing user info on cards
+        # for quick gravatar support
+        if not user:
+            user = users.get_current_user() or FakeUser()
+
+        self.user_email = user.email()
+        nickname = user.nickname()
+        if nickname.find('@') > 0:
+            nickname = nickname[:nickname.find('@')]
+        self.user_nickname = nickname
 
     @classmethod
     def get_for_user(cls, user_data):
