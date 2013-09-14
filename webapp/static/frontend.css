@@ -145,7 +145,9 @@ body {
     /*padding: 15px 9px 14px !important;*/
 }
 
-.takecard {
+.takecard, 
+.deletecard {
+    padding-left: 10px;
     float: right;
 }
 
