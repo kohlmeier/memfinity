@@ -31,17 +31,21 @@ class MainPage(webapp2.RequestHandler):
             user_data = None
 
         if user_data:
-            user_cards, global_cards = yield (
-                (models.Card
-                    .query(models.Card.user_key ==
-                        ndb.Key(urlsafe=user_data.key.urlsafe()))
-                    .order(models.Card.next_review)
-                    .fetch_async(500)),
-                models.Card.query().fetch_async(500),
+            user_cards, global_cards = yield ((
+                models.Card
+                .query(models.Card.user_key ==
+                    ndb.Key(urlsafe=user_data.key.urlsafe()))
+                .order(models.Card.next_review)
+                .fetch_async(500)),
+                models.Card
+                    .query()
+                    .order(-models.Card.added)
+                    .fetch_async(500),
                 )
         else:
             user_cards = []
-            global_cards = models.Card.query().fetch(1000)
+            global_cards = models.Card
+                .query().order(-models.Card.added).fetch(1000)
 
         if user_data:
             username = str(user)
