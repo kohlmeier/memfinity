@@ -33,10 +33,10 @@ class MainPage(webapp2.RequestHandler):
         if user_data:
             user_cards, global_cards = yield ((
                 models.Card
-                .query(models.Card.user_key ==
-                    ndb.Key(urlsafe=user_data.key.urlsafe()))
-                .order(models.Card.next_review)
-                .fetch_async(500)),
+                    .query(models.Card.user_key ==
+                        ndb.Key(urlsafe=user_data.key.urlsafe()))
+                    .order(models.Card.next_review)
+                    .fetch_async(500)),
                 models.Card
                     .query()
                     .order(-models.Card.added)
@@ -44,8 +44,8 @@ class MainPage(webapp2.RequestHandler):
                 )
         else:
             user_cards = []
-            global_cards = models.Card
-                .query().order(-models.Card.added).fetch(1000)
+            global_cards = (models.Card
+                .query().order(-models.Card.added).fetch(1000))
 
         if user_data:
             username = str(user)
