@@ -9,24 +9,31 @@ var gravatar = require('./gravatar.js');
 // props: model
 var FeedCard = React.createClass({
     mixins: [BackboneMixin],
+    getInitialState: function() {
+        return {isActive: false};
+    },
     render: function() {
-        
+        var isActive = this.state.isActive;
         var cardActionButtons;
         if (window.username === null) {
             cardActionButtons = null;
         } else if (window.username !== this.props.model.get('user_email')) {
             cardActionButtons = 
-                <div class='takecard btn btn-primary btn-small' onClick={this.takeCard}>
+                <div class={'takecard btn btn-primary btn-small' + (isActive ? ' visible' : ' invisible')}
+                        onClick={this.takeCard}>
                     <i class='icon-download'></i> Take
                 </div>;
         } else {
             cardActionButtons = 
-                <div class='deletecard btn btn-primary btn-small' onClick={this.deleteCard}>
+                <div class={'deletecard btn btn-primary btn-small' + (isActive ? ' visible' : ' invisible')}
+                        onClick={this.deleteCard}>
                     <i class='icon-trash'></i> Delete
                 </div>
         };
 
-        return <div class='feedcard row-fluid'>
+        return <div class='feedcard row-fluid'
+                        onMouseEnter={this.alertEnter}
+                        onMouseLeave={this.alertLeave}>
             <FeedCardMeta model={this.props.model} />
             <div class='feedcard_right span10'>
                 <div class='feedcard_front'>
@@ -55,8 +62,13 @@ var FeedCard = React.createClass({
     },
     takeCard: function() {
         this.props.model.takeCard();
-    }
-
+    },
+    alertEnter: function(target) {
+        this.setState({isActive: true});
+    },
+    alertLeave: function(target) {
+        this.setState({isActive: false});
+    },
 });
 
 var FeedCardMeta = React.createClass({
