@@ -10,6 +10,22 @@ var gravatar = require('./gravatar.js');
 var FeedCard = React.createClass({
     mixins: [BackboneMixin],
     render: function() {
+        
+        var cardActionButtons;
+        if (window.username === null) {
+            cardActionButtons = null;
+        } else if (window.username !== this.props.model.get('user_email')) {
+            cardActionButtons = 
+                <div class='takecard btn btn-primary btn-small' onClick={this.takeCard}>
+                    <i class='icon-download'></i> Take
+                </div>;
+        } else {
+            cardActionButtons = 
+                <div class='deletecard btn btn-primary btn-small' onClick={this.deleteCard}>
+                    <i class='icon-trash'></i> Delete
+                </div>
+        };
+
         return <div class='feedcard row-fluid'>
             <FeedCardMeta model={this.props.model} />
             <div class='feedcard_right span10'>
@@ -22,12 +38,7 @@ var FeedCard = React.createClass({
                 <div class="feedcard_meta row-fluid">
                     <Tags list={this.props.model.get('tags')} />
                     <div class="span3 l_takecard_container">
-                        <div class='deletecard btn btn-primary btn-small' onClick={this.deleteCard}>
-                            Delete
-                        </div>
-                        <div class='takecard btn btn-primary btn-small' onClick={this.takeCard}>
-                            Take
-                        </div>
+                        {cardActionButtons}
                     </div>
                 </div>
             </div>
@@ -37,7 +48,10 @@ var FeedCard = React.createClass({
         return [this.props.model];
     },
     deleteCard: function() {
+        // fire off an async DELETE to the server
         this.props.model.deleteCard();
+        // optimistically, we remove it from the UI
+        this.props.collection.remove(this.props.model);
     },
     takeCard: function() {
         this.props.model.takeCard();
@@ -80,9 +94,10 @@ var Tags = React.createClass({
 var FeedBody = React.createClass({
     mixins: [BackboneMixin],
     render: function() {
+        var collection = this.props.collection;
         var feedItems = _(this.props.collection.models).map(function(model) {
             return <li class="l-feedcard-container">
-                <FeedCard model={model} key={model.cid} />
+                <FeedCard model={model} key={model.cid} collection={collection} />
             </li>;
         });
         return <ol class='feedbody'>
