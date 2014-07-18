@@ -47,7 +47,7 @@ var About = React.createClass({
                 <div className="feature">
                     <h2>Built for openess.</h2>
                     <h3></h3>
-                    <p>Memfinity is built from the ground up as a web-service.  That means the open source communicty can create new apps for phones, browsers, and or any device. Also, with Ocelot your data is never held hostage. We're open source, and you're always free to host your own personal version of Memfinity.  And by learning with Memfinity, you're not only helping yourself learn;  you're also facilitating world-class research on memory.  </p>
+                    <p>Memfinity is built from the ground up as a web-service.  That means the open source communicty can create new apps for phones, browsers, and or any device. Also, with Memfinity your data is never held hostage. We're open source, and you're always free to host your own personal version of Memfinity.  And by learning with Memfinity, you're not only helping yourself learn;  you're also facilitating world-class research on memory.  </p>
                 </div>
             </div>
         </div>
