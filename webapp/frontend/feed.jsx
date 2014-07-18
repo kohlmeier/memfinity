@@ -65,7 +65,7 @@ var FeedCard = React.createClass({
         // fire off an async DELETE to the server
         this.props.model.deleteCard();
         // optimistically, we remove it from the UI
-        this.props.collection.remove(this.props.model);
+        this.props.onDeleteCard(this.props.model);
     },
     takeCard: function() {
         this.props.model.takeCard();
@@ -109,23 +109,24 @@ var Tags = React.createClass({
     }
 });
 
-// props: collection
+// props: collection, onDeleteCard
 var FeedBody = React.createClass({
-    mixins: [BackboneMixin],
     render: function() {
+        console.log("FeedBody:render()");
+        console.log(this.props.collection);
+        var onDeleteCard = this.props.onDeleteCard;
         var collection = this.props.collection;
-        var feedItems = _(this.props.collection.models).map(function(model) {
-            return <li className="l-feedcard-container">
-                <FeedCard model={model} key={model.cid} collection={collection} />
+        var cardModels = this.props.collection ? this.props.collection.models : [];
+        var feedItems = _(cardModels).map(function(model) {
+            return <li className="l-feedcard-container" key={model.cid}>
+                <FeedCard model={model} key={model.cid} collection={collection}
+                    onDeleteCard={onDeleteCard} />
             </li>;
         });
         return <ol className='feedbody'>
             {feedItems}
         </ol>;
     },
-    getBackboneModels: function() {
-        return [this.props.collection];
-    }
 });
 
 var PracticeButton = React.createClass({
@@ -166,18 +167,26 @@ var FilterBar = React.createClass({
 
 // props: collection, onPractice?
 var Feed = React.createClass({
-    mixins: [BackboneMixin],
     render: function() {
-        var collection = this.props.collection;
         return <div className='feed clearfix'>
             <FilterBar onPractice={$.noop}
                        onFilterChange={this.onFilterChange}
-                       count={collection.models.length} />
-            <FeedBody collection={collection} />
+                       count={this.state.cardCollection.length} />
+            <FeedBody collection={this.state.cardCollection}
+                       onDeleteCard={this.onDeleteCard} />
         </div>;
     },
-    getBackboneModels: function() {
-        return [this.props.collection];
+    getInitialState: function() {
+        // TODO set some state for a spinner?
+        return { cardCollection: new models.CardCollection() };
+    },
+    componentDidMount: function(elem) {
+        console.log("Feed component mounted");
+        if (!this.state.cardCollection || !this.state.cardCollection.length) {
+            // force an API call to retrieve cards
+            console.log("Trying to grab data");
+            this.fetchCardData('');
+        }
     },
     onFilterChange: function(filters) {
         var self = this;
@@ -185,6 +194,27 @@ var Feed = React.createClass({
         $.get('/api/cards' + filterQuery, function(newCards) {
             self.props.collection.reset(JSON.parse(newCards));
         });
+    },
+    fetchCardData: function(queryString) {
+        var self = this;
+        $.get('/api/cards' + queryString, function(newCards) {
+            console.log("fetchCardData got some card data");
+            console.log(newCards);
+            var cardData = JSON.parse(newCards);
+            var cardModels = _(cardData).map(function(card) {
+                return new models.CardModel(card);
+            });
+            var cardCollection = new models.CardCollection(cardModels);
+            self.setState({cardCollection: cardCollection});
+        });
+    },
+    onDeleteCard: function(cardModel) {
+        // TODO(jace) This seems lame and inefficient to make copy of the
+        // existing card collection, but there are warnings
+        // against modifying state directly.  Should figure out a better way.
+        var cardCollection = new models.CardCollection(this.state.cardCollection.models);
+        cardCollection.remove(cardModel);
+        this.setState({cardCollection: cardCollection});
     }
 });
 
