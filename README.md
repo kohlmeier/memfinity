@@ -5,12 +5,8 @@ social spaced repetition system
 
 ## Installation Instructions
 
-    sudo npm install -g react-tools watchify reactify browserfiy
-    # from within the webapp directory
-    npm install react-nested-router
-
-## To run
-    ./server
+    make deps
+    make serve
 
 
 Primary application routes
