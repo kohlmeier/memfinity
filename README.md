@@ -5,8 +5,8 @@ social spaced repetition system
 
 ## Installation Instructions
 
-    sudo npm install -g react-tools watchify
-    ./server2
+    make deps
+    make serve
 
 
 Primary application routes

@@ -16,3 +16,14 @@ handlers:
   static_dir: fonts
 - url: /.*
   script: main.application
+
+skip_files:
+# These are App Engine's default values.
+- ^(.*/)?#.*#$
+- ^(.*/)?.*~$
+- ^(.*/)?.*\.py[co]$
+- ^(.*/)?.*/RCS/.*$
+- ^(.*/)?\..*$
+# These are needed in development but aren't used in production.
+- ^(.*/)?node_modules$
+- ^(.*/)?package\.json$
