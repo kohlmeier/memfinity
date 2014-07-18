@@ -3,6 +3,7 @@
  * Interface for feed mode
  */
 var React = require('react');
+var Link = require('react-nested-router').Link;
 var BackboneMixin = require('./backbonemixin.js');
 var models = require('./models.js');
 var gravatar = require('./gravatar.js');
@@ -31,9 +32,8 @@ var FeedCard = React.createClass({
                             onClick={this.deleteCard}>
                         <i className='icon-trash'></i> Delete
                     </div>
-                    <div className={'deletecard btn btn-primary btn-small' + (isActive ? ' visible' : ' invisible')}
-                            onClick={this.editCard}>
-                        <i className='icon-edit'></i> Edit
+                    <div className={'deletecard btn btn-primary btn-small' + (isActive ? ' visible' : ' invisible')}>
+                        <i className='icon-edit'></i><Link to='edit' cardKey={this.props.model.get('key')}> Edit</Link>
                     </div>
                 </div>
         };
@@ -112,8 +112,6 @@ var Tags = React.createClass({
 // props: collection, onDeleteCard
 var FeedBody = React.createClass({
     render: function() {
-        console.log("FeedBody:render()");
-        console.log(this.props.collection);
         var onDeleteCard = this.props.onDeleteCard;
         var collection = this.props.collection;
         var cardModels = this.props.collection ? this.props.collection.models : [];
@@ -181,10 +179,8 @@ var Feed = React.createClass({
         return { cardCollection: new models.CardCollection() };
     },
     componentDidMount: function(elem) {
-        console.log("Feed component mounted");
         if (!this.state.cardCollection || !this.state.cardCollection.length) {
             // force an API call to retrieve cards
-            console.log("Trying to grab data");
             this.fetchCardData('');
         }
     },
@@ -198,8 +194,6 @@ var Feed = React.createClass({
     fetchCardData: function(queryString) {
         var self = this;
         $.get('/api/cards' + queryString, function(newCards) {
-            console.log("fetchCardData got some card data");
-            console.log(newCards);
             var cardData = JSON.parse(newCards);
             var cardModels = _(cardData).map(function(card) {
                 return new models.CardModel(card);

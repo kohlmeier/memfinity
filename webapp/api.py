@@ -66,7 +66,7 @@ def user_view(handler):
 
 
 def card_view(handler):
-    """Query for a single user by Key."""
+    """Query for a single card by Key."""
     return entity_view(handler, '/api/card/')
 
 
