@@ -128,7 +128,9 @@ def card_search(handler):
     entities. See search.py for query processing details.
     """
     query = handler.request.get('q', '')
-    results = search.query_cards(query, limit=20)
+    search_results = search.query_cards(query, limit=20, ids_only=True)
+    results = ndb.get_multi([ndb.Key(urlsafe=result.doc_id)
+                             for result in search_results])
     return jsonify.jsonify(results)
 
 
