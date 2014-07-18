@@ -13,30 +13,30 @@ var Header = React.createClass({
         }else{
             login_link = <span><img src={gravatar(window.username + '@gmail.com')} /><a href="/logout">Logout</a></span>;
         }
-        return <div class='navbar navbar-inverse'>
-            <div class='navbar-inner'>
-                <ul class='nav pull-left'>
-                    <li class={'header_home' + (homeActive ? ' active' : '')}
+        return <div className="navbar navbar-inverse">
+            <div className='navbar-inner'>
+                <ul className='nav pull-left'>
+                    <li className={'header_home' + (homeActive ? ' active' : '')}
                         onClick={_(this.props.onNavigate).partial('home')}
                         onMouseEnter={_(this.alertEnter).partial('home')}
                         onMouseLeave={_(this.alertLeave).partial('home')}>
-                        <i class='icon-home'></i> Practice
+                        <i className='icon-home'></i> Practice
                     </li>
-                    <li class={'header_feed' + (feedActive ? ' active' : '')}
+                    <li className={'header_feed' + (feedActive ? ' active' : '')}
                         onClick={_(this.props.onNavigate).partial('feed')}
                         onMouseEnter={_(this.alertEnter).partial('feed')}
                         onMouseLeave={_(this.alertLeave).partial('feed')}>
-                        <i class='icon-twitter'></i> Feed
+                        <i className='icon-twitter'></i> Feed
                     </li>
                 </ul>
-                <ul class='nav pull-right'>
-                    <li class={'header_about' + (aboutActive ? ' active' : '')}
+                <ul className='nav pull-right'>
+                    <li className={'header_about' + (aboutActive ? ' active' : '')}
                         onClick={_(this.props.onNavigate).partial('about')}
                         onMouseEnter={_(this.alertEnter).partial('about')}
                         onMouseLeave={_(this.alertLeave).partial('about')}>
-                        <i class='icon-info'></i> About
+                        <i className='icon-info'></i> About
                     </li>
-                    <li id="header_login" class={'header_login'}>
+                    <li id="header_login" className={'header_login'}>
                         {login_link}
                     </li>
                 </ul>

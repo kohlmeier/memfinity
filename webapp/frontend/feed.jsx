@@ -19,32 +19,32 @@ var FeedCard = React.createClass({
             cardActionButtons = null;
         } else if (window.username !== this.props.model.get('user_email')) {
             cardActionButtons = 
-                <div class={'takecard btn btn-primary btn-small' + (isActive ? ' visible' : ' invisible')}
+                <div className={'takecard btn btn-primary btn-small' + (isActive ? ' visible' : ' invisible')}
                         onClick={this.takeCard}>
-                    <i class='icon-download'></i> Take
+                    <i className='icon-download'></i> Take
                 </div>;
         } else {
             cardActionButtons = 
-                <div class={'deletecard btn btn-primary btn-small' + (isActive ? ' visible' : ' invisible')}
+                <div className={'deletecard btn btn-primary btn-small' + (isActive ? ' visible' : ' invisible')}
                         onClick={this.deleteCard}>
-                    <i class='icon-trash'></i> Delete
+                    <i className='icon-trash'></i> Delete
                 </div>
         };
 
-        return <div class='feedcard row-fluid'
+        return <div className='feedcard row-fluid'
                         onMouseEnter={this.alertEnter}
                         onMouseLeave={this.alertLeave}>
             <FeedCardMeta model={this.props.model} />
-            <div class='feedcard_right span10'>
-                <div class='feedcard_front'>
+            <div className='feedcard_right span10'>
+                <div className='feedcard_front'>
                     {this.props.model.get('front')}
                 </div>
-                <div class='feedcard_back'>
+                <div className='feedcard_back'>
                     {this.props.model.get('back')}
                 </div>
-                <div class="feedcard_meta row-fluid">
+                <div className="feedcard_meta row-fluid">
                     <Tags list={this.props.model.get('tags')} />
-                    <div class="span3 l_takecard_container">
+                    <div className="span3 l_takecard_container">
                         {cardActionButtons}
                     </div>
                 </div>
@@ -77,10 +77,10 @@ var FeedCardMeta = React.createClass({
         // http://stackoverflow.com/q/3591278/2121468
         var userImage = gravatar(this.props.model.get('user_email'), 60),
             photoStyle = {background: 'url(' + userImage + ') no-repeat'};
-        return <div class='feedcard_userinfo span2'>
-            <div class='feedcard_photo' style={photoStyle} />
-            <div class='feedcard_desc'>
-                <div class='feedcard_username'>
+        return <div className='feedcard_userinfo span2'>
+            <div className='feedcard_photo' style={photoStyle} />
+            <div className='feedcard_desc'>
+                <div className='feedcard_username'>
                     {this.props.model.get('user_nickname')}
                 </div>
             </div>
@@ -94,9 +94,9 @@ var FeedCardMeta = React.createClass({
 var Tags = React.createClass({
     render: function() {
         var tags = _(this.props.list).map(function(tag) {
-            return <span class='label label-info'>{tag}</span>;
+            return <span className='label label-info'>{tag}</span>;
         });
-        return <div class='tags span9'>
+        return <div className='tags span9'>
             Tags: {tags}
         </div>;
     }
@@ -108,11 +108,11 @@ var FeedBody = React.createClass({
     render: function() {
         var collection = this.props.collection;
         var feedItems = _(this.props.collection.models).map(function(model) {
-            return <li class="l-feedcard-container">
+            return <li className="l-feedcard-container">
                 <FeedCard model={model} key={model.cid} collection={collection} />
             </li>;
         });
-        return <ol class='feedbody'>
+        return <ol className='feedbody'>
             {feedItems}
         </ol>;
     },
@@ -123,7 +123,7 @@ var FeedBody = React.createClass({
 
 var PracticeButton = React.createClass({
     render: function() {
-        return <div class='practicebutton btn btn-primary'
+        return <div className='practicebutton btn btn-primary'
                     onClick={this.props.onClick}>
             Practice {this.props.count} cards
         </div>;
@@ -133,13 +133,13 @@ var PracticeButton = React.createClass({
 // props: onFilterChange, onPractice, count
 var FilterBar = React.createClass({
     render: function() {
-        return <div class='filterbar row-fluid'>
-            <div class="span9">
+        return <div className='filterbar row-fluid'>
+            <div className="span9">
             <input type='text'
-                   class='filtertext taginput'
+                   className='filtertext taginput'
                    ref='filter' />
             </div>
-            <div class="span3">
+            <div className="span3">
             <PracticeButton count={this.props.count}
                             onClick={this.props.onPractice} />
             </div>
@@ -162,7 +162,7 @@ var Feed = React.createClass({
     mixins: [BackboneMixin],
     render: function() {
         var collection = this.props.collection;
-        return <div class='feed clearfix'>
+        return <div className='feed clearfix'>
             <FilterBar onPractice={$.noop}
                        onFilterChange={this.onFilterChange}
                        count={collection.models.length} />

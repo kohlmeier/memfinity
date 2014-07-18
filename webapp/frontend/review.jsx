@@ -25,7 +25,7 @@ var Review = React.createClass({
             }
         }.bind(this);
 
-        return <div class="review_workspace">
+        return <div className="review_workspace">
             <ReviewedStack collection={hardStack}
                            position={{x: 800, y: 90}}
                            name='Hard' />
@@ -70,7 +70,7 @@ var ReviewingStack = React.createClass({
         var stack;
         if (!topCardModel) { // empty stack
             // TODO
-            stack = <div class='reviewingstack emptyreviewingstack'
+            stack = <div className='reviewingstack emptyreviewingstack'
                         style={stackstyle}>
                 <h2>Congratulations!</h2>
 
@@ -81,11 +81,11 @@ var ReviewingStack = React.createClass({
             var topCard = <Card model={topCardModel}
                                 rate={this.props.rate}
                                 key={topCardModel.cid} />;
-            stack = <div class='reviewingstack' style={stackstyle}>
+            stack = <div className='reviewingstack' style={stackstyle}>
                 {topCard}
             </div>;
         }
-        return <div class='reviewingstackall' style={allstyle}>
+        return <div className='reviewingstackall' style={allstyle}>
             <ReviewingStackMeta
                     count={this.props.collection.models.length}
                     name='Remaining' />
@@ -102,7 +102,7 @@ var ReviewingStackMeta = React.createClass({
         var count = this.props.count,
             word = this.props.count === 1 ? 'card' : 'cards',
             phrase = count + ' ' + word;
-        return <div class='reviewingstackmeta'>
+        return <div className='reviewingstackmeta'>
             <h3>{this.props.name}</h3>
             <h4>{phrase}</h4>
         </div>;
@@ -131,11 +131,11 @@ var ReviewedStack = React.createClass({
         } else {
             topCard = null;
         }
-        return <div class='reviewedstackall' style={allstyle}>
+        return <div className='reviewedstackall' style={allstyle}>
             <ReviewedStackMeta count={this.props.collection.models.length}
                                name={this.props.name} />
-            <div class='reviewedstack' style={stackstyle}>
-                <div class='topcardcover' />
+            <div className='reviewedstack' style={stackstyle}>
+                <div className='topcardcover' />
                 {topCard}
             </div>
         </div>;
@@ -150,7 +150,7 @@ var ReviewedStackMeta = React.createClass({
         var count = this.props.count,
             word = this.props.count === 1 ? 'card' : 'cards',
             phrase = count + ' ' + word;
-        return <div class='reviewedstackmeta'>
+        return <div className='reviewedstackmeta'>
             <h4>{this.props.name}</h4>
             {phrase}
         </div>;
@@ -176,7 +176,7 @@ var Card = React.createClass({
         } else { // meta
             stateView = <CardMeta info={this.props.model.get('meta')} />;
         }
-        return <div class='card'>
+        return <div className='card'>
             {stateView}
         </div>;
     },
@@ -189,7 +189,7 @@ var Card = React.createClass({
 
 var CardFront = React.createClass({
     render: function() {
-        return <div class='cardFront' onClick={this.props.onClick}>
+        return <div className='cardFront' onClick={this.props.onClick}>
             <Content content={this.props.content} />
         </div>;
     }
@@ -198,7 +198,7 @@ var CardFront = React.createClass({
 var CardBack = React.createClass({
     render: function() {
         // <MetaButton onClick={undefined} />
-        return <div class='clearfix'>
+        return <div className='clearfix'>
             <Content content={this.props.content} />
             <Choices rate={this.props.rate} />
         </div>;
@@ -213,18 +213,18 @@ var CardMeta = React.createClass({
 
 var Content = React.createClass({
     render: function() {
-        return <div class='content'>{this.props.content}</div>;
+        return <div className='content'>{this.props.content}</div>;
     }
 });
 
 var Choices = React.createClass({
     render: function() {
-        return <div class='choices'>
-            <span class='choices_hard'
+        return <div className='choices'>
+            <span className='choices_hard'
                   onClick={_(this.props.rate).partial('hard')}>
                 Hard
             </span>
-            <span class='choices_easy'
+            <span className='choices_easy'
                   onClick={_(this.props.rate).partial('easy')}>
                 Easy
             </span>
