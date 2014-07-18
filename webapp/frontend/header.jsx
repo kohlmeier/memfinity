@@ -1,5 +1,6 @@
 /** @jsx React.DOM */
 var React = require('react');
+var Link = require('react-nested-router').Link;
 var gravatar = require('./gravatar.js');
 
 var Header = React.createClass({
@@ -18,24 +19,21 @@ var Header = React.createClass({
             <div className='navbar-inner'>
                 <ul className='nav pull-left'>
                     <li className={'header_home' + (homeActive ? ' active' : '')}
-                        onClick={_(this.props.onNavigate).partial('home')}
                         onMouseEnter={_(this.alertEnter).partial('home')}
                         onMouseLeave={_(this.alertLeave).partial('home')}>
-                        <i className='icon-home'></i> Practice
+                        <span><i className='icon-home'></i> <Link to="review">Practice</Link></span>
                     </li>
                     <li className={'header_feed' + (feedActive ? ' active' : '')}
-                        onClick={_(this.props.onNavigate).partial('feed')}
                         onMouseEnter={_(this.alertEnter).partial('feed')}
                         onMouseLeave={_(this.alertLeave).partial('feed')}>
-                        <i className='icon-twitter'></i> Feed
+                        <span><i className='icon-twitter'></i> <Link to="feed">Feed</Link></span>
                     </li>
                 </ul>
                 <ul className='nav pull-right'>
                     <li className={'header_about' + (aboutActive ? ' active' : '')}
-                        onClick={_(this.props.onNavigate).partial('about')}
                         onMouseEnter={_(this.alertEnter).partial('about')}
                         onMouseLeave={_(this.alertLeave).partial('about')}>
-                        <i className='icon-info'></i> About
+                        <span><i className='icon-info'></i> <Link to="about">About</Link></span>
                     </li>
                     <li id="header_login" className={'header_login'}>
                         {login_link}

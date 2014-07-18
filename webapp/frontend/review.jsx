@@ -15,7 +15,7 @@ var Review = React.createClass({
             easyStack = new CardCollection();
 
         var rate = function(cid, rating) {
-            var reviewingStack = this.props.reviewingStack,
+            var reviewingStack = this.state.reviewingStack,
                 model = reviewingStack.get(cid);
             model.rate(rating);
             reviewingStack.remove(model);
@@ -34,10 +34,17 @@ var Review = React.createClass({
                            position={{x: 800, y: 310}}
                            name='Easy' />
 
-            <ReviewingStack collection={this.props.reviewingStack}
+            <ReviewingStack collection={this.state.reviewingStack}
                             rate={rate}
                             position={{x: 50, y: 90}} />
         </div>;
+    },
+    getInitialState: function() {
+        var cardModels = _(window.userCards).map(function(card) {
+            return new models.CardModel(card);
+        });
+        reviewingStack = new models.CardCollection(cardModels);
+        return { reviewingStack: reviewingStack };
     }
 });
 
