@@ -2,6 +2,7 @@
 /*
  * Interface for review mode
  */
+var React = require('react');
 var BackboneMixin = require('./backbonemixin.js');
 var models = require('./models.js');
 

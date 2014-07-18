@@ -1,4 +1,5 @@
 /** @jsx React.DOM */
+var React = require('react');
 var gravatar = require('./gravatar.js');
 
 var Header = React.createClass({

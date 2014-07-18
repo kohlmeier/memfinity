@@ -2,6 +2,7 @@
 /*
  * Interface for feed mode
  */
+var React = require('react');
 var BackboneMixin = require('./backbonemixin.js');
 var models = require('./models.js');
 var gravatar = require('./gravatar.js');
