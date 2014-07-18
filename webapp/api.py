@@ -7,6 +7,7 @@ from google.appengine.ext import ndb
 
 import jsonify
 import models
+import search
 
 
 def get_oauth_user():
@@ -120,6 +121,17 @@ def card_query(handler):
     return response
 
 
+def card_search(handler):
+    """Search cards with query parameter "q".
+
+    Returns a (possibly empty) list of JSONified models.Card
+    entities. See search.py for query processing details.
+    """
+    query = handler.request.get('q', '')
+    results = search.query_cards(query, limit=20)
+    return jsonify.jsonify(results)
+
+
 def card_add(handler):
     """Add a new Card."""
     user_data = get_current_user(handler)
@@ -133,6 +145,7 @@ def card_add(handler):
     card.update_email_and_nickname()
 
     card.put()
+    search.insert_cards([card])
 
     # Update the list of all known tags for this user
     # Update the list of all known tags for this user
@@ -174,6 +187,7 @@ def card_update(handler, delete=False, review=False):
     if delete:
         card_tags_updated = set()
         card.key.delete()
+        search.delete_cards([card])
     elif review:
         data = json.loads(handler.request.body)
         card.record_review(data.get('grade'))
@@ -184,6 +198,7 @@ def card_update(handler, delete=False, review=False):
         card.update_from_dict(data)
         card_tags_updated = set(card.tags)
         card.put()
+        search.insert_cards([card])
 
     # Update the list of all known tags for this user
     user_data.update_card_tags(card_tags_original, card_tags_updated)
@@ -220,6 +235,7 @@ def card_import(handler):
     new_card.user_key = user_data.key
     new_card.update_email_and_nickname()
     new_card.put()
+    search.insert_cards([new_card])
 
     # Update the list of all known tags for this user
     user_data.update_card_tags([], new_card.tags)

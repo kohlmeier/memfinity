@@ -77,6 +77,10 @@ class ApiHandler(webapp2.RequestHandler):
         if path.startswith('/api/card/'):
             # retrieve an individual card
             response = api.card_view(self)
+        elif path == '/api/cards/search':
+            # search across cards
+            # '/api/cards/search?q=search+query' -> search for 'search query'
+            response = api.card_search(self)
         elif path == '/api/cards':
             # query for many cards
             # '/api/cards' -> returns all cards, ordered by date added desc
