@@ -25,9 +25,15 @@ var FeedCard = React.createClass({
                 </div>;
         } else {
             cardActionButtons = 
-                <div className={'deletecard btn btn-primary btn-small' + (isActive ? ' visible' : ' invisible')}
-                        onClick={this.deleteCard}>
-                    <i className='icon-trash'></i> Delete
+                <div>
+                    <div className={'deletecard btn btn-primary btn-small' + (isActive ? ' visible' : ' invisible')}
+                            onClick={this.deleteCard}>
+                        <i className='icon-trash'></i> Delete
+                    </div>
+                    <div className={'deletecard btn btn-primary btn-small' + (isActive ? ' visible' : ' invisible')}
+                            onClick={this.editCard}>
+                        <i className='icon-edit'></i> Edit
+                    </div>
                 </div>
         };
 
