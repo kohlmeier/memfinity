@@ -194,9 +194,17 @@ class Card(ndb.Model):
         self.front = data.get('front', self.front)
         self.back = data.get('back', self.back)
         self.info = data.get('info', self.info)
-        self.reversible = data.get('reversible', self.reversible)
         self.tags = data.get('tags', self.tags)
         self.source_url = data.get('source_url', self.source_url)
+
+        # Special case for reversible to convert to Boolean
+        reversible = self.reversible
+        if data.get('reversible') == 'false':
+            reversible = False
+        elif data.get('reversible') == 'true':
+            reversible = True
+        self.reversible = reversible
+
         # TODO(jace) Allow updating of last/next_review?
 
     def update_email_and_nickname(self, user=None):

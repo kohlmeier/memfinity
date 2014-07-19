@@ -366,6 +366,19 @@ body {
     margin-left: 20px;
 }
 
+
+.editor {
+    margin: 50px auto 0;
+    width: 800px;
+}
+
+.editor-textarea {
+    padding: 5px;
+}
+
+
+
+
 /* http://meyerweb.com/eric/tools/css/reset/
    v2.0 | 20110126
    License: none (public domain)
