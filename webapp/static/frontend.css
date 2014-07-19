@@ -2,7 +2,8 @@ body {
     background-color: rgb(225, 225, 225) !important;
 }
 
-.navbar, .filterbar_description {
+.navbar,
+.filterbar_description {
     font-weight: lighter !important;
 }
 
@@ -21,12 +22,18 @@ body {
 }
 
 
-.header_home, .header_feed, .header_login, .header_about {
+.header_home,
+.header_feed,
+.header_login,
+.header_about {
     color: #fff;
     cursor: pointer;
 }
 
-.header_home.active, .header_feed.active, .header_login.active, .header_about.active {
+.header_home.active,
+.header_feed.active,
+.header_login.active,
+.header_about.active {
     background-color: #1abc9c;
     border-bottom-color: #16a085;
 }
@@ -135,7 +142,8 @@ body {
     text-align: center
 }
 
-.feedcard_front, .feedcard_back {
+.feedcard_front,
+.feedcard_back {
     padding: 10px 0;
     margin: 0 10px;
     border-radius: 2px;
@@ -147,18 +155,18 @@ body {
 }
 
 .tags,
-.l_takecard_container {
+.feedcard .btn-container {
     padding: 10px 0 10px 10px;
+}
+
+.feedcard .btn-container .btn {
+    padding-left: 10px;
+    margin-left:3px;
+    float: right;
 }
 
 .tagsinput-add {
     /*padding: 15px 9px 14px !important;*/
-}
-
-.takecard, 
-.deletecard {
-    padding-left: 10px;
-    float: right;
 }
 
 .label {
@@ -288,7 +296,8 @@ body {
     margin-left: 230px;
 }
 
-.choices_hard, .choices_easy {
+.choices_hard,
+.choices_easy {
     cursor: pointer;
 }
 
