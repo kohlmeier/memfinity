@@ -153,11 +153,17 @@ var FilterBar = React.createClass({
     }
 });
 
-// props: collection, params.refresh(optional)
-var Feed = React.createClass({
+// props: collection, query, showSearchBar, params.refresh(optional)
+var SearchFeed = React.createClass({
     render: function() {
+        var filterbar = '';
+        if (!this.props.hasOwnProperty('showSearchBar')
+                || this.props.showSearchBar) {
+            filterbar = <FilterBar filter={this.props.query}
+                                   onFilterChange={this.fetchCardData} />;
+        }
         return <div className='feed clearfix'>
-            <FilterBar onFilterChange={this.onFilterChange} />
+            {filterbar}
             <FeedBody collection={this.state.cardCollection}
                       onDeleteCard={this.onDeleteCard} />
         </div>;
@@ -167,16 +173,7 @@ var Feed = React.createClass({
         return { cardCollection: new models.CardCollection() };
     },
     componentDidMount: function() {
-        if (!this.state.cardCollection || !this.state.cardCollection.length) {
-            // force an API call to retrieve cards
-            this.fetchCardData('');
-        }
-    },
-    onFilterChange: function(filter) {
-        var self = this;
-        $.get('/api/cards/search', {q: filter}, function(newCardsJSON) {
-            self.setState({cardCollection: self.cardsFromJSON(newCardsJSON)});
-        });
+        this.fetchCardData(this.props.query);
     },
     cardsFromJSON: function(cardsJSON) {
         var cardData = JSON.parse(cardsJSON);
@@ -185,11 +182,9 @@ var Feed = React.createClass({
         });
         return new models.CardCollection(cardModels);
     },
-    fetchCardData: function(queryString) {
+    fetchCardData: function(query) {
         var self = this;
-        $.get('/api/cards' + queryString, function(newCardsJSON) {
-            console.log("fetchCardData got some card data");
-            console.log(newCardsJSON);
+        $.get('/api/cards/search', {q: query}, function(newCardsJSON) {
             self.setState({cardCollection: self.cardsFromJSON(newCardsJSON)});
         });
     },
@@ -203,4 +198,16 @@ var Feed = React.createClass({
     }
 });
 
-module.exports = Feed;
+var UserFeed = React.createClass({
+    render: function() {
+        // TODO(chris): is there a better way to get these props in here?
+        // By default, show the content for ourselves and those we're following.
+        var query = [window.user_key].concat(window.following_keys).join(' ');
+        return <SearchFeed query={query} showSearchBar={false} />;
+    }
+});
+
+module.exports = {
+    SearchFeed: SearchFeed,
+    UserFeed: UserFeed
+};

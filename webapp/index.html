@@ -11,6 +11,8 @@
     <body>
         <script>
             var username = {{username}},
+                user_key = '{{user.key.urlsafe()}}',
+                following = {{following_keys}},
                 loginUrl = '{{users.create_login_url('/')}}',
                 logoutUrl = '{{users.create_logout_url('/')}}',
                 userCards = {{user_cards}},

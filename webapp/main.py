@@ -42,10 +42,12 @@ class MainPage(webapp2.RequestHandler):
                     .order(-models.Card.added)
                     .fetch_async(500),
                 )
+            following_keys = [k.urlsafe() for k in user_data.following]
         else:
             user_cards = []
             global_cards = (models.Card
                 .query().order(-models.Card.added).fetch(1000))
+            following_keys = []
 
         if user_data:
             username = str(user)
@@ -56,6 +58,7 @@ class MainPage(webapp2.RequestHandler):
         env = {
             'user': user_data,
             'username': json.dumps(username),
+            'following_keys': jsonify.jsonify(following_keys),
             'users': users,
             'user_cards': jsonify.jsonify(user_cards),
             'global_cards': jsonify.jsonify(global_cards),

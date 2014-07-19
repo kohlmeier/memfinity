@@ -17,6 +17,7 @@ var Header = React.createClass({
                 <ul className='nav navbar-nav'>
                     <li><Link to="review"><i className='icon-home'></i> Practice</Link></li>
                     <li><Link to="feed"><i className='icon-twitter'></i> Feed</Link></li>
+                    <li><Link to="search"><i className='icon-search'></i> Search</Link></li>
                     <li><Link to="create"><i className='icon-edit'></i> Create</Link></li>
                 </ul>
                 <ul className='nav navbar-nav pull-right'>
