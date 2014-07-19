@@ -108,6 +108,14 @@ body {
     padding: 10px 0 10px 10px;
 }
 
+.feedcard .btn-container {
+    visibility: hidden;
+}
+
+.feedcard:hover .btn-container {
+    visibility: visible;
+}
+
 .feedcard .btn-container .btn {
     padding-left: 10px;
     margin-left:3px;
@@ -300,14 +308,6 @@ body {
     font-size: 22px;
     color: #666;
     text-align: justify;
-}
-
-.visible {
-    visibility: visible;
-}
-
-.invisible {
-    visibility: hidden;
 }
 
 #above-fold{

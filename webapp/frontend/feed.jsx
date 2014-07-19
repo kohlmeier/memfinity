@@ -11,11 +11,7 @@ var gravatar = require('./gravatar.js');
 // props: model
 var FeedCard = React.createClass({
     mixins: [BackboneMixin],
-    getInitialState: function() {
-        return {isActive: false};
-    },
     render: function() {
-        var isActive = this.state.isActive;
         var cardActionButtons;
         if (window.username === null) {
             cardActionButtons = null;
@@ -37,9 +33,7 @@ var FeedCard = React.createClass({
                 </div>;
         };
 
-        return <div className='feedcard row-fluid'
-                        onMouseEnter={this.alertEnter}
-                        onMouseLeave={this.alertLeave}>
+        return <div className='feedcard row-fluid'>
             <FeedCardMeta model={this.props.model} />
             <div className='feedcard_right span10'>
                 <div className='feedcard_front'>
@@ -50,8 +44,7 @@ var FeedCard = React.createClass({
                 </div>
                 <div className="feedcard_meta row-fluid">
                     <Tags list={this.props.model.get('tags')} />
-                    <div className={'span3 btn-container' +
-                                    (isActive ? ' visible' : ' invisible')}>
+                    <div className='span3 btn-container'>
                         {cardActionButtons}
                     </div>
                 </div>
@@ -69,13 +62,7 @@ var FeedCard = React.createClass({
     },
     takeCard: function() {
         this.props.model.takeCard();
-    },
-    alertEnter: function(target) {
-        this.setState({isActive: true});
-    },
-    alertLeave: function(target) {
-        this.setState({isActive: false});
-    },
+    }
 });
 
 var FeedCardMeta = React.createClass({
