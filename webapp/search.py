@@ -64,13 +64,25 @@ def delete_cards(cards):
     index.delete(card_doc_ids)
 
 
-def query_cards(query_str, limit=QUERY_LIMIT, web_safe_cursor=None):
+def query_cards(query_str, limit=QUERY_LIMIT, web_safe_cursor=None,
+                ids_only=False):
+    """Return the search.SearchResults for a query.
+
+    ids_only is useful because the returned document IDs are url-safe
+    keys for models.Card entities.
+    """
+    if web_safe_cursor:
+        cursor = search.Cursor(web_safe_string=web_safe_cursor)
+    else:
+        cursor = None
+
     index = search.Index(name=CARD_INDEX_NAME)
-    query_processor = _QueryProcessor(query_str,
-                                      name_field='user_nickname',
-                                      tag_field='tag',
-                                      limit=limit,
-                                      web_safe_cursor=web_safe_cursor)
+    query_processor = _QueryProcessor(
+        query_str,
+        name_field='user_nickname',
+        tag_field='tag',
+        query_options=search.QueryOptions(limit=limit, cursor=cursor,
+                                          ids_only=ids_only))
     search_results = index.search(query_processor.query())
     # TODO(chris): should this return partially-instantiated
     # models.Card instances instead of leaking implementation details
@@ -111,36 +123,23 @@ def _sanitize_user_input(query_str):
     # don't want to expose the internal query language to users so
     # we strictly restrict inputs. The rules are:
     #
-    # Allowed characters for values are  [a-zA-Z0-9_-].
+    # Allowed characters for values are  [a-zA-Z0-9._-].
     # @name is removed and 'name' values returned as a list.
     # #tag is removed and 'tag' values returned as a list.
-    names = []
-    tags = []
-
-    def token_extract(match):
-        s = match.group(1)
-        if s.startswith('@'):
-            names.append(s[1:])
-        else:
-            assert s.startswith('#'), s
-            tags.append(s[1:])
-        return ' '  # remove from input, leaving space b/w other tokens
-
-    # TODO(chris): allow international characters.
-    ok_chars = r'a-zA-Z0-9_-'
-
-    # Extract tokens, removing them from the input.
-    query_str = re.sub(r'(?:^|\s)(@[%s]+|#[%s]+)(?:\s|$)' % (ok_chars, ok_chars),
-                       token_extract, query_str)
-
-    # Replace non-allowed characters with a space so normal text
-    # search rules apply.
-    query_str = re.sub(r'[^%s]+' % ok_chars, ' ', query_str)
-
-    # Remove keywords.
-    query_str = re.sub(r'\bAND\b|\bOR\b', '', query_str)
-
-    return query_str, names, tags
+    terms, names, tags = [], [], []
+    for token in query_str.split():
+        # TODO(chris): allow international characters.
+        sane_token = re.sub(r'[^a-zA-Z0-9._-]+', '', token)
+        if sane_token:
+            if sane_token in ('AND', 'OK'):
+                continue  # ignore special search keywords
+            elif token.startswith('@'):
+                names.append(sane_token)
+            elif token.startswith('#'):
+                tags.append(sane_token)
+            else:
+                terms.append(sane_token)
+    return terms, names, tags
 
 
 class _QueryProcessor(object):
@@ -149,35 +148,31 @@ class _QueryProcessor(object):
     name_field is the field @name tokens should apply to.
     tag_field is the name of the field #tag tokens should apply to.
     """
-    def __init__(self, query_str, name_field=None, tag_field=None,
-                 limit=QUERY_LIMIT, web_safe_cursor=None):
+    def __init__(self, query_str, name_field, tag_field, query_options=None):
         self.query_str = query_str
         self.name_field = name_field
         self.tag_field = tag_field
-        self.limit = limit
-        self.web_safe_cursor = web_safe_cursor
+        self.query_options = query_options
 
     def _sanitize_user_input(self):
         query_str = self.query_str[:MAX_QUERY_LEN]
         return _sanitize_user_input(query_str)
 
     def _build_query_string(self):
-        query_str, names, tags = self._sanitize_user_input()
+        terms, names, tags = self._sanitize_user_input()
         # Our simply query logic is to OR together all terms from the
         # user, then AND in the name or tag filters.
-        query_str = ' OR '.join(re.split(r'\s+', query_str.strip()))
-        if self.name_field and names:
-            query_str += ' AND %s: (%s)' % (self.name_field, ' OR '.join(names))
-        if self.tag_field and tags:
-            query_str += ' AND %s: (%s)' % (self.tag_field, ' OR '.join(tags))
-        return query_str
+        parts = []
+        if terms:
+            parts.append(' OR '.join(terms))
+        if names:
+            parts.append('%s: (%s)' % (self.name_field, ' OR '.join(names)))
+        if tags:
+            parts.append('%s: (%s)' % (self.tag_field, ' OR '.join(tags)))
+        return ' AND '.join(parts)
 
     def query(self):
-        if self.web_safe_cursor:
-            cursor = search.Cursor(web_safe_string=self.web_safe_cursor)
-        else:
-            cursor = None
         query = search.Query(
             query_string=self._build_query_string(),
-            options=search.QueryOptions(limit=self.limit, cursor=cursor))
+            options=self.query_options)
         return query

@@ -73,9 +73,19 @@ body {
     padding: 5px;
 }
 
-.filtertext {
+.filterbar .filterbar-query {
     min-width: 500px;
-    border: 1px solid #bdc3c7 !important;
+    border: 1px solid #bdc3c7 !important; /* Override bootstrap's :focus coloring. */
+    font-size: 18px;
+    line-height: 24px;
+}
+
+.filterbar .filterbar-submit {
+    /* Sizes are magic numbers related to the input height. */
+    height: 55px;
+    margin: 2px 0;
+    width: 100%;
+    font-size: 22px;
 }
 
 .btn.practicebutton {
@@ -365,6 +375,19 @@ body {
     width: 430px;
     margin-left: 20px;
 }
+
+
+.editor {
+    margin: 50px auto 0;
+    width: 800px;
+}
+
+.editor-textarea {
+    padding: 5px;
+}
+
+
+
 
 /* http://meyerweb.com/eric/tools/css/reset/
    v2.0 | 20110126

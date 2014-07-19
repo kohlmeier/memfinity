@@ -15,16 +15,22 @@ var EditorForm = React.createClass({
     },
     handleChange: function(field, event) {
         var state = {};
-        state[field] = event.target.value;
+        if (field == 'reversible') {
+            state[field] = event.target.checked;
+        } else {
+            state[field] = event.target.value;
+        }
         this.setState(state);
     },
     handleSubmit: function() {
+
         this.props.submitCardData(this.state);
     },
     render: function() {
         return <form className="editorForm" onSubmit={this.handleSubmit}>
-            <input type="textarea" defaultValue={this.props.cardModel.front} onChange={_.partial(this.handleChange, 'front')} /> <br />
-            <input type="textarea" defaultValue={this.props.cardModel.back} onChange={_.partial(this.handleChange, 'back')} />
+            <textarea className="editor-textarea" rows="10" defaultValue={this.props.cardModel.front} onChange={_.partial(this.handleChange, 'front')} /> <br/>
+            <textarea className="editor-textarea" rows="10" defaultValue={this.props.cardModel.back} onChange={_.partial(this.handleChange, 'back')} /> <br/>
+            <input type="checkbox" defaultValue={this.props.cardModel.reversible} onClick={_.partial(this.handleChange, 'reversible')}/>Reversible<br/>
             <input type="submit" value="Save" />
         </form>;
     }
@@ -36,7 +42,7 @@ var EditorForm = React.createClass({
 var Editor = React.createClass({
     render: function() {
         if (this.state.cardModel) {
-            return <div>
+            return <div className="editor">
                 <EditorForm cardModel={this.state.cardModel} submitCardData={this.submitCardData} />
             </div>;
 
@@ -65,6 +71,8 @@ var Editor = React.createClass({
     },
     submitCardData: function(data) {
         var self = this;
+        console.log("submitting");
+        console.log(data);
         $.ajax({
             url: '/api/card/' + this.props.params.cardKey,
             contentType: "application/json",
