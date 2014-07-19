@@ -8,4 +8,4 @@ deps:
 serve:
 	cd webapp ; \
 	node_modules/.bin/watchify -t reactify frontend/* -o static/frontend.js & \
-	dev_appserver.py .
+	dev_appserver.py --host=0.0.0.0 .
