@@ -2,72 +2,20 @@ body {
     background-color: rgb(225, 225, 225) !important;
 }
 
-.navbar,
-.filterbar_description {
-    font-weight: lighter !important;
-}
-
 .practicebutton {
     font-weight: 100 !important;
     line-height: 42px !important;
 }
 
-.navbar-inner {
-    border-radius: 0 !important;
-}
-
-.header {
-    background-color: #ccc;
-    font-size: 30px;
-}
-
-
-.header_home,
-.header_feed,
-.header_login,
-.header_about {
-    color: #fff;
-    cursor: pointer;
-}
-
-.header_home.active,
-.header_feed.active,
-.header_login.active,
-.header_about.active {
-    background-color: #1abc9c;
-    border-bottom-color: #16a085;
-}
-
-.header_home {
-    padding: 10px;
-    margin-left: 10px;
-}
-
-.header_feed {
-    padding: 10px;
-    margin-left: 10px;
-}
-
-.header_about {
-    padding: 10px;
-    margin-left: 10px;
-}
-
-#header_login{
-    padding: 10px;
-    margin-left: 10px;
-}
-#header_login > a{
-    margin: 0;
-    padding: 0;
-    border: none;
-}
-#header_login img {
+.navbar .header-login img {
     display: inline-block;
-    margin-right: 5px;
     height: 20px;
     width: 20px;
     border-radius: 50%;
+    position:absolute;
+}
+.navbar .header-login span {
+    padding-left:25px;
 }
 
 .feed {
@@ -76,6 +24,7 @@ body {
 }
 
 .filterbar_description {
+    font-weight: lighter !important;
     font-size: 24px;
     padding: 5px;
 }
@@ -416,4 +365,23 @@ body {
 .checkbox input,
 .radio input {
     display: inline;
+}
+
+.navbar .navbar-inner {
+    border-radius: 0 !important;
+}
+.navbar .nav > li > a {
+    font-weight: lighter !important;
+}
+.navbar .nav > li:first-child > a,
+.navbar-inverse .nav > li > a {
+    border-radius: 0;
+    border: 0;
+    font-size: 16.996px;
+}
+.navbar-inverse .navbar-nav > li > a:hover,
+.navbar-inverse .navbar-nav > li > a:focus {
+    color: #fff;
+    background-color: #1abc9c;
+    border-radius: 0;
 }
