@@ -140,9 +140,7 @@ var FilterBar = React.createClass({
     handleSubmit: function(event) {
         event.preventDefault();
         var query = this.refs.query.getDOMNode().value.trim();
-        if (query) {
-            this.props.onFilterChange(query);
-        }
+        this.props.onFilterChange(query);
     },
     render: function() {
         return <form className='filterbar row-fluid' onSubmit={this.handleSubmit}>

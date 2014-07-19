@@ -12,8 +12,8 @@ var CardModel = Backbone.Model.extend({
     rate: function(rating) {
         $.ajax({
             url: this.url() + '/review',
-            data: { grade: rating },
-            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({ grade: rating }),
+            contentType: 'application/json',
             type: 'PUT'
         })
             .done(function() { console.log('success'); })

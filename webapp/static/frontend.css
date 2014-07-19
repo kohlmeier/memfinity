@@ -395,8 +395,9 @@ body {
     width: 800px;
 }
 
-.editor-textarea {
+.editor-text {
     padding: 5px;
+    width: 500px;
 }
 
 @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
