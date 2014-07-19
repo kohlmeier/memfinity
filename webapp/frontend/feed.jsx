@@ -21,21 +21,20 @@ var FeedCard = React.createClass({
             cardActionButtons = null;
         } else if (window.username !== this.props.model.get('user_email')) {
             cardActionButtons = 
-                <div className={'takecard btn btn-primary btn-small' + (isActive ? ' visible' : ' invisible')}
-                        onClick={this.takeCard}>
+                <div className='btn btn-primary btn-small' onClick={this.takeCard}>
                     <i className='icon-download'></i> Take
                 </div>;
         } else {
             cardActionButtons = 
                 <div>
-                    <div className={'deletecard btn btn-primary btn-small' + (isActive ? ' visible' : ' invisible')}
-                            onClick={this.deleteCard}>
+                    <div className='btn btn-primary btn-small' onClick={this.deleteCard}>
                         <i className='icon-trash'></i> Delete
                     </div>
-                    <div className={'deletecard btn btn-primary btn-small' + (isActive ? ' visible' : ' invisible')}>
-                        <i className='icon-edit'></i><Link to='edit' cardKey={this.props.model.get('key')}> Edit</Link>
-                    </div>
-                </div>
+                    <Link to='edit' className='btn btn-primary btn-small'
+                          cardKey={this.props.model.get('key')}>
+                        <i className='icon-edit'></i> Edit
+                    </Link>
+                </div>;
         };
 
         return <div className='feedcard row-fluid'
@@ -51,7 +50,8 @@ var FeedCard = React.createClass({
                 </div>
                 <div className="feedcard_meta row-fluid">
                     <Tags list={this.props.model.get('tags')} />
-                    <div className="span3 l_takecard_container">
+                    <div className={'span3 btn-container' +
+                                    (isActive ? ' visible' : ' invisible')}>
                         {cardActionButtons}
                     </div>
                 </div>
