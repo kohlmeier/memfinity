@@ -21,6 +21,7 @@ React.renderComponent((
     <Route handler={Site}>
         <Route name="review" path="/review" handler={Review }/>
         <Route name="feed" path="/feed" handler={Feed}/>
+        <Route name="create" path="/create" handler={Editor}/>
         <Route name="edit" path="/edit/:cardKey" handler={Editor}/>
         <Route name="about" path="/about" handler={About}/>
     </Route>

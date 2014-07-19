@@ -147,7 +147,7 @@ var FilterBar = React.createClass({
     }
 });
 
-// props: collection, onPractice?
+// props: collection, params.refresh(optional)
 var Feed = React.createClass({
     render: function() {
         return <div className='feed clearfix'>

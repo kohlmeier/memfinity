@@ -3,6 +3,7 @@
  * Interface for card editing
  */
 var React = require('react');
+var Router = require('react-nested-router');
 var BackboneMixin = require('./backbonemixin.js');
 var models = require('./models.js');
 
@@ -11,7 +12,7 @@ var models = require('./models.js');
 // stats:  [a dict representing fields which have been changed]
 var EditorForm = React.createClass({
     getInitialState: function() {
-        return {};
+        return {isEnabled: true};
     },
     handleChange: function(field, event) {
         var state = {};
@@ -31,12 +32,12 @@ var EditorForm = React.createClass({
         this.setState({tags: tags});
     },
     handleSubmit: function() {
+        this.setState({isEnabled: false});
         this.props.submitCardData(this.state);
     },
     render: function() {
-        var tagsCSV = this.props.cardModel.tags.join(",");
-        console.log("cardModel=", this.props.cardModel);
-        console.log(tagsCSV);
+        var tagsArray = this.props.cardModel.tags;
+        var tagsCSV = tagsArray ? tagsArray.join(", ") : "";
         return <form className="editorForm" onSubmit={this.handleSubmit}>
             <div className="form-group">
                 <label htmlFor="editor-input-front">Front</label>
@@ -75,7 +76,7 @@ var EditorForm = React.createClass({
                               defaultChecked={this.props.cardModel.public}
                               onChange={_.partial(this.handleChange, 'public')}/> Public</label>
             </div>
-            <input type="submit" className="btn btn-primary" value="Save" />
+            <input type="submit" disabled={!this.props.isEnabled} className="btn btn-primary" value="Save" />
         </form>;
     },
     componentDidMount: function() {
@@ -92,7 +93,10 @@ var Editor = React.createClass({
     render: function() {
         if (this.state.cardModel) {
             return <div className="editor">
-                <EditorForm cardModel={this.state.cardModel} submitCardData={this.submitCardData} />
+                <EditorForm ref="editorForm"
+                    isEnabled={!this.state.pendingSubmit}
+                    cardModel={this.state.cardModel}
+                    submitCardData={this.submitCardData} />
             </div>;
 
         }
@@ -104,7 +108,12 @@ var Editor = React.createClass({
         </div>;
     },
     getInitialState: function() {
-        return {cardModel: null};
+        var isCreateMode = !this.props.params.cardKey;
+        return {
+            isCreateMode: isCreateMode,
+            cardModel: isCreateMode ? new models.CardModel() : null,
+            pendingSubmit: false
+        };
     },
     componentDidMount: function(elem) {
         if (!this.state.cardModel) {
@@ -122,18 +131,50 @@ var Editor = React.createClass({
         var self = this;
         console.log("submitting");
         console.log(data);
-        $.ajax({
-            url: '/api/card/' + this.props.params.cardKey,
-            contentType: "application/json",
-            type: 'PUT',
-            data: JSON.stringify(data),
-            success: function(response) {
-                console.log("PUT was successful: " + response);
-            },
-            error: function(xhr, status, err) {
-                console.error(self.props.url, status, err.toString());
-            }
-        });
+        this.setState({pendingSubmit: true});
+        if (this.state.isCreateMode) {
+            $.ajax({
+                url: '/api/card',
+                contentType: "application/json",
+                type: 'POST',
+                data: JSON.stringify(data),
+                success: function(response) {
+                    console.log("creation POST was successful: " + response);
+                    self.setState({pendingSubmit: false});
+                    // if you successfully created a new card, we just route
+                    // you back to your feed.
+                    setTimeout(function () {
+                        // setTimeout necessary due to eventual consistency.
+                        // TODO(jace) eliminate this setTimeout!  We should
+                        // pass the newly created card's key (which we have
+                        // in response) via a param in transitionTo to
+                        // the Feed component, which can explicity query
+                        // the API by key (which is consistent) and merge
+                        // that card in if it's not already present.
+                        Router.transitionTo('feed');
+                    }, 1000);
+                },
+                error: function(xhr, status, err) {
+                    console.error(self.props.url, status, err.toString());
+                    self.setState({pendingSubmit: false});
+                }
+            });
+        } else {
+            $.ajax({
+                url: '/api/card/' + this.props.params.cardKey,
+                contentType: "application/json",
+                type: 'PUT',
+                data: JSON.stringify(data),
+                success: function(response) {
+                    console.log("PUT was successful: " + response);
+                    self.setState({pendingSubmit: false});
+                },
+                error: function(xhr, status, err) {
+                    console.error(self.props.url, status, err.toString());
+                    self.setState({pendingSubmit: false});
+                }
+            });
+        }
     }
 });
 
