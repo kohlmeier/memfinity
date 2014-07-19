@@ -397,12 +397,34 @@ body {
 
 .editor {
     margin: 50px auto 0;
-    width: 800px;
+    width: 450px;
 }
 
-.editor-text {
-    padding: 5px;
-    width: 500px;
+.editor textarea {
+    height: 150px;
+}
+
+#editor-input-source {
+    width: 436px; /* = 450px - 2 * 5px padding - 2 * 2px border */
+}
+
+.editor .checkbox label {
+    display: inline-block;
+}
+
+/* Override some flat-ui styles.
+
+   For some reason, flat-ui is at odds with vanilla bootstrap. E.g.,
+   if not using flat-ui JS, sometimes elements (like checkboxes) done
+   in the bootstrap style simply don't show up.
+*/
+.tagsinput {
+    border-color: #bdc3c7; /* Override flat-ui border color. */
+}
+
+.checkbox input,
+.radio input {
+    display: inline;
 }
 
 @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
@@ -466,55 +488,4 @@ body {
     .emptyreviewingstack {
         padding-top: 50px;
     }
-}
-
-
-
-/* http://meyerweb.com/eric/tools/css/reset/
-   v2.0 | 20110126
-   License: none (public domain)
-*/
-
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font-size: 100%;
-    font: inherit;
-    vertical-align: baseline;
-}
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
-    display: block;
-}
-body {
-    line-height: 1;
-}
-ol, ul {
-    list-style: none;
-}
-blockquote, q {
-    quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-    content: '';
-    content: none;
-}
-table {
-    border-collapse: collapse;
-    border-spacing: 0;
 }
