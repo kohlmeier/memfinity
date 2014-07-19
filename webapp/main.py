@@ -87,7 +87,7 @@ class ApiHandler(webapp2.RequestHandler):
             # '/api/cards?tag=tag1,tag2' -> as above, but with tag filtering
             # '/api/cards?user=<user_key> -> returns cards for a single user
             # '/api/cards?user=user_key&tags=tag1,tag2' -> obvious
-            # '/api/cards?user=<user_key>&review=1' -> all cards for the
+            # '/api/cards?review=1' -> all cards for the current logged in
             #      user but sorted by next_review
             response = api.card_query(self)
         elif path == '/api/user':

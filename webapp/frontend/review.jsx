@@ -3,6 +3,7 @@
  * Interface for review mode
  */
 var React = require('react');
+var Link = require('react-nested-router').Link;
 var BackboneMixin = require('./backbonemixin.js');
 var models = require('./models.js');
 
@@ -16,6 +17,11 @@ var CardModel = models.CardModel,
 
 var Review = React.createClass({
     render: function() {
+        if (!this.state.reviewingStack) {
+            // If we don't have the data yet, display a temp message.
+            return <div>Sit tight, partner.  We&lsquo;re loading your data now!</div>;
+        }
+
         var hardStack = new CardCollection(),
             easyStack = new CardCollection();
 
@@ -37,17 +43,46 @@ var Review = React.createClass({
             <ReviewedStack collection={easyStack}
                            name='Easy' />
 
-            <ReviewingStack collection={this.state.reviewingStack}
+            <ReviewingStack onKeepPracticing={this.onKeepPracticing}
+                            collection={this.state.reviewingStack}
                             rate={rate} />
         </div>;
     },
     getInitialState: function() {
-        var cardModels = _(window.userCards).map(function(card) {
-            return new models.CardModel(card);
+        var reviewAll = (
+            (this.props.params && this.props.params.reviewAll==='true') ||
+            (this.props.query && this.props.query.reviewAll==='true')
+        );
+        return {
+            reviewingStack: null,
+            reviewAll: reviewAll
+        };
+    },
+    componentDidMount: function() {
+        if (this.state.reviewingStack === null) {
+            // force an API call to retrieve cards
+            this.fetchCardData(this.state.reviewAll);
+        }
+    },
+    onKeepPracticing: function() {
+        this.setState({reviewAll: true, reviewingStack: null});
+        this.fetchCardData(true);
+    },
+    fetchCardData: function(reviewAll) {
+        var self = this;
+        var url = '/api/cards?review=1';
+        if (reviewAll) {
+            url += "&reviewAll=true"
+        }
+
+        $.get(url, function(reviewCards) {
+            var cardModels = _(JSON.parse(reviewCards)).map(function(card) {
+                return new models.CardModel(card);
+            });
+            var reviewingStack = new models.CardCollection(cardModels);
+            self.setState({reviewingStack: reviewingStack});
         });
-        reviewingStack = new models.CardCollection(cardModels);
-        return { reviewingStack: reviewingStack };
-    }
+    },
 });
 
 var stackSides = function (primary, secondary, size, times) {
@@ -80,8 +115,11 @@ var ReviewingStack = React.createClass({
                         style={stackstyle}>
                 <h2>Congratulations!</h2>
 
-                <p>you're done for the day</p>
-                <p><a>make more</a> or <a>continue practicing</a></p>
+                <p>you&rsquo;re done for the day</p>
+                <p>
+                    <Link to="create">make more</Link> or
+                    <a href="javascript:void(0);" onClick={this.onKeepPracticing}> continue practicing</a>
+                </p>
             </div>;
         } else {
             var topCard = <Card model={topCardModel}
@@ -97,6 +135,9 @@ var ReviewingStack = React.createClass({
                     name='Remaining' />
             {stack}
         </div>;
+    },
+    onKeepPracticing: function(event) {
+        this.props.onKeepPracticing();
     },
     getBackboneModels: function() {
         return [this.props.collection];

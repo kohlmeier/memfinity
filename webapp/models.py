@@ -21,7 +21,7 @@ class LeitnerAlgorithm(object):
         current_box = data.setdefault('box', 0)
         if result == 'easy' and datetime.datetime.now() > card.next_review:
             # Note we don't advance the scheduled review if this review
-            # was done premturely.
+            # was done prematurely.
             current_box += 1
         else:
             current_box -= 1

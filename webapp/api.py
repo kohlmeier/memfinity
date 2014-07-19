@@ -1,3 +1,4 @@
+import datetime
 import json
 import logging
 
@@ -77,11 +78,17 @@ def card_query(handler):
 
     TODO(jace): return a query cursor, too?
     """
-    user_key = handler.request.get('user', None)
+
     tag = handler.request.get("tag", None)
     tag_list = tag.split(',') if tag else None
     review = handler.request.get('review', None)
+    reviewAll = handler.request.get('reviewAll', False)
     include_followers = handler.request.get('include_followers', None)
+    user_key = handler.request.get('user', None)
+
+    if review and user_key:
+        handler.error(400)
+        return "'review' and 'user_key' cannot be used together."
 
     if review and include_followers:
         handler.error(400)
@@ -90,6 +97,16 @@ def card_query(handler):
     if include_followers and not user_key:
         handler.error(400)
         return "'review' and 'include_followers' cannot be used together."
+
+
+    if review:
+        # if asked for review cards, get them for the current user only
+        current_user = get_current_user(handler)
+        if not current_user:
+            handler.error(400)
+            return "must be logged in to quer for review cards."
+        user_key = current_user.key.urlsafe()
+
 
     query = models.Card.query()
 
@@ -116,6 +133,15 @@ def card_query(handler):
 
     response = '[]'
     if results:
+        if review and not reviewAll:
+            # TODO(jace) if the current user is asking for review cards but
+            # hasn't explicitly asked to review ALL cards, then we truncate
+            # the results to include just cards scheduled on or before
+            # today... the future can wait.
+            logging.error("Attempting to truncate review list")
+            now = datetime.datetime.now()
+            results = [card for card in results if card.next_review <= now]
+
         response = jsonify.jsonify(results, pretty_print=True)
 
     return response
