@@ -7,7 +7,6 @@ var Router = require('react-nested-router');
 var BackboneMixin = require('./backbonemixin.js');
 var models = require('./models.js');
 
-
 // props: submitCardData
 // stats:  [a dict representing fields which have been changed]
 var EditorForm = React.createClass({
@@ -38,6 +37,9 @@ var EditorForm = React.createClass({
     render: function() {
         var tagsArray = this.props.cardModel.tags;
         var tagsCSV = tagsArray ? tagsArray.join(", ") : "";
+        var inputFormat = (this.props.cardModel.input_format
+                           ? this.props.cardModel.input_format.toLowerCase()
+                           : "text");
         return <form className="editorForm" onSubmit={this.handleSubmit}>
             <div className="form-group">
                 <label htmlFor="editor-input-front">Front</label>
@@ -52,6 +54,15 @@ var EditorForm = React.createClass({
                           placeholder="Back of card..."
                           defaultValue={this.props.cardModel.back}
                           onChange={_.partial(this.handleChange, 'back')} />
+            </div>
+            <div className="form-group">
+                <label htmlFor="editor-input-format">Format</label>
+                <select id="editor-input-format" className="form-control"
+                        defaultValue={inputFormat}
+                        onChange={_.partial(this.handleChange, 'input_format')}>
+                    <option value="text">Text</option>
+                    <option value="markdown">Markdown</option>
+                </select>
             </div>
             <div className="form-group">
                 <label htmlFor="editor-input-tags">Tags</label>

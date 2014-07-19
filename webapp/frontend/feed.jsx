@@ -8,6 +8,11 @@ var BackboneMixin = require('./backbonemixin.js');
 var models = require('./models.js');
 var gravatar = require('./gravatar.js');
 
+// TODO(chris): this is chock-full of XSS potential. Plz fix. We
+// really ought to sanitize the generated HTML, probably on the
+// server. See Markdown and Bleach for Python.
+var converter = new Showdown.converter();
+
 // props: model
 var FeedCard = React.createClass({
     mixins: [BackboneMixin],
@@ -32,16 +37,17 @@ var FeedCard = React.createClass({
                     </Link>
                 </div>;
         };
-
+        var front = this.props.model.get('front'),
+            back = this.props.model.get('back');
+        if (this.props.model.get('input_format') == 'markdown') {
+            front = <div className="userhtml" dangerouslySetInnerHTML={{__html: converter.makeHtml(front)}}></div>;
+            back = <div className="userhtml" dangerouslySetInnerHTML={{__html: converter.makeHtml(back)}}></div>;
+        }
         return <div className='feedcard row-fluid'>
             <FeedCardMeta model={this.props.model} />
             <div className='feedcard_right span10'>
-                <div className='feedcard_front'>
-                    {this.props.model.get('front')}
-                </div>
-                <div className='feedcard_back'>
-                    {this.props.model.get('back')}
-                </div>
+                <div className='feedcard_front'>{front}</div>
+                <div className='feedcard_back'>{back}</div>
                 <div className="feedcard_meta row-fluid">
                     <Tags list={this.props.model.get('tags')} />
                     <div className='span3 btn-container'>

@@ -125,6 +125,11 @@ class Card(ndb.Model):
     # TODO(jace): what type should the content properties
     # be?  TextProperty just for now
 
+    # Format of user input in the rich text fields "front", "back",
+    # and "info".
+    input_format = ndb.StringProperty(default='text', indexed=False,
+                                      choices=['text', 'markdown'])
+
     # content for the 'front' of the card
     front = ndb.TextProperty()
     # the content for the 'back' of the card
@@ -195,6 +200,7 @@ class Card(ndb.Model):
         self.front = data.get('front', self.front)
         self.back = data.get('back', self.back)
         self.info = data.get('info', self.info)
+        self.input_format = data.get('input_format', self.input_format)
         self.tags = data.get('tags', self.tags)
         self.source_url = data.get('source_url', self.source_url)
         self.reversible = data.get('reversible', self.reversible)

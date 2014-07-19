@@ -6,6 +6,11 @@ var React = require('react');
 var BackboneMixin = require('./backbonemixin.js');
 var models = require('./models.js');
 
+// TODO(chris): this is chock-full of XSS potential. Plz fix. We
+// really ought to sanitize the generated HTML, probably on the
+// server. See Markdown and Bleach for Python.
+var converter = new Showdown.converter();
+
 var CardModel = models.CardModel,
     CardCollection = models.CardCollection;
 
@@ -157,17 +162,28 @@ var ReviewedStackMeta = React.createClass({
 // TODO this should probably take state as as prop
 var Card = React.createClass({
     render: function() {
-        var stateView;
+        var stateView,
+            content;
         if (this.state.state === 'front') {
             var clickHandler = function() {
                 this.setState({state: 'back'});
             }.bind(this);
+            content = this.props.model.get('front');
+            if (this.props.model.get('input_format') == 'markdown') {
+                content = <div className="userhtml"
+                             dangerouslySetInnerHTML={{__html: converter.makeHtml(content)}}></div>;
+            }
             stateView = <CardFront
-                content={this.props.model.get('front')}
-                onClick={clickHandler} />
+                content={content}
+                onClick={clickHandler} />;
         } else if (this.state.state === 'back') {
+            content = this.props.model.get('back');
+            if (this.props.model.get('input_format') == 'markdown') {
+                content = <div className="userhtml"
+                             dangerouslySetInnerHTML={{__html: converter.makeHtml(content)}}></div>;
+            }
             stateView = <CardBack
-                content={this.props.model.get('back')}
+                content={content}
                 rate={_(this.props.rate).partial(this.props.model.cid)} />;
         } else { // meta
             stateView = <CardMeta info={this.props.model.get('meta')} />;

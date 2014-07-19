@@ -236,6 +236,7 @@ body {
     padding: 10px;
     border-radius: 2px;
     background-color: #fff;
+    overflow: hidden;
 }
 
 .cardFront {
@@ -360,6 +361,40 @@ body {
 .editor .checkbox label {
     display: inline-block;
 }
+
+/* Style the HTML of user-generated content.
+
+   Since CSS reset took out defaults, we want to re-instate some
+   simple defauts. This is a slight modification of Vanilla CSS from
+   http://noscope.com/vanilla-css/.
+
+  */
+.userhtml h1, .userhtml h2, .userhtml h3, .userhtml h4, .userhtml h5, .userhtml h6, .userhtml b, .userhtml strong {font-weight: bold;}
+.userhtml em, .userhtml i, .userhtml dfn {font-style: italic;}
+.userhtml dfn {font-weight:bold;}
+.userhtml p, .userhtml code, .userhtml pre, .userhtml kbd {margin:0 0 1.5em 0;}
+.userhtml blockquote {margin:0 1.5em 1.5em 1.5em;}
+.userhtml cite {font-style: italic;}
+.userhtml li ul, .userhtml li ol {margin:0 1.5em;}
+.userhtml ul, .userhtml ol {margin:0 1.5em 1.5em 1.5em;}
+.userhtml ul {list-style-type:disc;}
+.userhtml ol {list-style-type:decimal;}
+.userhtml ol ol {list-style: upper-alpha;}
+.userhtml ol ol ol {list-style: lower-roman;}
+.userhtml ol ol ol ol {list-style: lower-alpha;}
+.userhtml dl {margin:0 0 1.5em 0;}
+.userhtml dl dt {font-weight:bold;}
+.userhtml dd {margin-left:1.5em;}
+.userhtml table {margin-bottom:1.4em;width:100%;}
+.userhtml th {font-weight:bold;}
+.userhtml th, .userhtml td, .userhtml caption {padding:4px 10px 4px 5px;}
+.userhtml tfoot {font-style:italic;}
+.userhtml sup, .userhtml sub {line-height:0;}
+.userhtml abbr, .userhtml acronym {border-bottom: 1px dotted;}
+.userhtml address {margin:0 0 1.5em;font-style:italic;}
+.userhtml del {text-decoration: line-through;}
+.userhtml pre {margin:1.5em 0;white-space:pre;}
+.userhtml img {max-width: 100%;}
 
 @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
     /* iPhone, Android rules here */
