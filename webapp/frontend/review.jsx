@@ -28,15 +28,12 @@ var Review = React.createClass({
 
         return <div className="review_workspace">
             <ReviewedStack collection={hardStack}
-                           position={{x: 800, y: 90}}
                            name='Hard' />
             <ReviewedStack collection={easyStack}
-                           position={{x: 800, y: 310}}
                            name='Easy' />
 
             <ReviewingStack collection={this.state.reviewingStack}
-                            rate={rate}
-                            position={{x: 50, y: 90}} />
+                            rate={rate} />
         </div>;
     },
     getInitialState: function() {
@@ -67,10 +64,6 @@ var ReviewingStack = React.createClass({
     render: function() {
         var topCardModel = _(this.props.collection.models).first();
         var sideLayers = Math.max(1, this.props.collection.models.length);
-        var allstyle = {
-            left: this.props.position.x,
-            top: this.props.position.y
-        };
         var stackstyle = {
             'box-shadow': stackSides('#2C3E50', '#BDC3C7', 2, sideLayers)
         };
@@ -93,7 +86,7 @@ var ReviewingStack = React.createClass({
                 {topCard}
             </div>;
         }
-        return <div className='reviewingstackall' style={allstyle}>
+        return <div className='reviewingstackall'>
             <ReviewingStackMeta
                     count={this.props.collection.models.length}
                     name='Remaining' />
@@ -122,11 +115,6 @@ var ReviewedStack = React.createClass({
     mixins: [BackboneMixin],
     render: function() {
         var sideLayers = this.props.collection.models.length;
-        var allstyle = {
-            left: this.props.position.x,
-            top: this.props.position.y
-        };
-
         var stackstyle = {
             'box-shadow': stackSides('#2C3E50', '#BDC3C7', 2, sideLayers)
         };
@@ -139,7 +127,7 @@ var ReviewedStack = React.createClass({
         } else {
             topCard = null;
         }
-        return <div className='reviewedstackall' style={allstyle}>
+        return <div className={'reviewedstackall reviewedstackall-' + this.props.name.toLowerCase()}>
             <ReviewedStackMeta count={this.props.collection.models.length}
                                name={this.props.name} />
             <div className='reviewedstack' style={stackstyle}>

@@ -155,7 +155,7 @@ body {
     /*padding: 15px 9px 14px !important;*/
 }
 
-.takecard, 
+.takecard,
 .deletecard {
     padding-left: 10px;
     float: right;
@@ -200,6 +200,9 @@ body {
     width: 700px;
     height: 400px;
     position: absolute;
+
+    left: 90px;
+    top: 50px;
 }
 
 .reviewingstackmeta {
@@ -223,6 +226,16 @@ body {
     width: 400px;
     height: 200px;
     position: absolute;
+}
+
+.reviewedstackall-hard {
+    left: 800px;
+    top: 90px;
+}
+
+.reviewedstackall-easy {
+    left: 800px;
+    top: 310px;
 }
 
 .reviewedstackmeta {
@@ -387,6 +400,68 @@ body {
     width: 500px;
 }
 
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+    /* iPhone, Android rules here */
+    .reviewingstack {
+        width: 300px;
+        height: 300px;
+    }
+
+    .reviewingstackmeta {
+
+        float: none;
+        height: 70px;
+    }
+
+    .reviewingstackall {
+        width: 700px;
+        height: 400px;
+        position: absolute;
+
+        left: 10px;
+        top: 50px;
+    }
+
+    .reviewedstackall {
+        width: 100px;
+        height: 100px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .reviewedstack {
+        /* Just hide these on mobile */
+        display: none;
+    }
+
+    .reviewedstackall-hard {
+        left: 10px;
+        top: 380px;
+    }
+
+    .reviewedstackall-easy {
+        left: 10px;
+        top: 380px;
+        margin-left: 150px;
+    }
+
+    .content {
+        margin-top: 10%;
+        font-size: large;
+    }
+
+    .choices {
+        padding-left: 200px
+    }
+
+    .choices_hard {
+        margin-left: 0px;
+    }
+
+    .emptyreviewingstack {
+        padding-top: 50px;
+    }
+}
 
 
 
