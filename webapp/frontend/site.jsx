@@ -1,5 +1,5 @@
 /** @jsx React.DOM */
-var React = require('react');
+var React = window.React = require('react');
 var Route = require('react-nested-router').Route;
 var models = require('./models.js'),
     Review = require('./review.jsx'),
