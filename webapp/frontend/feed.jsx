@@ -114,8 +114,7 @@ var FeedBody = React.createClass({
     render: function() {
         var onDeleteCard = this.props.onDeleteCard;
         var collection = this.props.collection;
-        var cardModels = this.props.collection ? this.props.collection.models : [];
-        var feedItems = _(cardModels).map(function(model) {
+        var feedItems = _(collection.models).map(function(model) {
             return <li className="l-feedcard-container" key={model.cid}>
                 <FeedCard model={model} key={model.cid} collection={collection}
                     onDeleteCard={onDeleteCard} />
@@ -136,30 +135,30 @@ var PracticeButton = React.createClass({
     }
 });
 
-// props: onFilterChange, onPractice, count
+// props: onFilterChange
 var FilterBar = React.createClass({
-    render: function() {
-        return <div className='filterbar row-fluid'>
-            <div className="span9">
-            <input type='text'
-                   className='filtertext taginput'
-                   ref='filter' />
-            </div>
-            <div className="span3">
-            <PracticeButton count={this.props.count}
-                            onClick={this.props.onPractice} />
-            </div>
-        </div>;
+    handleSubmit: function(event) {
+        event.preventDefault();
+        var query = this.refs.query.getDOMNode().value.trim();
+        if (query) {
+            this.props.onFilterChange(query);
+        }
     },
-    componentDidMount: function(elem) {
-        var self = this;
-        $(elem).find('.taginput').tagsInput({
-            onChange: function(event){
-                var $input = $(self.refs.filter.getDOMNode());
-                var tags = $input.val()
-                self.props.onFilterChange(tags);
-            }
-        });
+    render: function() {
+        return <form className='filterbar row-fluid' onSubmit={this.handleSubmit}>
+            <div className='span9'>
+                <input type='text'
+                       placeholder='What are you looking for?'
+                       className='filterbar-query'
+                       ref='query'
+                       name='q' />
+            </div>
+            <div className='span3'>
+                <input type='submit'
+                       className='btn btn-primary filterbar-submit'
+                       value='Search' />
+            </div>
+        </form>;
     }
 });
 
@@ -167,39 +166,40 @@ var FilterBar = React.createClass({
 var Feed = React.createClass({
     render: function() {
         return <div className='feed clearfix'>
-            <FilterBar onPractice={$.noop}
-                       onFilterChange={this.onFilterChange}
-                       count={this.state.cardCollection.length} />
+            <FilterBar onFilterChange={this.onFilterChange} />
             <FeedBody collection={this.state.cardCollection}
-                       onDeleteCard={this.onDeleteCard} />
+                      onDeleteCard={this.onDeleteCard} />
         </div>;
     },
     getInitialState: function() {
         // TODO set some state for a spinner?
         return { cardCollection: new models.CardCollection() };
     },
-    componentDidMount: function(elem) {
+    componentDidMount: function() {
         if (!this.state.cardCollection || !this.state.cardCollection.length) {
             // force an API call to retrieve cards
             this.fetchCardData('');
         }
     },
-    onFilterChange: function(filters) {
+    onFilterChange: function(filter) {
         var self = this;
-        var filterQuery = !!filters ? ('?tag=' + filters) : '';
-        $.get('/api/cards' + filterQuery, function(newCards) {
-            self.props.collection.reset(JSON.parse(newCards));
+        $.get('/api/cards/search', {q: filter}, function(newCardsJSON) {
+            self.setState({cardCollection: self.cardsFromJSON(newCardsJSON)});
         });
+    },
+    cardsFromJSON: function(cardsJSON) {
+        var cardData = JSON.parse(cardsJSON);
+        var cardModels = _(cardData).map(function(card) {
+            return new models.CardModel(card);
+        });
+        return new models.CardCollection(cardModels);
     },
     fetchCardData: function(queryString) {
         var self = this;
-        $.get('/api/cards' + queryString, function(newCards) {
-            var cardData = JSON.parse(newCards);
-            var cardModels = _(cardData).map(function(card) {
-                return new models.CardModel(card);
-            });
-            var cardCollection = new models.CardCollection(cardModels);
-            self.setState({cardCollection: cardCollection});
+        $.get('/api/cards' + queryString, function(newCardsJSON) {
+            console.log("fetchCardData got some card data");
+            console.log(newCardsJSON);
+            self.setState({cardCollection: self.cardsFromJSON(newCardsJSON)});
         });
     },
     onDeleteCard: function(cardModel) {

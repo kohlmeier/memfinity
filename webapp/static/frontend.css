@@ -73,9 +73,19 @@ body {
     padding: 5px;
 }
 
-.filtertext {
+.filterbar .filterbar-query {
     min-width: 500px;
-    border: 1px solid #bdc3c7 !important;
+    border: 1px solid #bdc3c7 !important; /* Override bootstrap's :focus coloring. */
+    font-size: 18px;
+    line-height: 24px;
+}
+
+.filterbar .filterbar-submit {
+    /* Sizes are magic numbers related to the input height. */
+    height: 55px;
+    margin: 2px 0;
+    width: 100%;
+    font-size: 22px;
 }
 
 .btn.practicebutton {
