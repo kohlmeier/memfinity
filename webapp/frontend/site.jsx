@@ -7,7 +7,8 @@ var models = require('./models.js'),
     SearchFeed = require('./feed.jsx').SearchFeed,
     UserFeed = require('./feed.jsx').UserFeed,
     Editor = require('./editor.jsx'),
-    Follows = require('./follows.jsx'),
+    Following = require('./follows.jsx').Following,
+    Followers = require('./follows.jsx').Followers,
     About = require('./about.jsx');
 
 var Site = React.createClass({
@@ -27,6 +28,8 @@ React.renderComponent((
         <Route name="create" path="/create" handler={Editor}/>
         <Route name="edit" path="/edit/:cardKey" handler={Editor}/>
         <Route name="about" path="/about" handler={About}/>
-        <Route name="follows" path="/user/:userKey/following" handler={Follows}/>
+        <Route name="user" path="/user/:userKey" handler={UserFeed}/>
+        <Route name="following" path="/user/:userKey/following" handler={Following}/>
+        <Route name="followers" path="/user/:userKey/followers" handler={Followers}/>
     </Route>
 ), document.body);

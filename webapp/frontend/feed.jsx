@@ -7,6 +7,7 @@ var Link = require('react-nested-router').Link;
 var BackboneMixin = require('./backbonemixin.js');
 var models = require('./models.js');
 var gravatar = require('./gravatar.js');
+var UserHeader = require('./userheader.jsx');
 
 // TODO(chris): this is chock-full of XSS potential. Plz fix. We
 // really ought to sanitize the generated HTML, probably on the
@@ -78,12 +79,14 @@ var FeedCardMeta = React.createClass({
         var userImage = gravatar(this.props.model.get('user_email'), 60),
             photoStyle = {background: 'url(' + userImage + ') no-repeat'};
         return <div className='feedcard_userinfo span2'>
-            <div className='feedcard_photo' style={photoStyle} />
-            <div className='feedcard_desc'>
-                <div className='feedcard_username'>
-                    {this.props.model.get('user_nickname')}
+            <Link to="user" userKey={this.props.model.get('user_key')}>
+                <div className='feedcard_photo' style={photoStyle} />
+                <div className='feedcard_desc'>
+                    <div className='feedcard_username'>
+                        {this.props.model.get('user_nickname')}
+                    </div>
                 </div>
-            </div>
+            </Link>
         </div>;
     },
     takeCard: function() {
@@ -199,11 +202,47 @@ var SearchFeed = React.createClass({
 });
 
 var UserFeed = React.createClass({
+    determineUserKey: function() {
+        if (this.props.params && this.props.params.userKey) {
+            return this.props.params.userKey;
+        }
+        if (window.user_key) {
+            return window.user_key;
+        }
+        return null;
+    },
     render: function() {
-        // TODO(chris): is there a better way to get these props in here?
-        // By default, show the content for ourselves and those we're following.
-        var query = [window.user_key].concat(window.following_keys).join(' ');
-        return <SearchFeed query={query} showSearchBar={false} />;
+        if (!this.determineUserKey()) {
+            return <div>Log in to view your feed...</div>;
+        }
+
+        if (!this.state.userData || !this.state.query) {
+            return <div>Hold on, reticulating splines...</div>;
+        }
+
+        return <div>
+            <UserHeader userData={this.state.userData} />
+            <SearchFeed query={this.state.query} showSearchBar={false} />
+        </div>;
+
+    },
+    getInitialState: function() {
+        return {
+            userData: null,
+            query: ''
+        };
+    },
+    componentDidMount: function() {
+        var userKey = this.determineUserKey();
+        if (!this.state.userData && userKey) {
+            var url = '/api/user/' + userKey ;
+            var self = this;
+            $.get(url, function(response) {
+                var userData = JSON.parse(response);
+                var query = [userData.key].concat(userData.following).join(' ');
+                self.setState({userData: userData, query: query});
+            });
+        }
     }
 });
 
