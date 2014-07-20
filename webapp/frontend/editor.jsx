@@ -102,20 +102,25 @@ var EditorForm = React.createClass({
 // state: cardModel
 var Editor = React.createClass({
     render: function() {
-        if (this.state.cardModel) {
+        if (window.user_key === 'None') {
             return <div className="editor">
-                <EditorForm ref="editorForm"
-                    isEnabled={!this.state.pendingSubmit}
-                    cardModel={this.state.cardModel}
-                    submitCardData={this.submitCardData} />
+                Please log in to create your own cards.  :)
             </div>;
-
         }
 
-        // If we don't have the data yet, display a temp message.
+        if (!this.state.cardModel) {
+            // If we don't have the data yet, display a temp message.
+            return <div className="editor">
+                Please wait while your card data is fetched for editing. <br/>
+                {this.props.params.cardKey}
+            </div>;
+        }
+
         return <div className="editor">
-            Please wait while your card data is fetched for editing. <br/>
-            {this.props.params.cardKey}
+            <EditorForm ref="editorForm"
+                isEnabled={!this.state.pendingSubmit}
+                cardModel={this.state.cardModel}
+                submitCardData={this.submitCardData} />
         </div>;
     },
     getInitialState: function() {

@@ -206,18 +206,19 @@ var UserFeed = React.createClass({
         if (this.props.params && this.props.params.userKey) {
             return this.props.params.userKey;
         }
-        if (window.user_key) {
+        if (window.user_key !== 'None') {
             return window.user_key;
         }
         return null;
     },
     render: function() {
         if (!this.determineUserKey()) {
-            return <div>Log in to view your feed...</div>;
+            // hack: use a real class name
+            return <div className="login-prompt">Log in to view your feed...</div>;
         }
 
         if (!this.state.userData || !this.state.query) {
-            return <div>Hold on, reticulating splines...</div>;
+            return <div className="feed">Hold on, reticulating splines...</div>;
         }
 
         return <div>

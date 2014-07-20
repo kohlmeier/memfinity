@@ -17,6 +17,12 @@ var CardModel = models.CardModel,
 
 var Review = React.createClass({
     render: function() {
+        if (window.user_key === 'None') {
+            return <div className="editor">
+                Please log in to practice your personal cards.  :)
+            </div>;
+        }
+
         if (!this.state.reviewingStack) {
             // If we don't have the data yet, display a temp message.
             return <div>Sit tight, partner.  We&lsquo;re loading your data now!</div>;

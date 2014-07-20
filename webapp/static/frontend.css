@@ -362,6 +362,13 @@ body {
     display: inline-block;
 }
 
+
+.login-prompt {
+    margin: 50px auto 0;
+    width: 450px;
+}
+
+
 /* Style the HTML of user-generated content.
 
    Since CSS reset took out defaults, we want to re-instate some
