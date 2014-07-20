@@ -210,7 +210,7 @@ class Card(ndb.Model):
         # TODO(jace) remove the hack of storing user info on cards
         # for quick gravatar support
         if not user:
-            user = users.get_current_user() or FakeUser()
+            user = users.get_current_user()
         self.user_email = user.email()
         self.user_nickname = user_nickname(user.email())
 
