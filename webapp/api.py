@@ -138,7 +138,6 @@ def card_query(handler):
             # hasn't explicitly asked to review ALL cards, then we truncate
             # the results to include just cards scheduled on or before
             # today... the future can wait.
-            logging.error("Attempting to truncate review list")
             now = datetime.datetime.now()
             results = [card for card in results if card.next_review <= now]
 

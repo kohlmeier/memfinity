@@ -22,6 +22,7 @@ var Site = React.createClass({
 
 React.renderComponent((
     <Route handler={Site}>
+        <Route name="index" path="/" handler={About}/>
         <Route name="review" path="/review" handler={Review }/>
         <Route name="feed" path="/feed" handler={UserFeed}/>
         <Route name="search" path="/search" handler={SearchFeed}/>
