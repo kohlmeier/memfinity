@@ -18,8 +18,12 @@ var UserHeader = React.createClass({
         var followItem = '';
         var unfollowItem = '';
         if (!sameUser) {
-            followItem = !isFollowing && <li className="follow-item"><button className="btn btn-primary" onClick={this.onFollow}>Follow</button></li>;
-            unfollowItem = isFollowing && <li><button className="btn btn-danger" onClick={this.onUnfollow}>Unfollow</button></li>;
+            followItem = !isFollowing && <li className="follow-item">
+                <button className="btn btn-small btn-primary"
+                        onClick={this.onFollow}>Follow</button></li>;
+            unfollowItem = isFollowing && <li>
+                <button className="btn btn-small btn-danger"
+                        onClick={this.onUnfollow}>Unfollow</button></li>;
         }
         // Update our idea of followers in case the current user has
         // followed / unfollowed.

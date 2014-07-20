@@ -387,11 +387,12 @@ body {
 .user-header .primary {
     margin-bottom: 15px;
     padding-left: 100px;
-    min-height: 80px;
+    min-height: 90px;
 }
 
 .user-header .primary li {
-    margin-top: 5px;
+    padding-top: 5px;
+    margin-bottom: 10px;
 }
 
 .user-header .userimg {
@@ -401,7 +402,7 @@ body {
 }
 
 .user-header .username {
-    font-size: 22px;
+    font-size: 24px;
     font-weight: bold;
     margin-top: 5px;
 }
