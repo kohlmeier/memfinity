@@ -19,9 +19,9 @@ var FeedCard = React.createClass({
     mixins: [BackboneMixin],
     render: function() {
         var cardActionButtons;
-        if (window.username === null) {
+        if (window.user_key === null || window.user_key === 'None') {
             cardActionButtons = null;
-        } else if (window.username !== this.props.model.get('user_email')) {
+        } else if (window.user_key !== this.props.model.get('user_key')) {
             cardActionButtons = 
                 <div className='btn btn-primary btn-small' onClick={this.takeCard}>
                     <i className='icon-download'></i> Take
