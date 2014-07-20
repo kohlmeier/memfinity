@@ -1,6 +1,5 @@
 import datetime
 import json
-import logging
 
 from google.appengine.api import oauth
 from google.appengine.api import users
@@ -148,8 +147,16 @@ def card_search(handler):
     Returns a (possibly empty) list of JSONified models.Card
     entities. See search.py for query processing details.
     """
+    user = users.get_current_user()
+    if user:
+        user_data = models.UserData.get_for_user_id(user.user_id())
+        user_key = user_data.key.urlsafe()
+    else:
+        user_key = None
+
     query = handler.request.get('q', '')
-    search_results = search.query_cards(query, limit=20, ids_only=True)
+    search_results = search.query_cards(query, limit=20, ids_only=True,
+            user_key=user_key)
     results = ndb.get_multi([ndb.Key(urlsafe=result.doc_id)
                              for result in search_results])
     return jsonify.jsonify(results)

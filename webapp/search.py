@@ -65,7 +65,7 @@ def delete_cards(cards):
 
 
 def query_cards(query_str, limit=QUERY_LIMIT, web_safe_cursor=None,
-                ids_only=False):
+                ids_only=False, user_key=None):
     """Return the search.SearchResults for a query.
 
     ids_only is useful because the returned document IDs are url-safe
@@ -81,8 +81,11 @@ def query_cards(query_str, limit=QUERY_LIMIT, web_safe_cursor=None,
         query_str,
         name_field='user_nickname',
         tag_field='tag',
+        private_field='private',
+        user_key_field='user_key',
         query_options=search.QueryOptions(limit=limit, cursor=cursor,
-                                          ids_only=ids_only))
+                                          ids_only=ids_only),
+        user_key=user_key)
     search_results = index.search(query_processor.query())
     # TODO(chris): should this return partially-instantiated
     # models.Card instances instead of leaking implementation details
@@ -109,6 +112,7 @@ def _card2doc(card):
             search.DateField(name='added', value=card.added),
             search.DateField(name='modified', value=card.modified),
             search.AtomField(name='source_url', value=card.source_url),
+            search.AtomField(name='private', value="1" if card.private else "0"),
             ] + tag_fields)
     return doc
 
@@ -148,11 +152,16 @@ class _QueryProcessor(object):
     name_field is the field @name tokens should apply to.
     tag_field is the name of the field #tag tokens should apply to.
     """
-    def __init__(self, query_str, name_field, tag_field, query_options=None):
+    def __init__(self, query_str,
+            name_field, tag_field, private_field, user_key_field,
+            query_options=None, user_key=None):
         self.query_str = query_str
         self.name_field = name_field
         self.tag_field = tag_field
+        self.private_field = private_field
+        self.user_key_field = user_key_field
         self.query_options = query_options
+        self.user_key = user_key
 
     def _sanitize_user_input(self):
         query_str = self.query_str[:MAX_QUERY_LEN]
@@ -161,7 +170,7 @@ class _QueryProcessor(object):
     def _build_query_string(self):
         terms, names, tags = self._sanitize_user_input()
         # Our simply query logic is to OR together all terms from the
-        # user, then AND in the name or tag filters.
+        # user, then AND in the name or tag filters (plus a privacy clause).
         parts = []
         if terms:
             parts.append(' OR '.join(terms))
@@ -169,6 +178,14 @@ class _QueryProcessor(object):
             parts.append('%s: (%s)' % (self.name_field, ' OR '.join(names)))
         if tags:
             parts.append('%s: (%s)' % (self.tag_field, ' OR '.join(tags)))
+
+        # Don't return cards that other users have marked private...
+        privacy = '%s: 0' % self.private_field
+        if self.user_key:
+            # ... but always show the user their own cards in results.
+            privacy += ' OR %s: (%s)' % (self.user_key_field, self.user_key)
+        parts.append('(' + privacy + ')')
+
         return ' AND '.join(parts)
 
     def query(self):
