@@ -13,7 +13,7 @@ var UserHeader = React.createClass({
         //console.log("sameUser: ", sameUser, window.user_key, this.props.userData.key);
 
         return <div className="feedcard row-fluid">
-            <div>Avatar here, please</div>
+            <div><img src={gravatar(userData.email)} /></div>
             <div>
                 <div>Name: {userData.name}</div>
                 <div>UserId: {userData.user_id}</div>

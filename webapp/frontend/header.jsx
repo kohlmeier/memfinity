@@ -10,7 +10,7 @@ var Header = React.createClass({
         if (window.username === null) {
             loginLink = <a href="/login">Login</a>;
         } else {
-            loginLink = <a href="/logout"><img src={gravatar(window.username + '@gmail.com')} /> Logout</a>;
+            loginLink = <a href="/logout"><img src={gravatar(window.user_email)} /> Logout</a>;
         }
         return <div className="navbar navbar-inverse">
             <div className=' navbar-inner'>

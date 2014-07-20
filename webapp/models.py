@@ -34,8 +34,14 @@ class LeitnerAlgorithm(object):
         return cls.BOX_INTERVALS[current_box] * 24 * 60 * 60
 
 
+def user_nickname(email):
+    return email[:email.find('@')]
+
+
 class UserData(ndb.Model):
     user_id = ndb.StringProperty(required=True, indexed=True)
+    # TODO(chris): require this field.
+    email = ndb.StringProperty(required=False, indexed=True)
 
     name = ndb.StringProperty()
 
@@ -48,6 +54,10 @@ class UserData(ndb.Model):
     followers = ndb.KeyProperty(repeated=True, indexed=True)
 
     # TODO(jace) add user-specific settings
+
+    @property
+    def nickname(self):
+        return user_nickname(self.email)
 
     def _keys_from_urlsafes(urlsafe_list):
         return [ndb.Key(urlsafe=k) for k in urlsafe_list]
@@ -201,12 +211,8 @@ class Card(ndb.Model):
         # for quick gravatar support
         if not user:
             user = users.get_current_user() or FakeUser()
-
         self.user_email = user.email()
-        nickname = user.nickname()
-        if nickname.find('@') > 0:
-            nickname = nickname[:nickname.find('@')]
-        self.user_nickname = nickname
+        self.user_nickname = user_nickname(user.email())
 
     @classmethod
     def get_for_user(cls, user_data):

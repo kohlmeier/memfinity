@@ -27,6 +27,14 @@ class MainPage(webapp2.RequestHandler):
         logging.info("Debug User: '" + str(user) + "'")
         if user:
             user_data = models.UserData.get_for_user_id(user.user_id())
+            # TODO(chris): remove this hack! We added email to
+            # UserData, and it's required, so this ensures that on the
+            # next page load, UserData will be updated properly.
+            if user_data.email is None:
+                logging.info("Added %s for UserData %s"
+                             % (user.email(), user_data.key.urlsafe()))
+                user_data.email = user.email()
+                user_data.put()
         else:
             user_data = None
 
@@ -45,6 +53,8 @@ class MainPage(webapp2.RequestHandler):
             following_keys = [k.urlsafe() for k in user_data.following]
             user_key = user_data.key.urlsafe()
             username = str(user)
+            user_nickname = user_data.nickname
+            user_email = user_data.email
         else:
             user_cards = []
             global_cards = (models.Card
@@ -52,11 +62,15 @@ class MainPage(webapp2.RequestHandler):
             following_keys = []
             user_key = None
             username = None
+            user_nickname = None
+            user_email = None
 
         template = JINJA_ENVIRONMENT.get_template('index.html')
         env = {
             'user': user_data,
             'user_key': user_key,
+            'user_nickname': user_nickname,
+            'user_email': user_email,
             'username': json.dumps(username),
             'following_keys': jsonify.jsonify(following_keys),
             'users': users,
