@@ -253,9 +253,10 @@ body {
     cursor: pointer
 }
 
+
 .content {
-    margin-top: 5%;
-    text-align: center;
+    padding: 5% 5% 0% 5%;
+    text-align: left;
 }
 
 .choices {
