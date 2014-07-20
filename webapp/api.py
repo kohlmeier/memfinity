@@ -30,12 +30,8 @@ def get_current_user(handler):
     user = users.get_current_user()
 
     if not user:
-        # STOPSHIP(jace) whooooa!
-        if handler.request.get('no_auth', None):
-            user = models.FakeUser()
-        else:
-            handler.error(401)
-            return None
+        handler.error(401)
+        return None
 
     return models.UserData.get_for_user_id(user.user_id())
 

@@ -34,17 +34,6 @@ class LeitnerAlgorithm(object):
         return cls.BOX_INTERVALS[current_box] * 24 * 60 * 60
 
 
-# STOPSHIP(jace) remove - was for debugging
-class FakeUser(object):
-    user = "joelburget@gmail.com"
-    def user_id(self):
-        return FakeUser.user
-    def email(self):
-        return FakeUser.user
-    def nickname(self):
-        return FakeUser.user
-
-
 class UserData(ndb.Model):
     user_id = ndb.StringProperty(required=True, indexed=True)
 
