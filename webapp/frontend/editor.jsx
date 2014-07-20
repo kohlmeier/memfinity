@@ -15,7 +15,7 @@ var EditorForm = React.createClass({
     },
     handleChange: function(field, event) {
         var state = {};
-        if (field === 'reversible' || field === 'public') {
+        if (field === 'reversible' || field === 'private') {
             state[field] = event.target.checked;
         } else {
             state[field] = event.target.value;
@@ -84,8 +84,8 @@ var EditorForm = React.createClass({
             </div>
             <div className="checkbox">
                 <label><input type="checkbox"
-                              defaultChecked={this.props.cardModel.public}
-                              onChange={_.partial(this.handleChange, 'public')}/> Public</label>
+                              defaultChecked={this.props.cardModel.private}
+                              onChange={_.partial(this.handleChange, 'private')}/> Private</label>
             </div>
             <input type="submit" disabled={!this.props.isEnabled} className="btn btn-primary" value="Save" />
         </form>;

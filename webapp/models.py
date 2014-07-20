@@ -138,7 +138,7 @@ class Card(ndb.Model):
     info = ndb.TextProperty()
 
     reversible = ndb.BooleanProperty(default=False, indexed=False)
-    public = ndb.BooleanProperty(default=True, indexed=True)
+    private = ndb.BooleanProperty(default=False, indexed=True)
     tags = ndb.StringProperty(repeated=True, indexed=True)
 
     # metadata
@@ -204,7 +204,7 @@ class Card(ndb.Model):
         self.tags = data.get('tags', self.tags)
         self.source_url = data.get('source_url', self.source_url)
         self.reversible = data.get('reversible', self.reversible)
-        self.public = data.get('public', self.public)
+        self.private = data.get('private', self.private)
         # TODO(jace) Allow updating of last/next_review?
 
     def update_email_and_nickname(self, user=None):
