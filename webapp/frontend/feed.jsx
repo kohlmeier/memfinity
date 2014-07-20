@@ -38,12 +38,18 @@ var FeedCard = React.createClass({
                     </Link>
                 </div>;
         };
-        var front = this.props.model.get('front'),
+
+        var inputFormat = this.props.model.get('input_format'),
+            front = this.props.model.get('front'),
             back = this.props.model.get('back');
-        if (this.props.model.get('input_format') == 'markdown') {
+        if (inputFormat == 'text') {
+            front = <div style={{whiteSpace: 'pre-line'}}>{front}</div>;
+            back = <div style={{whiteSpace: 'pre-line'}}>{back}</div>;
+        } else if (inputFormat == 'markdown') {
             front = <div className="userhtml" dangerouslySetInnerHTML={{__html: converter.makeHtml(front)}}></div>;
             back = <div className="userhtml" dangerouslySetInnerHTML={{__html: converter.makeHtml(back)}}></div>;
         }
+
         return <div className='feedcard row-fluid'>
             <FeedCardMeta model={this.props.model} />
             <div className='feedcard_right span10'>
