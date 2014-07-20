@@ -85,12 +85,12 @@ var Follows = React.createClass({
         return new models.CardCollection(cardModels);
     },
     fetchData: function(queryString) {
-        //var self = this;
-        //$.get('/api/cards' + queryString, function(newCardsJSON) {
-        //    console.log("fetchData got some card data");
-        //    console.log(newCardsJSON);
-        //    self.setState({cardCollection: self.cardsFromJSON(newCardsJSON)});
-        //});
+        var self = this;
+        var url = '/api/user/' + this.props.params.userKey + '/follows';
+        $.get(url, function(response) {
+            console.log("fetchData got some card data");
+            console.log(response);
+        });
         this.setState({users: [{"user_email": "test@example.com", "user_nickname": "theBOSS"}]});
     }
 });

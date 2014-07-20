@@ -274,8 +274,35 @@ def card_import(handler):
     return new_card.key.urlsafe()
 
 
+def user_follows(handler):
+    """Get the users followed by and following a certain users.
+
+    Called via a route like:
+    /api/user/<user_key>/follows
+    """
+    path = handler.request.path
+
+    user_key = path[len('/api/user/'):-len('/follows')]
+    user_data = ndb.Key(urlsafe=user_key).get()
+    if not user_data:
+        return "User not found"
+
+    # TODO make async
+    following_data = ndb.get_multi(user_data.following)
+    followers_data = ndb.get_multi(user_data.followers)
+
+    # Finally ready to do the update
+    data = {
+        'user_data': user_data,
+        'following': following_data,
+        'followers': followers_data
+    }
+
+    return jsonify.jsonify(data)
+
+
 def user_update(handler):
-    """Update and exisiting Card."""
+    """Update an exisiting User."""
     user_data = get_current_user(handler)
     if not user_data:
         return

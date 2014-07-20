@@ -43,20 +43,20 @@ class MainPage(webapp2.RequestHandler):
                     .fetch_async(500),
                 )
             following_keys = [k.urlsafe() for k in user_data.following]
+            user_key = user_data.key.urlsafe()
+            username = str(user)
         else:
             user_cards = []
             global_cards = (models.Card
                 .query().order(-models.Card.added).fetch(1000))
             following_keys = []
-
-        if user_data:
-            username = str(user)
-        else:
+            user_key = None
             username = None
 
         template = JINJA_ENVIRONMENT.get_template('index.html')
         env = {
             'user': user_data,
+            'user_key': user_key,
             'username': json.dumps(username),
             'following_keys': jsonify.jsonify(following_keys),
             'users': users,
@@ -95,6 +95,9 @@ class ApiHandler(webapp2.RequestHandler):
             response = api.card_query(self)
         elif path == '/api/user':
             response = api.user_view_current(self)
+        elif re.match('/api/user/.+/follows', path):
+            # return and the follower and following users
+            response = api.user_follows(self)
         elif path.startswith('/api/user/'):
             # retrieve an individual user
             response = api.user_view(self)
