@@ -17,6 +17,9 @@ handlers:
 - url: /.*
   script: main.application
 
+builtins:
+- remote_api: on
+
 skip_files:
 # These are App Engine's default values.
 - ^(.*/)?#.*#$
