@@ -16,15 +16,15 @@ var CardModel = Backbone.Model.extend({
             contentType: 'application/json',
             type: 'PUT'
         })
-            .done(function() { console.log('success'); })
-            .fail(function() { console.log('fail'); });
+            //.done(function() { console.log('card rate success'); })
+            .fail(function() { console.log('card rate fail'); });
     },
     deleteCard: function() {
         $.ajax({
             url: this.url(),
             type: 'DELETE'
         })
-            .done(function() { console.log('card delete success'); })
+            //.done(function() { console.log('card delete success'); })
             .fail(function() { console.log('card delete fail'); });
     },
     takeCard: function() {
@@ -32,7 +32,7 @@ var CardModel = Backbone.Model.extend({
             url: this.url() + '/import',
             type: 'PUT'
         })
-            .done(function() { console.log('card import success'); })
+            //.done(function() { console.log('card import success'); })
             .fail(function() { console.log('card import fail'); });
     },
 });

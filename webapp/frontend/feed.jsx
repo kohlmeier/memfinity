@@ -23,7 +23,7 @@ var FeedCard = React.createClass({
             cardActionButtons = null;
         } else if (window.user_key !== this.props.model.get('user_key')) {
             cardActionButtons = 
-                <div className='btn btn-primary btn-small' onClick={this.takeCard}>
+                <div className='btn btn-info btn-small' onClick={this.takeCard}>
                     <i className='icon-download'></i> Take
                 </div>;
         } else {
@@ -139,7 +139,8 @@ var FilterBar = React.createClass({
         this.props.onFilterChange(query);
     },
     render: function() {
-        return <form className='filterbar row-fluid' onSubmit={this.handleSubmit}>
+        return <div className="row-fluid">
+        <form className='filterbar row-fluid' onSubmit={this.handleSubmit}>
             <div className='span9'>
                 <input type='text'
                        placeholder='What are you looking for?'
@@ -152,7 +153,11 @@ var FilterBar = React.createClass({
                        className='btn btn-primary filterbar-submit'
                        value='Search' />
             </div>
-        </form>;
+        </form>
+            <div className='span12 takeallbutton'>
+                <button className="btn btn-small btn-info" onClick={this.props.onTakeAll}><i className="icon-download"></i> Take &rsquo;em all</button>
+            </div>
+        </div>;
     }
 });
 
@@ -163,7 +168,8 @@ var SearchFeed = React.createClass({
         if (!this.props.hasOwnProperty('showSearchBar')
                 || this.props.showSearchBar) {
             filterbar = <FilterBar filter={this.props.query}
-                                   onFilterChange={this.fetchCardData} />;
+                                   onFilterChange={this.fetchCardData}
+                                   onTakeAll={this.onTakeAll} />;
         }
         return <div className='feed clearfix'>
             {filterbar}
@@ -173,7 +179,10 @@ var SearchFeed = React.createClass({
     },
     getInitialState: function() {
         // TODO set some state for a spinner?
-        return { cardCollection: new models.CardCollection() };
+        return {
+            cardCollection: new models.CardCollection(),
+            userKey: window.user_key
+        };
     },
     componentDidMount: function() {
         this.fetchCardData(this.props.query);
@@ -198,6 +207,15 @@ var SearchFeed = React.createClass({
         var cardCollection = new models.CardCollection(this.state.cardCollection.models);
         cardCollection.remove(cardModel);
         this.setState({cardCollection: cardCollection});
+    },
+    onTakeAll: function() {
+        console.log("Take ALL", this.state.cardCollection.models);
+        var self = this;
+        _.map(this.state.cardCollection.models, function(cardModel) {
+            if (cardModel.get('user_key') !== self.state.userKey) {
+                cardModel.takeCard();
+            }
+        });
     }
 });
 

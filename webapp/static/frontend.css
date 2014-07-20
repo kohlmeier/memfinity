@@ -50,6 +50,11 @@ body {
     width: 100%;
 }
 
+.takeallbutton {
+    margin-left: 0;
+    text-align: center;
+}
+
 .feedbody {
     list-style-type: none;
     margin-left: 0;
