@@ -373,6 +373,52 @@ body {
     width: 450px;
 }
 
+.user-header {
+    background-color: #fff;
+    margin-top: -20px;
+    padding-top: 20px;
+}
+
+.user-header-inner {
+    width: 210px;
+    margin: 0 auto;
+}
+
+.user-header .primary {
+    margin-bottom: 15px;
+    padding-left: 100px;
+    min-height: 80px;
+}
+
+.user-header .primary li {
+    margin-top: 5px;
+}
+
+.user-header .userimg {
+    border-radius: 50%;
+    margin-left: -100px;
+    position: absolute;
+}
+
+.user-header .username {
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.user-header .primary button {
+    width: 100px;
+}
+
+.user-header .secondary {
+    clear: both;
+    text-align: center;
+}
+
+.user-header .secondary li {
+    display: inline;
+    margin: 0 3px;
+}
 
 /* Style the HTML of user-generated content.
 

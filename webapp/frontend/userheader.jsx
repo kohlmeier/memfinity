@@ -7,37 +7,54 @@ var Link = require('react-nested-router').Link;
 var gravatar = require('./gravatar.js');
 
 var UserHeader = React.createClass({
+    getInitialState: function() {
+        return {following: window.following};
+    },
     render: function() {
         var userData = this.props.userData;
-        var sameUser = (window.user_key && this.props.userData.key == window.user_key);
-        //console.log("sameUser: ", sameUser, window.user_key, this.props.userData.key);
+        var sameUser = (window.user_key && userData.key == window.user_key);
+        //console.log("sameUser: ", sameUser, window.user_key, userData.key);
+        var isFollowing = !sameUser && _.contains(this.state.following, userData.key);
+        var followItem = '';
+        var unfollowItem = '';
+        if (!sameUser) {
+            followItem = !isFollowing && <li className="follow-item"><button className="btn btn-primary" onClick={this.onFollow}>Follow</button></li>;
+            unfollowItem = isFollowing && <li><button className="btn btn-danger" onClick={this.onUnfollow}>Unfollow</button></li>;
+        }
+        // Update our idea of followers in case the current user has
+        // followed / unfollowed.
+        var followers = (isFollowing ? _.union : _.difference)(
+            userData.followers, [window.user_key]);
 
-        return <div className="feedcard row-fluid">
-            <div><img src={gravatar(userData.email)} /></div>
-            <div>
-                <div>Name: {userData.name}</div>
-                <div>UserId: {userData.user_id}</div>
-                <div>Following: &nbsp;
-                    <Link to="following" userKey={this.props.userData.key}>{userData.following.length}</Link>
+        return <div className="user-header row-fluid">
+            <div className="user-header-inner">
+                <ul className="primary">
+                    <li><img className="userimg" src={gravatar(userData.email)} /></li>
+                    <li className="username">{userData.nickname}</li>
+                    {followItem}
+                    {unfollowItem}
+                </ul>
+                <ul className="secondary">
+                    <li style={followers.length ? {} : {display: "none"}}><Link to="followers" userKey={userData.key}>{followers.length} Followers.</Link></li>
+                    <li style={userData.following.length ? {} : {display: "none"}}><Link to="following" userKey={userData.key}>Following {userData.following.length}.</Link></li>
+                </ul>
                 </div>
-                <div>Followers: &nbsp;
-                    <Link to="followers" userKey={this.props.userData.key}>{userData.followers.length}</Link>
-                </div>
-                <div visible={!sameUser}>
-                    <a disabled={sameUser} href="javascript:void(0);" onClick={this.onFollow}>Follow</a>
-                </div>
-                <div visible={!sameUser}>
-                    <a disabled={sameUser} href="javascript:void(0);" onClick={this.onUnfollow}>Unfollow</a>
-                </div>
-            </div>
-        </div>;
+            </div>;
     },
     fireAJAX: function(followOrUnfollow) {
+        var self = this;
+        var userDataKey = this.props.userData.key;
         $.ajax({
-            url: '/api/user/' + this.props.userData.key + '/' + followOrUnfollow,
+            url: '/api/user/' + userDataKey + '/' + followOrUnfollow,
             type: 'PUT',
-            success: function(response) { console.log("PUT was successful: " + response); },
-            error: function(xhr, status, err) { console.log("PUT failed: ", status, err.toString()); }
+            success: function(response) {
+                console.log("PUT was successful: " + response);
+                var fn = followOrUnfollow == "follow" ? _.union : _.difference;
+                self.setState({following: fn(window.following, [userDataKey])});
+            },
+            error: function(xhr, status, err) {
+                console.log("PUT failed: ", status, err.toString());
+            }
         });
     },
     onFollow: function() {
