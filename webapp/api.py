@@ -240,7 +240,7 @@ def card_update(handler, delete=False, review=False):
 
 
 def card_import(handler):
-    """Import another user's exisiting Card the current users account.
+    """Import another user's existing Card to the current user's account.
 
     Called with the form: /api/card/<card_id>/import
     """
@@ -369,3 +369,53 @@ def user_follow_unfollow(handler, follow_or_unfollow):
                 follow_user.put()
 
     return user_data.key.urlsafe()
+
+
+class _JSONCardArchive(object):
+    """Simple format for storing cards used by bulk import & export."""
+    # TODO(chris): unit tests for import / export.
+
+    VERSION = "v1"
+    """Increment VERSION when the JSON archive format changes."""
+
+    def __init__(self, cards=None):
+        self.cards = cards or []
+
+    def _card_to_archive_card(self, card):
+        """Python object representation of a model.Card for export."""
+        # TODO(chris): ensure front / back / tags / input_format are
+        # empty strings and not "None". Needs unit testing.
+        return {"front": card.front,
+                "back": card.back,
+                "tags": card.tags,
+                "input_format": card.input_format,
+                }
+
+    def get_cards(self):
+        return self.cards
+
+    def to_json(self):
+        archive = {"format": "JSONCardArchive",
+                   "version": self.VERSION,
+                   "cards": map(self._card_to_archive_card, self.cards),
+                   }
+        return jsonify.jsonify(archive)
+
+    @classmethod
+    def from_json(cls, json_str):
+        pass
+
+
+def card_bulk_export(handler):
+    """Return all cards for the current user in JSON archive format."""
+    user_data = get_current_user(handler)
+    if not user_data:
+        return
+
+    query = models.Card.query()
+    query = query.filter(models.Card.user_key == user_data.key)
+    # TODO(chris): support export of >1k cards.
+    # TODO(chris): support streaming JSON w/a fixed memory buffer to
+    # avoid OOMs due to large card content.
+    archive = _JSONCardArchive(query.fetch(limit=1000))
+    return archive.to_json()

@@ -98,6 +98,8 @@ class ApiHandler(webapp2.RequestHandler):
             # search across cards
             # '/api/cards/search?q=search+query' -> search for 'search query'
             response = api.card_search(self)
+        elif path == '/api/cards/bulk_export':
+            response = api.card_bulk_export(self)
         elif path == '/api/cards':
             # query for many cards
             # '/api/cards' -> returns all cards, ordered by date added desc

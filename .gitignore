@@ -1,3 +1,5 @@
+*.pyc
+\#*\#
 webapp/static/frontend.js
 webapp/static/.module-cache
 webapp/static/.lock.pid
