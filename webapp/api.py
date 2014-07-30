@@ -383,13 +383,13 @@ class _JSONCardArchive(object):
 
     def _card_to_archive_card(self, card):
         """Python object representation of a model.Card for export."""
-        # TODO(chris): ensure front / back / tags / input_format are
-        # empty strings and not "None". Needs unit testing.
-        return {"front": card.front,
-                "back": card.back,
-                "tags": card.tags,
-                "input_format": card.input_format,
-                }
+        obj = {"front": card.front or "",
+               "back": card.back or "",
+               "input_format": card.input_format or "text",
+               }
+        if card.tags:
+            obj["tags"] = card.tags
+        return obj
 
     def get_cards(self):
         return self.cards
