@@ -1,0 +1,3 @@
+[submodule "frankenserver"]
+	path = frankenserver
+	url = https://github.com/Khan/frankenserver.git
