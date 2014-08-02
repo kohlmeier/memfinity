@@ -54,3 +54,41 @@ class CardBulkExportTest(unittest.TestCase):
         kwargs = {'front': 'Hello\n====', 'back': '* World',
                   'tags': ['in-text'], 'input_format': 'markdown'}
         self.assert_card_json(models.Card(**kwargs), **kwargs)
+
+
+class CardBulkImportTest(unittest.TestCase):
+    def test_invalid_metadata(self):
+        # Empty JSON is missing a necessary attribute.
+        with self.assertRaises(AssertionError):
+            api._JSONCardArchive.from_json('{}')
+        # Missing "version" attribute.
+        with self.assertRaises(AssertionError):
+            api._JSONCardArchive.from_json('{"format":"JSONCardArchive"}')
+
+    def test_valid_empty_archive(self):
+        archive = api._JSONCardArchive.from_json("""
+            {"format": "JSONCardArchive",
+             "version": "v1",
+             "cards": []}
+            """)
+        self.assertIsNotNone(archive)
+        self.assertTrue(len(archive.get_cards()) == 0)
+
+    def test_valid_archive(self):
+        archive = api._JSONCardArchive.from_json("""
+            {"format": "JSONCardArchive",
+             "version": "v1",
+             "cards": [{"front": "First side.",
+                        "back": "Second side.",
+                        "input_format": "text",
+                        "tags": ["keep-it-simple"]
+                        }]
+             }
+            """)
+        self.assertIsNotNone(archive)
+        self.assertTrue(len(archive.get_cards()) == 1)
+        card = archive.get_cards()[0]
+        self.assertEqual(card.front, "First side.")
+        self.assertEqual(card.back, "Second side.")
+        self.assertEqual(card.input_format, "text")
+        self.assertEqual(card.tags, ["keep-it-simple"])

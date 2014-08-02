@@ -129,6 +129,8 @@ class ApiHandler(webapp2.RequestHandler):
         if path == '/api/card':
             # add a new card
             response = api.card_add(self)
+        elif path == '/api/cards/bulk_import':
+            response = api.card_bulk_import(self)
         else:
             raise Exception("Unsupported API path: %s" % path)
 

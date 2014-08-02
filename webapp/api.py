@@ -403,7 +403,17 @@ class _JSONCardArchive(object):
 
     @classmethod
     def from_json(cls, json_str):
-        pass
+        obj = json.loads(json_str)
+        assert obj.get("format") == "JSONCardArchive", obj.get("format")
+        assert obj.get("version") == "v1", obj.get("version")
+        assert "cards" in obj
+        cards = []
+        for card_obj in obj["cards"]:
+            card = models.Card()
+            card.update_from_dict(card_obj)
+            cards.append(card)
+        archive = _JSONCardArchive(cards)
+        return archive
 
 
 def card_bulk_export(handler):
@@ -419,3 +429,28 @@ def card_bulk_export(handler):
     # avoid OOMs due to large card content.
     archive = _JSONCardArchive(query.fetch(limit=1000))
     return archive.to_json()
+
+
+def card_bulk_import(handler):
+    """Create POSTed cards for the current user."""
+    user_data = get_current_user(handler)
+    user = users.get_current_user()
+    if not user_data or not user:
+        return
+
+    archive_json_str = handler.request.body
+    archive = _JSONCardArchive.from_json(archive_json_str)
+
+    tags = set()
+    cards = archive.get_cards()
+    # TODO(chris): support streaming JSON w/a fixed memory buffer to
+    # avoid OOMs due to large card content.
+    for card in cards:
+        card.user_key = user_data.key
+        card.update_email_and_nickname(user)
+        tags.update(card.tags)
+
+    # Update the list of all known tags for this user.
+    user_data.update_card_tags([], tags)
+    ndb.put_multi(cards + [user_data])  # TODO(chris): only put if necessary
+    search.insert_cards(cards)
