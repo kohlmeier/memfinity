@@ -1,6 +1,6 @@
 {
-  "name": "SSRS",
-  "description": "SSRS",
+  "name": "Memfinity",
+  "description": "An extension to easily create cards for memfinity.org",
   "version": "0.1",
   "browser_action": {
     "default_icon": "icon.png",
