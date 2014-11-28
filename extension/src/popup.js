@@ -94,7 +94,7 @@ function addCard(data){
 function authenticate(){
   $('#content').html(Templates.authenticate);
   $('#login').click(function(){
-    chrome.tabs.create({'url': "http://localhost:8080/login"});
+    chrome.tabs.create({'url': "http://www.memfinity.org/login"});
   });
 }
 
