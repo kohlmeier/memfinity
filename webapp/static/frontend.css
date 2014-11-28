@@ -257,6 +257,7 @@ body {
 .content {
     padding: 5% 5% 0% 5%;
     text-align: left;
+    white-space: pre-line;
 }
 
 .choices {

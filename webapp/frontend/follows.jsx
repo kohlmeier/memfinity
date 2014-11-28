@@ -19,8 +19,8 @@ var UserCard = React.createClass({
                     <i className='icon-download'></i> Take
                 </div>;
         };
-        var front = this.props.user.user_email,
-            back = this.props.user.user_nickname;
+        var front = this.props.user.nickname,
+            back = this.props.user.name;
         return <div className='feedcard row-fluid'>
             <UserCardMeta user={this.props.user} />
             <div className='feedcard_right span10'>
@@ -40,7 +40,7 @@ var UserCardMeta = React.createClass({
     render: function() {
         // TODO get this info from google
         // http://stackoverflow.com/q/3591278/2121468
-        var userImage = gravatar(this.props.user.user_email, 60),
+        var userImage = gravatar(this.props.user.email, 60),
             photoStyle = {background: 'url(' + userImage + ') no-repeat'};
         return <div className='feedcard_userinfo span2'>
             <div className='feedcard_photo' style={photoStyle} />
