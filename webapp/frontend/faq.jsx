@@ -28,7 +28,11 @@ var FAQ = React.createClass({
                 </div>
                 <div className="feature">
                     <h3>Q: Can I embed images in my cards?</h3>
-                    <p>A: Yup, at least if the images are hosted somewhere else on the web.  Memfinity support Markdown syntax for your cards, and you can find the syntax for specifying an image in Markdown <a href="http://daringfireball.net/projects/markdown/syntax#img">here</a>. If your images are not already hosted on the web, you can use a product like a public Dropbox folder to create linkable URLs for your images.</p>
+                    <p>A: Yup, at least if the images are hosted somewhere else on the web.  Memfinity supports Markdown syntax for your cards, and you can find the syntax for specifying an image in Markdown <a href="http://daringfireball.net/projects/markdown/syntax#img">here</a>. If your images are not already hosted on the web, you can use a product like a public Dropbox folder to create linkable URLs for your images.</p>
+                </div>
+                <div className="feature">
+                    <h3>Q: Do I need to have a Google account to use Memfinity?</h3>
+                    <p>A: Right now, Memfinity requires a Google account to log in. You can search public cards without logging in, but in order to create and practice cards you will need to create a free Google account.</p>
                 </div>
                 <div className="feature">
                     <h3>Q: How do I customize my avatar?</h3>

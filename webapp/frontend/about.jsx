@@ -16,7 +16,7 @@ var About = React.createClass({
                         <div id="textintro">
                             <h1>Memfinity</h1>
                             <p id="acronym">A social spaced-repetition system.</p>
-                            <p id="tagline">Learn with your friends. Remember facts forever.</p>
+                            <p id="tagline">Learn with your friends. Remember forever.</p>
                         </div>
                         <button
                             className="btn btn-primary btn-large"
