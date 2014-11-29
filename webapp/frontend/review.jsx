@@ -121,9 +121,9 @@ var ReviewingStack = React.createClass({
                         style={stackstyle}>
                 <h2>Congratulations!</h2>
 
-                <p>you&rsquo;re done for the day</p>
+                <p>you have no cards needing practice right now.</p>
                 <p>
-                    <Link to="create">make more</Link> or
+                    <Link to="create">Create new cards</Link> or
                     <a href="javascript:void(0);" onClick={this.onKeepPracticing}> continue practicing</a>
                 </p>
             </div>;

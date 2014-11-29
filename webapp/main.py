@@ -79,12 +79,14 @@ class MainPage(webapp2.RequestHandler):
         }
         self.response.write(template.render(env))
 
+
 class LoginHandler(webapp2.RequestHandler):
     def get(self):
         if self.request.path.startswith('/login'):
-            return self.redirect(users.create_login_url('/'))
+            return self.redirect(users.create_login_url('/#/review'))
         if self.request.path.startswith('/logout'):
             return self.redirect(users.create_logout_url('/'))
+
 
 class ApiHandler(webapp2.RequestHandler):
 
