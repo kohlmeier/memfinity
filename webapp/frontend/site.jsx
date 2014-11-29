@@ -9,7 +9,8 @@ var models = require('./models.js'),
     Editor = require('./editor.jsx'),
     Following = require('./follows.jsx').Following,
     Followers = require('./follows.jsx').Followers,
-    About = require('./about.jsx');
+    About = require('./about.jsx'),
+    FAQ = require('./faq.jsx');
 
 var Site = React.createClass({
     render: function() {
@@ -29,6 +30,7 @@ React.renderComponent((
         <Route name="create" path="/create" handler={Editor}/>
         <Route name="edit" path="/edit/:cardKey" handler={Editor}/>
         <Route name="about" path="/about" handler={About}/>
+        <Route name="faq" path="/faq" handler={FAQ}/>
         <Route name="user" path="/user/:userKey" handler={UserFeed}/>
         <Route name="following" path="/user/:userKey/following" handler={Following}/>
         <Route name="followers" path="/user/:userKey/followers" handler={Followers}/>
