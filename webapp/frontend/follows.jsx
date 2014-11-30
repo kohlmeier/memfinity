@@ -13,11 +13,12 @@ var UserCard = React.createClass({
         var cardActionButtons;
         if (window.username === null) {
             cardActionButtons = null;
-        } else if (window.username !== this.props.user.user_email) {
-            cardActionButtons = 
-                <div className='btn btn-primary btn-small' onClick={this.takeCard}>
-                    <i className='icon-download'></i> Take
-                </div>;
+        } else if (window.username !== this.props.user.email) {
+            cardActionButtons = null;
+            // TODO.. should implement a *follow* button here...
+            //<div className='btn btn-primary btn-small' onClick={this.takeCard}>
+            //   <i className='icon-download'></i> Take
+            //</div>;
         };
         var front = this.props.user.nickname,
             back = this.props.user.name;
@@ -40,15 +41,18 @@ var UserCardMeta = React.createClass({
     render: function() {
         // TODO get this info from google
         // http://stackoverflow.com/q/3591278/2121468
+        // TODO DRY this up with-- duplicates FeedCardMeta in feed.jsx
         var userImage = gravatar(this.props.user.email, 60),
             photoStyle = {background: 'url(' + userImage + ') no-repeat'};
         return <div className='feedcard_userinfo span2'>
-            <div className='feedcard_photo' style={photoStyle} />
-            <div className='feedcard_desc'>
-                <div className='feedcard_username'>
-                    {this.props.user.key}
+            <Link to="user" userKey={this.props.user.key}>
+                <div className='feedcard_photo' style={photoStyle} />
+                <div className='feedcard_desc'>
+                    <div className='feedcard_username'>
+                        {this.props.user.nickname}
+                    </div>
                 </div>
-            </div>
+            </Link>
         </div>;
     }
 });
@@ -68,8 +72,8 @@ var Follows = React.createClass({
         }
 
         var userItems = _(userDicts).map(function(user) {
-            return <li className="l-feedcard-container" key={user.user_email}>
-                <UserCard user={user} key={user.user_email} />
+            return <li className="l-feedcard-container" key={user.email}>
+                <UserCard user={user} key={user.email} />
             </li>;
         });
 

@@ -149,7 +149,7 @@ var FilterBar = React.createClass({
         <form className='filterbar row-fluid' onSubmit={this.handleSubmit}>
             <div className='span9'>
                 <input type='text'
-                       placeholder='What are you looking for?  (@usernames, #tags, or text)'
+                       placeholder='What are you looking for?  (@username, #tag, or text)'
                        className='filterbar-query'
                        ref='query'
                        name='q' />
