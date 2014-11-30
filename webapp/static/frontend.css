@@ -260,6 +260,14 @@ body {
     white-space: pre-line;
 }
 
+.flip_prompt {
+    bottom: 15px;
+    position: absolute;
+    margin-right: 20px;
+    margin-left: 205px;
+    color: gray;
+}
+
 .choices {
     bottom: 15px;
     position: absolute;

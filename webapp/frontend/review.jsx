@@ -250,6 +250,7 @@ var CardFront = React.createClass({
     render: function() {
         return <div className='cardFront' onClick={this.props.onClick}>
             <Content content={this.props.content} />
+            <div className='flip_prompt'>(click to reveal and rate)</div>
         </div>;
     }
 });
