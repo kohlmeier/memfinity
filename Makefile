@@ -8,7 +8,7 @@ deps:
 	pip install -r requirements.txt
 	git submodule sync && git submodule update --init --recursive
 
-serve:
+server serve:
 	cd webapp ; \
 	  node_modules/.bin/watchify -t reactify frontend/* -o static/frontend.js & \
 	  ../frankenserver/python/dev_appserver.py --host=0.0.0.0 .
