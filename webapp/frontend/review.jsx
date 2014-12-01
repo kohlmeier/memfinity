@@ -4,44 +4,27 @@
  */
 var React = require('react');
 var Link = require('react-nested-router').Link;
-var BackboneMixin = require('./backbonemixin.js');
-var models = require('./models.js');
+var { CardModel } = require('./models.js');
 
 // TODO(chris): this is chock-full of XSS potential. Plz fix. We
 // really ought to sanitize the generated HTML, probably on the
 // server. See Markdown and Bleach for Python.
 var converter = new Showdown.converter();
 
-var CardModel = models.CardModel,
-    CardCollection = models.CardCollection;
-
 var Review = React.createClass({
     render: function() {
+        var { easyStack, hardStack, reviewingStack } = this.state;
+
         if (window.user_key === 'None') {
             return <div className="editor">
                 Please log in to practice your personal cards.  :)
             </div>;
         }
 
-        if (!this.state.reviewingStack) {
+        if (!reviewingStack) {
             // If we don't have the data yet, display a temp message.
             return <div>Sit tight, partner.  We&lsquo;re loading your data now!</div>;
         }
-
-        var hardStack = new CardCollection(),
-            easyStack = new CardCollection();
-
-        var rate = function(cid, rating) {
-            var reviewingStack = this.state.reviewingStack,
-                model = reviewingStack.get(cid);
-            model.rate(rating);
-            reviewingStack.remove(model);
-            if (rating === 'easy') {
-                easyStack.add(model);
-            } else { // hard
-                hardStack.add(model);
-            }
-        }.bind(this);
 
         return <div className="review_workspace">
             <ReviewedStack collection={hardStack}
@@ -50,10 +33,29 @@ var Review = React.createClass({
                            name='Easy' />
 
             <ReviewingStack onKeepPracticing={this.onKeepPracticing}
-                            collection={this.state.reviewingStack}
-                            rate={rate} />
+                            collection={reviewingStack}
+                            rate={this.handleRate} />
         </div>;
     },
+
+    handleRate: function(rating) {
+        var { easyStack, hardStack, reviewingStack } = this.state;
+        var model = reviewingStack[0];
+        model.rate(rating);
+        var reviewingStack = reviewingStack.slice();
+        reviewingStack.splice(0, 1);
+        if (rating === 'easy') {
+            easyStack = easyStack.concat([model]);
+        } else { // hard
+            hardStack = hardStack.concat([model]);
+        }
+        this.setState({
+            reviewingStack,
+            easyStack,
+            hardStack,
+        });
+    },
+
     getInitialState: function() {
         var reviewAll = (
             (this.props.params && this.props.params.reviewAll==='true') ||
@@ -61,19 +63,24 @@ var Review = React.createClass({
         );
         return {
             reviewingStack: null,
-            reviewAll: reviewAll
+            reviewAll: reviewAll,
+            hardStack: [],
+            easyStack: [],
         };
     },
+
     componentDidMount: function() {
         if (this.state.reviewingStack === null) {
             // force an API call to retrieve cards
             this.fetchCardData(this.state.reviewAll);
         }
     },
+
     onKeepPracticing: function() {
         this.setState({reviewAll: true, reviewingStack: null});
         this.fetchCardData(true);
     },
+
     fetchCardData: function(reviewAll) {
         var self = this;
         var url = '/api/cards?review=1';
@@ -83,10 +90,9 @@ var Review = React.createClass({
 
         $.get(url, function(reviewCards) {
             var cardModels = _(JSON.parse(reviewCards)).map(function(card) {
-                return new models.CardModel(card);
+                return new CardModel(card);
             });
-            var reviewingStack = new models.CardCollection(cardModels);
-            self.setState({reviewingStack: reviewingStack});
+            self.setState({ reviewingStack: cardModels });
         });
     },
 });
@@ -106,10 +112,9 @@ var stackSides = function (primary, secondary, size, times) {
 
 // props: collection, position ({x, y})?, rate
 var ReviewingStack = React.createClass({
-    mixins: [BackboneMixin],
     render: function() {
-        var topCardModel = _(this.props.collection.models).first();
-        var sideLayers = Math.max(1, this.props.collection.models.length);
+        var topCardModel = this.props.collection[0];
+        var sideLayers = Math.max(1, this.props.collection.length);
         var stackstyle = {
             'box-shadow': stackSides('#2C3E50', '#BDC3C7', 2, sideLayers)
         };
@@ -137,7 +142,7 @@ var ReviewingStack = React.createClass({
         }
         return <div className='reviewingstackall'>
             <ReviewingStackMeta
-                    count={this.props.collection.models.length}
+                    count={this.props.collection.length}
                     name='Remaining' />
             {stack}
         </div>;
@@ -145,9 +150,6 @@ var ReviewingStack = React.createClass({
     onKeepPracticing: function(event) {
         this.props.onKeepPracticing();
     },
-    getBackboneModels: function() {
-        return [this.props.collection];
-    }
 });
 
 var ReviewingStackMeta = React.createClass({
@@ -164,14 +166,13 @@ var ReviewingStackMeta = React.createClass({
 
 // props: collection, position, (some handler)
 var ReviewedStack = React.createClass({
-    mixins: [BackboneMixin],
     render: function() {
-        var sideLayers = this.props.collection.models.length;
+        var sideLayers = this.props.collection.length;
         var stackstyle = {
             'box-shadow': stackSides('#2C3E50', '#BDC3C7', 2, sideLayers)
         };
 
-        var topCardModel = _(this.props.collection.models).last();
+        var topCardModel = _(this.props.collection).last();
         if (topCardModel) {
             // TODO way to view this card
             topCard = <Card model={topCardModel}
@@ -180,7 +181,7 @@ var ReviewedStack = React.createClass({
             topCard = null;
         }
         return <div className={'reviewedstackall reviewedstackall-' + this.props.name.toLowerCase()}>
-            <ReviewedStackMeta count={this.props.collection.models.length}
+            <ReviewedStackMeta count={this.props.collection.length}
                                name={this.props.name} />
             <div className='reviewedstack' style={stackstyle}>
                 <div className='topcardcover' />
@@ -188,9 +189,6 @@ var ReviewedStack = React.createClass({
             </div>
         </div>;
     },
-    getBackboneModels: function() {
-        return [this.props.collection];
-    }
 });
 
 var ReviewedStackMeta = React.createClass({
@@ -231,7 +229,7 @@ var Card = React.createClass({
             }
             stateView = <CardBack
                 content={content}
-                rate={_(this.props.rate).partial(this.props.model.cid)} />;
+                rate={this.props.rate} />;
         } else { // meta
             stateView = <CardMeta info={this.props.model.get('meta')} />;
         }

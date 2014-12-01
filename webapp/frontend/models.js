@@ -37,13 +37,6 @@ var CardModel = Backbone.Model.extend({
     },
 });
 
-var CardCollection = Backbone.Collection.extend({
-    model: CardModel,
-    url: '/api/cards' // TODO
-    // TODO - comparator
-});
-
 module.exports = {
     CardModel: CardModel,
-    CardCollection: CardCollection
 };

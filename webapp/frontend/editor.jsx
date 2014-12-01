@@ -4,7 +4,6 @@
  */
 var React = require('react');
 var Router = require('react-nested-router');
-var BackboneMixin = require('./backbonemixin.js');
 var models = require('./models.js');
 
 // props: submitCardData

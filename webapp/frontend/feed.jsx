@@ -4,7 +4,6 @@
  */
 var React = require('react');
 var Link = require('react-nested-router').Link;
-var BackboneMixin = require('./backbonemixin.js');
 var models = require('./models.js');
 var gravatar = require('./gravatar.js');
 var UserHeader = require('./userheader.jsx');
@@ -16,18 +15,17 @@ var converter = new Showdown.converter();
 
 // props: model
 var FeedCard = React.createClass({
-    mixins: [BackboneMixin],
     render: function() {
         var cardActionButtons;
         if (window.user_key === null || window.user_key === 'None') {
             cardActionButtons = null;
         } else if (window.user_key !== this.props.model.get('user_key')) {
-            cardActionButtons = 
+            cardActionButtons =
                 <div className='btn btn-info btn-small' onClick={this.takeCard}>
                     <i className='icon-download'></i> Take
                 </div>;
         } else {
-            cardActionButtons = 
+            cardActionButtons =
                 <div>
                     <div className='btn btn-primary btn-small' onClick={this.deleteCard}>
                         <i className='icon-trash'></i> Delete
@@ -63,9 +61,6 @@ var FeedCard = React.createClass({
                 </div>
             </div>
         </div>;
-    },
-    getBackboneModels: function() {
-        return [this.props.model];
     },
     deleteCard: function() {
         // fire off an async DELETE to the server
@@ -186,7 +181,7 @@ var SearchFeed = React.createClass({
     getInitialState: function() {
         // TODO set some state for a spinner?
         return {
-            cardCollection: new models.CardCollection(),
+            cardCollection: [],
             userKey: window.user_key
         };
     },
@@ -195,10 +190,7 @@ var SearchFeed = React.createClass({
     },
     cardsFromJSON: function(cardsJSON) {
         var cardData = JSON.parse(cardsJSON);
-        var cardModels = _(cardData).map(function(card) {
-            return new models.CardModel(card);
-        });
-        return new models.CardCollection(cardModels);
+        return _(cardData).map(card => new models.CardModel(card));
     },
     fetchCardData: function(query) {
         var self = this;
@@ -207,17 +199,15 @@ var SearchFeed = React.createClass({
         });
     },
     onDeleteCard: function(cardModel) {
-        // TODO(jace) This seems lame and inefficient to make copy of the
-        // existing card collection, but there are warnings
-        // against modifying state directly.  Should figure out a better way.
-        var cardCollection = new models.CardCollection(this.state.cardCollection.models);
-        cardCollection.remove(cardModel);
-        this.setState({cardCollection: cardCollection});
+        var cardCollection = _(this.state.cardCollection).filter(card => {
+            return card !== cardModel;
+        });
+        this.setState({ cardCollection });
     },
     onTakeAll: function() {
-        console.log("Take ALL", this.state.cardCollection.models);
+        console.log("Take ALL", this.state.cardCollection);
         var self = this;
-        _.map(this.state.cardCollection.models, function(cardModel) {
+        _.map(this.state.cardCollection, function(cardModel) {
             if (cardModel.get('user_key') !== self.state.userKey) {
                 cardModel.takeCard();
             }

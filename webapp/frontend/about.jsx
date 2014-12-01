@@ -3,7 +3,6 @@
  * Interface for the About page
  */
 var React = require('react');
-var BackboneMixin = require('./backbonemixin.js');
 var models = require('./models.js');
 
 var About = React.createClass({

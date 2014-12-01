@@ -10,7 +10,7 @@ deps:
 
 server serve:
 	cd webapp ; \
-	  node_modules/.bin/watchify -t reactify frontend/* -o static/frontend.js & \
+	  node_modules/.bin/webpack-dev-server --config webpack.config.js & \
 	  ../frankenserver/python/dev_appserver.py --host=0.0.0.0 .
 
 test:
