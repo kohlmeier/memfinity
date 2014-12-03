@@ -1,7 +1,7 @@
 Memfinity
 ====
 
-Memfinity is a modern webapp and API to provide a social, spaced repitition system. You can easily create flash cards and practice them utilizing a spaced repetition algorithm. You can make your flash cards public or private. You can follow other users or search for topics of interest to discover new cards of interest. If you see a card you like, you can "take" (make a copy of) that card for yourself.
+Memfinity is a modern webapp and API to provide a social, spaced repetition system. You can easily create flash cards and practice them utilizing a spaced repetition algorithm. You can make your flash cards public or private. You can follow other users or search for topics of interest to discover new cards of interest. If you see a card you like, you can "take" (make a copy of) that card for yourself.
 
 A current, partial list of features:
 * Create, edit, and delete cards.
