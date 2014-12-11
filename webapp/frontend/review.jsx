@@ -10,7 +10,9 @@ var models = require('./models.js');
 // TODO(chris): this is chock-full of XSS potential. Plz fix. We
 // really ought to sanitize the generated HTML, probably on the
 // server. See Markdown and Bleach for Python.
-var converter = new Showdown.converter();
+var audio_pre  = require('../../extension/src/showdown/audio_pre');
+var audio_post = require('../../extension/src/showdown/audio_post');
+var converter = new Showdown.converter({ extensions: [audio_pre, audio_post] });
 
 var CardModel = models.CardModel,
     CardCollection = models.CardCollection;
