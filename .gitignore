@@ -6,3 +6,4 @@ webapp/static/.lock.pid
 node_modules
 google_appengine
 memfinity_extension.zip
+*.log
