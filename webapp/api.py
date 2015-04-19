@@ -74,7 +74,7 @@ def user_view(handler):
 
 def card_view(handler):
     """Query for a single card by Key."""
-    logging.info("card_view is %s", str(entity_view(handler, '/api/card/')))
+#    logging.info("card_view is %s", str(entity_view(handler, '/api/card/')))
     return entity_view(handler, '/api/card/')
 
 
