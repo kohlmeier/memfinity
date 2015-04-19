@@ -1,9 +1,34 @@
 import datetime
 
+import endpoints
+import logging
+
 from google.appengine.ext import ndb
 from google.appengine.api import users
 
+from api_messages import CardResponseMessage
+
+from endpoints_proto_datastore.ndb import EndpointsModel
+
 TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S'
+
+
+def get_endpoints_current_user(raise_unauthorized=True):
+    """Returns a current user and (optionally) causes an HTTP 401 if no user.
+
+    Args:
+        raise_unauthorized: Boolean; defaults to True. If True, this method
+            raises an exception which causes an HTTP 401 Unauthorized to be
+            returned with the request.
+
+    Returns:
+        The signed in user if there is one, else None if there is no signed in
+        user and raise_unauthorized is False.
+    """
+    current_user = endpoints.get_current_user()
+    if raise_unauthorized and current_user is None:
+        raise endpoints.UnauthorizedException('Invalid token.')
+    return current_user
 
 
 class Grades(object):
@@ -38,7 +63,7 @@ def user_nickname(email):
     return email[:email.find('@')]
 
 
-class UserData(ndb.Model):
+class UserData(EndpointsModel):
     user_id = ndb.StringProperty(required=True, indexed=True)
     # TODO(chris): require this field.
     email = ndb.StringProperty(required=False, indexed=True)
@@ -95,7 +120,7 @@ class UserData(ndb.Model):
 
         # if the count hit zero for any tags, we delete them
         del_tags = [tag for tag in tag_counts
-                if tag_counts[tag] <= 0]
+                    if tag_counts[tag] <= 0]
         for del_tag in del_tags:
             del tag_counts[del_tag]
             tags = tags - set([del_tag])
@@ -114,8 +139,9 @@ class UserData(ndb.Model):
         return user_data
 
 
-class Card(ndb.Model):
+class Card(EndpointsModel):
     user_key = ndb.KeyProperty(required=True)
+    kata = ndb.StringProperty(required=True)
 
     # TODO(jace): Remove this hack for quick gravatar/nickname support on cards
     user_email = ndb.StringProperty()
@@ -130,7 +156,7 @@ class Card(ndb.Model):
                                       choices=['text', 'markdown'])
 
     # content for the 'front' of the card
-    front = ndb.TextProperty()
+    front = ndb.TextProperty(indexed=True)
     # the content for the 'back' of the card
     back = ndb.TextProperty()
     # the content for any additional, optional comments or info
@@ -149,7 +175,7 @@ class Card(ndb.Model):
     # of this problem for review, and what happened.  The list is sorted,
     # with the most recent activity first.  E.g.,
     # review_history = [
-    #     {
+    # {
     #         "timestamp": <python datetime>,
     #         "grade": <"easy"|"hard">
     #     },
@@ -168,6 +194,42 @@ class Card(ndb.Model):
     # Date of the next suggested review
     next_review = ndb.DateTimeProperty(auto_now_add=True)
 
+    def to_message(self):
+        """Turns the Card entity into a ProtoRPC object.
+
+        This is necessary so the entity can be returned in an API request.
+
+        Returns:
+            An instance of ScoreResponseMessage with the ID set to the datastore
+            ID of the current entity, the outcome simply the entity's outcome
+            value and the played value equal to the string version of played
+            from the property 'timestamp'.
+        """
+        return CardResponseMessage(
+#            id=self.key.id(),
+            kata=self.kata,
+            front=self.front,
+            back=self.back,
+            reversible=self.reversible,
+            input_format=self.input_format,
+            private=self.private,
+            user_nickname=self.user_nickname,
+            user_email=self.user_email,
+            source_url=self.source_url or "",
+            info=self.info,
+            last_review=self.last_review,
+            next_review=self.next_review,
+            added=self.added,
+            modified=self.modified,
+            tags=self.tags or [],
+            kind=self.key.kind(),
+            algo_data=str(self.algo_data),
+            review_history=str(self.review_history),
+            user_key=self.user_key.urlsafe(),
+            key=self.key.urlsafe()
+
+        )
+
     def record_review(self, grade):
         """Record a review attempt on this card.
 
@@ -182,28 +244,29 @@ class Card(ndb.Model):
         # TODO(jace) Allow different algorithms based on user settings.
         now = datetime.datetime.now()
         next_interval_seconds = LeitnerAlgorithm.compute_next_interval(
-                grade, self)
+            grade, self)
         self.next_review = datetime.datetime.now() + (
             datetime.timedelta(seconds=next_interval_seconds))
 
         self.last_review = now
 
         self.review_history.append({
-                "timestamp": now.strftime(TIMESTAMP_FORMAT),
-                "grade": grade
-            })
+            "timestamp": now.strftime(TIMESTAMP_FORMAT),
+            "grade": grade
+        })
 
     def update_from_dict(self, data):
         """Update this entity from data in a dict."""
         # Note that we never update user_key here
-        self.front = data.get('front', self.front)
+        self.reversible = data.get('reversible', self.reversible)
         self.back = data.get('back', self.back)
+        self.front = data.get('front', self.front)
         self.info = data.get('info', self.info)
         self.input_format = data.get('input_format', self.input_format)
         self.tags = data.get('tags', self.tags)
         self.source_url = data.get('source_url', self.source_url)
-        self.reversible = data.get('reversible', self.reversible)
         self.private = data.get('private', self.private)
+        self.kata = data.get('kata', self.kata)
         # TODO(jace) Allow updating of last/next_review?
 
     def update_email_and_nickname(self, user=None):
@@ -217,3 +280,27 @@ class Card(ndb.Model):
     @classmethod
     def get_for_user(cls, user_data):
         return cls.query(cls.user_key == user_data.key)
+
+    @classmethod
+    def query_current_user(cls):
+        """Creates a query for the cards of the current user.
+
+        Returns:
+            An ndb.Query object bound to the current user. This can be used
+            to filter for other properties or order by them.
+        """
+        current_user = get_endpoints_current_user()
+        logging.info("value of current_user is %s", str(current_user))
+        return cls.query(cls.kata == str(current_user))
+
+    @classmethod
+    def query_current_user_key(cls, key):
+        """Creates a query for a specific card of the current user.
+
+        Returns:
+            An ndb.Query object bound to the current user. This can be used
+            to filter for other properties or order by them.
+        """
+
+        logging.info("value of key is %d", key)
+        return cls.query(cls.key==ndb.Key(Card, key))
