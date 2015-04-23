@@ -21,7 +21,7 @@ The third stage audio_post extension then converts that img tag to an HTML5 audi
             { type: 'output', filter: function(source){
                 return source.replace(/🔊<img/gi, 
                         function(wholematch) {
-                    var retStr = '<audio preload="auto" controls';
+                    var retStr = '<audio preload="auto" controls autoplay';
                     return retStr;
                 });
             }} 
