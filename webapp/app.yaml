@@ -1,4 +1,4 @@
-application: khan-ssrs
+application: phonic-monolith-841
 version: 1
 runtime: python27
 api_version: 1
@@ -8,8 +8,14 @@ libraries:
   version: latest
 - name: jinja2
   version: latest
+- name: endpoints
+  version: 1.0
 
 handlers:
+# Endpoints handler
+- url: /_ah/spi/.*
+  script: api.APPLICATION
+
 - url: /static
   static_dir: static
 - url: /fonts

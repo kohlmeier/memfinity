@@ -12,7 +12,9 @@ var UserHeader = require('./userheader.jsx');
 // TODO(chris): this is chock-full of XSS potential. Plz fix. We
 // really ought to sanitize the generated HTML, probably on the
 // server. See Markdown and Bleach for Python.
-var converter = new Showdown.converter();
+var audio_pre  = require('../showdown/audio_pre');
+var audio_post = require('../showdown/audio_post');
+var converter = new Showdown.converter({ extensions: [audio_pre, audio_post] });
 
 // props: model
 var FeedCard = React.createClass({

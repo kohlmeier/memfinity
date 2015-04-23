@@ -9,6 +9,17 @@ import jsonify
 import models
 import search
 
+import logging
+
+import endpoints
+from protorpc import remote
+
+from api_messages import CardViewRequest
+from api_messages import CardsViewRequest
+from api_messages import CardViewResponse
+
+CLIENT_ID = '290690870153-s9h3p1i91mtrshen020tc2hlnu85qnad.apps.googleusercontent.com'
+API_ID = 'AIzaSyC9lDWLb8lcxcx-p45ZfsN-9TMTOBGgtA0.apps.googleusercontent.com'
 
 def get_oauth_user():
     """Return the OAuth authenticated user, else raise an exception."""
@@ -63,6 +74,7 @@ def user_view(handler):
 
 def card_view(handler):
     """Query for a single card by Key."""
+#    logging.info("card_view is %s", str(entity_view(handler, '/api/card/')))
     return entity_view(handler, '/api/card/')
 
 
@@ -99,7 +111,7 @@ def card_query(handler):
         current_user = get_current_user(handler)
         if not current_user:
             handler.error(400)
-            return "must be logged in to quer for review cards."
+            return "must be logged in to query for review cards."
         user_key = current_user.key.urlsafe()
 
 
@@ -156,7 +168,7 @@ def card_search(handler):
 
     query = handler.request.get('q', '')
     search_results = search.query_cards(query, limit=20, ids_only=True,
-            user_key=user_key)
+                                        user_key=user_key)
     results = ndb.get_multi([ndb.Key(urlsafe=result.doc_id)
                              for result in search_results])
     return jsonify.jsonify(results)
@@ -170,14 +182,14 @@ def card_add(handler):
 
     data = json.loads(handler.request.body)
 
-    card = models.Card(user_key=user_data.key)
+    user = users.get_current_user()
+    card = models.Card(user_key=user_data.key, kata=str(user))
     card.update_from_dict(data)
     card.update_email_and_nickname()
 
     card.put()
     search.insert_cards([card])
 
-    # Update the list of all known tags for this user
     # Update the list of all known tags for this user
     user_data.update_card_tags([], data.get('tags', []))
     user_data.put()  # TODO(jace): only put if necessary
@@ -454,3 +466,13 @@ def card_bulk_import(handler):
     user_data.update_card_tags([], tags)
     ndb.put_multi(cards + [user_data])  # TODO(chris): only put if necessary
     search.insert_cards(cards)
+
+@endpoints.api(name='memfinity', version='v1',
+               description='Memfinity API',
+               allowed_client_ids=[API_ID, CLIENT_ID, endpoints.API_EXPLORER_CLIENT_ID])
+class Memfinity(remote.Service):
+    """Class which defines memfinity API v1."""
+
+
+APPLICATION = endpoints.api_server([Memfinity],
+                                   restricted=False)

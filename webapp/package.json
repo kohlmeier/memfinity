@@ -6,7 +6,7 @@
   "description": "A social spaced-repetition system",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kohlmeier/ssrs"
+    "url": "https://github.com/henchan/memfinity"
   },
   "dependencies": {
     "reactify": "~0.14.0",
