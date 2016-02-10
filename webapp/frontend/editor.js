@@ -25,7 +25,7 @@ var EditorForm = React.createClass({
         // go straight to the source.
         // TODO(chris): this is called once per tag on initialization,
         // which is silly.
-        var tags = this.refs.tagsinput.getDOMNode().value.split(',');
+        var tags = this.refs.tagsinput.value.split(',');
         this.setState({tags: tags});
     },
     handleSubmit: function() {
@@ -89,7 +89,7 @@ var EditorForm = React.createClass({
         </form>;
     },
     componentDidMount: function() {
-        $(this.refs.tagsinput.getDOMNode()).tagsInput({
+        $(this.refs.tagsinput).tagsInput({
             onChange: this.handleTagsInputChange
         });
     }

@@ -135,7 +135,7 @@ var PracticeButton = React.createClass({
 var FilterBar = React.createClass({
     handleSubmit: function(event) {
         event.preventDefault();
-        var query = this.refs.query.getDOMNode().value.trim();
+        var query = this.refs.query.value.trim();
         this.props.onFilterChange(query);
     },
     render: function() {
