@@ -172,12 +172,11 @@ var ReviewedStack = React.createClass({
         };
 
         var topCardModel = _(this.props.collection).last();
+        var topCard = null;
         if (topCardModel) {
             // TODO way to view this card
             topCard = <Card model={topCardModel}
                             key={topCardModel.cid} />;
-        } else {
-            topCard = null;
         }
         return <div className={'reviewedstackall reviewedstackall-' + this.props.name.toLowerCase()}>
             <ReviewedStackMeta count={this.props.collection.length}
