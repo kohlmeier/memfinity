@@ -29,7 +29,7 @@ var FeedCard = React.createClass({
                     <div className='btn btn-primary btn-small' onClick={this.deleteCard}>
                         <i className='icon-trash'></i> Delete
                     </div>
-                    <Link to='edit' className='btn btn-primary btn-small'
+                    <Link to='/edit' className='btn btn-primary btn-small'
                           cardKey={this.props.model.get('key')}>
                         <i className='icon-edit'></i> Edit
                     </Link>
@@ -79,7 +79,7 @@ var FeedCardMeta = React.createClass({
         var userImage = gravatar(this.props.model.get('user_email'), 60),
             photoStyle = {background: 'url(' + userImage + ') no-repeat'};
         return <div className='feedcard_userinfo span2'>
-            <Link to="user" userKey={this.props.model.get('user_key')}>
+            <Link to="/user" userKey={this.props.model.get('user_key')}>
                 <div className='feedcard_photo' style={photoStyle} />
                 <div className='feedcard_desc'>
                     <div className='feedcard_username'>

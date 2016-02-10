@@ -12,13 +12,13 @@ export default function Header() {
   return <div className="navbar navbar-inverse">
       <div className=' navbar-inner'>
           <ul className='nav navbar-nav'>
-              <li><Link to="create"><i className='icon-edit'></i> Create</Link></li>
-              <li><Link to="review"><i className='icon-check'></i> Practice</Link></li>
-              <li><Link to="feed"><i className='icon-list'></i> Feed</Link></li>
-              <li><Link to="search"><i className='icon-search'></i> Search</Link></li>
+              <li><Link to="/create"><i className='icon-edit'></i> Create</Link></li>
+              <li><Link to="/review"><i className='icon-check'></i> Practice</Link></li>
+              <li><Link to="/feed"><i className='icon-list'></i> Feed</Link></li>
+              <li><Link to="/search"><i className='icon-search'></i> Search</Link></li>
           </ul>
           <ul className='nav navbar-nav pull-right'>
-              <li><Link to="about"><i className='icon-info'></i> About</Link></li>
+              <li><Link to="/about"><i className='icon-info'></i> About</Link></li>
               <li className="header-login">{loginLink}</li>
           </ul>
       </div>

@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { Link } from 'react-router';
-import gravatar from './gravatar.js';
+import gravatar from './gravatar';
 
 var UserHeader = React.createClass({
     getInitialState: function() {
@@ -38,8 +38,8 @@ var UserHeader = React.createClass({
                     {unfollowItem}
                 </ul>
                 <ul className="secondary">
-                    <li style={followers.length ? {} : {display: "none"}}><Link to="followers" userKey={userData.key}>{followers.length} Followers.</Link></li>
-                    <li style={userData.following.length ? {} : {display: "none"}}><Link to="following" userKey={userData.key}>Following {userData.following.length}.</Link></li>
+                    <li style={followers.length ? {} : {display: "none"}}><Link to="/followers" userKey={userData.key}>{followers.length} Followers.</Link></li>
+                    <li style={userData.following.length ? {} : {display: "none"}}><Link to="/following" userKey={userData.key}>Following {userData.following.length}.</Link></li>
                 </ul>
                 </div>
             </div>;

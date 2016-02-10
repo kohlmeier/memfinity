@@ -24,7 +24,7 @@ ReactDOM.render((
   <Router history={browserHistory}>
     <Route path="/" component={Site}>
       <IndexRoute component={About} />
-      <Route path="review" component={Review } />
+      <Route path="review" component={Review} />
       <Route path="feed" component={UserFeed} />
       <Route path="search" component={SearchFeed} />
       <Route path="create" component={Editor} />

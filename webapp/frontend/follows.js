@@ -44,7 +44,7 @@ var UserCardMeta = React.createClass({
         var userImage = gravatar(this.props.user.email, 60),
             photoStyle = {background: 'url(' + userImage + ') no-repeat'};
         return <div className='feedcard_userinfo span2'>
-            <Link to="user" userKey={this.props.user.key}>
+            <Link to="/user" userKey={this.props.user.key}>
                 <div className='feedcard_photo' style={photoStyle} />
                 <div className='feedcard_desc'>
                     <div className='feedcard_username'>

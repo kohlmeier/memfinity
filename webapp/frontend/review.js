@@ -115,7 +115,7 @@ var ReviewingStack = React.createClass({
         var topCardModel = this.props.collection[0];
         var sideLayers = Math.max(1, this.props.collection.length);
         var stackstyle = {
-            'box-shadow': stackSides('#2C3E50', '#BDC3C7', 2, sideLayers)
+            'boxShadow': stackSides('#2C3E50', '#BDC3C7', 2, sideLayers)
         };
 
         var stack;
@@ -127,7 +127,7 @@ var ReviewingStack = React.createClass({
 
                 <p>you have no cards needing practice right now.</p>
                 <p>
-                    <Link to="create">Create new cards</Link> or
+                    <Link to="/create">Create new cards</Link> or
                     <a href="javascript:void(0);" onClick={this.onKeepPracticing}> continue practicing</a>
                 </p>
             </div>;
@@ -168,7 +168,7 @@ var ReviewedStack = React.createClass({
     render: function() {
         var sideLayers = this.props.collection.length;
         var stackstyle = {
-            'box-shadow': stackSides('#2C3E50', '#BDC3C7', 2, sideLayers)
+            'boxShadow': stackSides('#2C3E50', '#BDC3C7', 2, sideLayers)
         };
 
         var topCardModel = _(this.props.collection).last();
