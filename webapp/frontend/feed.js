@@ -1,12 +1,11 @@
-/** @jsx React.DOM */
 /*
  * Interface for feed mode
  */
-var React = require('react');
-var Link = require('react-nested-router').Link;
-var models = require('./models.js');
-var gravatar = require('./gravatar.js');
-var UserHeader = require('./userheader.jsx');
+import React from 'react';
+import { Link } from 'react-router';
+import { CardModel } from './models';
+import gravatar from './gravatar';
+import UserHeader from './userheader';
 
 // TODO(chris): this is chock-full of XSS potential. Plz fix. We
 // really ought to sanitize the generated HTML, probably on the
@@ -190,7 +189,7 @@ var SearchFeed = React.createClass({
     },
     cardsFromJSON: function(cardsJSON) {
         var cardData = JSON.parse(cardsJSON);
-        return _(cardData).map(card => new models.CardModel(card));
+        return _(cardData).map(card => new CardModel(card));
     },
     fetchCardData: function(query) {
         var self = this;

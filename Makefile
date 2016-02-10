@@ -1,3 +1,5 @@
+PORT = 8082
+
 help:
 	@echo '"make deps"   installs dev software. Do this first!'
 	@echo '"make server" runs the website.'
@@ -10,8 +12,8 @@ deps:
 
 server serve:
 	cd webapp ; \
-	  node_modules/.bin/webpack-dev-server --config webpack.config.js & \
-	  ../frankenserver/python/dev_appserver.py --host=0.0.0.0 .
+	  PORT=$(PORT) babel-node server.js & \
+	  ../frankenserver/python/dev_appserver.py --skip_sdk_update_check=yes --host=0.0.0.0 --port $(PORT) .
 
 test:
 	cd webapp ; \

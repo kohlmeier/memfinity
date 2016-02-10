@@ -1,10 +1,9 @@
-/** @jsx React.DOM */
 /*
  * Interface for review mode
  */
-var React = require('react');
-var Link = require('react-nested-router').Link;
-var { CardModel } = require('./models.js');
+import React from 'react';
+import Link from 'react-router';
+import { CardModel } from './models';
 
 // TODO(chris): this is chock-full of XSS potential. Plz fix. We
 // really ought to sanitize the generated HTML, probably on the

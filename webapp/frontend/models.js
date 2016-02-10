@@ -5,7 +5,7 @@
  * - tags: list of tag names
  * - ... meta ...
  */
-var CardModel = Backbone.Model.extend({
+export const CardModel = Backbone.Model.extend({
     url: function() {
         return '/api/card/' + this.get('key');
     },
@@ -36,7 +36,3 @@ var CardModel = Backbone.Model.extend({
             .fail(function() { console.log('card import fail'); });
     },
 });
-
-module.exports = {
-    CardModel: CardModel,
-};

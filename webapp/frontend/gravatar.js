@@ -1,4 +1,4 @@
-function getGravatar(email, size) {
+export default function getGravatar(email, size) {
     email = email || 'example@example.com';
 
     // MD5 (Message-Digest Algorithm) by WebToolkit
@@ -10,5 +10,3 @@ function getGravatar(email, size) {
 
     return 'http://www.gravatar.com/avatar/' + MD5(email) + '.jpg?s=' + size;
 }
-
-module.exports = getGravatar

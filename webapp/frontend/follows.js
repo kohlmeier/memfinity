@@ -1,11 +1,10 @@
-/** @jsx React.DOM */
 /*
  * Interface for feed mode
  */
-var React = require('react');
-var Link = require('react-nested-router').Link;
-var gravatar = require('./gravatar.js');
-var UserHeader = require('./userheader.jsx');
+import React from 'react';
+import { Link } from 'react-router';
+import gravatar from './gravatar';
+import UserHeader from './userheader';
 
 // props: model
 var UserCard = React.createClass({

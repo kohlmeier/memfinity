@@ -1,10 +1,9 @@
-/** @jsx React.DOM */
 /*
  * Interface for card editing
  */
-var React = require('react');
-var Router = require('react-nested-router');
-var models = require('./models.js');
+import React from 'react';
+import Router from 'react-router';
+import { CardModel } from './models';
 
 // props: submitCardData
 // stats:  [a dict representing fields which have been changed]
@@ -126,7 +125,7 @@ var Editor = React.createClass({
         var isCreateMode = !this.props.params.cardKey;
         return {
             isCreateMode: isCreateMode,
-            cardModel: isCreateMode ? new models.CardModel() : null,
+            cardModel: isCreateMode ? new CardModel() : null,
             pendingSubmit: false
         };
     },
