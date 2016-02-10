@@ -2,7 +2,7 @@
  * Interface for review mode
  */
 import React from 'react';
-import Link from 'react-router';
+import { Link } from 'react-router';
 import { CardModel } from './models';
 
 // TODO(chris): this is chock-full of XSS potential. Plz fix. We
