@@ -16,12 +16,6 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
   ],
-  externals: {
-    jquery: "jQuery",
-    React: "React",
-    _: "_",
-    Backbone: "Backbone"
-  },
   resolve: {
     extensions: ['', '.js'],
   },

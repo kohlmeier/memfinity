@@ -1,8 +1,10 @@
 /*
  * Interface for card editing
  */
+import $ from 'jquery';
 import React from 'react';
 import Router from 'react-router';
+
 import { CardModel } from './models';
 
 // props: submitCardData
@@ -44,20 +46,20 @@ var EditorForm = React.createClass({
                 <textarea id="editor-input-front" className="form-control span6"
                           placeholder="Front of card..."
                           defaultValue={this.props.cardModel.front}
-                          onChange={_.partial(this.handleChange, 'front')} />
+                          onChange={event => this.handleChange('front', event)} />
             </div>
             <div className="form-group">
                 <label htmlFor="editor-input-back">Back</label>
                 <textarea id="editor-input-back" className="form-control span6"
                           placeholder="Back of card..."
                           defaultValue={this.props.cardModel.back}
-                          onChange={_.partial(this.handleChange, 'back')} />
+                          onChange={event => this.handleChange('back', event)} />
             </div>
             <div className="form-group">
                 <label htmlFor="editor-input-format">Format</label>
                 <select id="editor-input-format" className="form-control"
                         defaultValue={inputFormat}
-                        onChange={_.partial(this.handleChange, 'input_format')}>
+                        onChange={event => this.handleChange('input_format', event)}>
                     <option value="text">Text</option>
                     <option value="markdown">Markdown</option>
                 </select>
@@ -73,17 +75,17 @@ var EditorForm = React.createClass({
                 <label htmlFor="editor-input-source">Source URL</label>
                 <input type="text" id="editor-input-source" className="form-control"
                        defaultValue={this.props.cardModel.source_url}
-                       onChange={_.partial(this.handleChange, 'source_url')} />
+                       onChange={event => this.handleChange('source_url', event)} />
             </div>
             <div className="checkbox">
                 <label><input type="checkbox"
                               defaultChecked={this.props.cardModel.reversible}
-                              onChange={_.partial(this.handleChange, 'reversible')}/> Reversible</label>
+                              onChange={event => this.handleChange('reversible', event)} /> Reversible</label>
             </div>
             <div className="checkbox">
                 <label><input type="checkbox"
                               defaultChecked={this.props.cardModel.private}
-                              onChange={_.partial(this.handleChange, 'private')}/> Private</label>
+                              onChange={event => this.handleChange('private', event)} /> Private</label>
             </div>
             <input type="submit" disabled={!this.props.isEnabled} className="btn btn-primary" value="Save" />
         </form>;

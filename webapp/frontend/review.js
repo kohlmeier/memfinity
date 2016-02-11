@@ -1,7 +1,9 @@
 /*
  * Interface for review mode
  */
+import $ from 'jquery';
 import React from 'react';
+
 import { Link } from 'react-router';
 import { CardModel } from './models';
 

@@ -1,3 +1,6 @@
+import Backbone from 'backbone';
+import $ from 'jquery';
+
 /*
  * Cards store the following data:
  * - front: markup appearing on the front of the card

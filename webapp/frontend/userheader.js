@@ -1,8 +1,11 @@
 /*
  * Interface for feed mode
  */
+import $ from 'jquery';
+import { union, difference } from 'lodash';
 import React from 'react';
 import { Link } from 'react-router';
+
 import gravatar from './gravatar';
 
 var UserHeader = React.createClass({
@@ -13,7 +16,7 @@ var UserHeader = React.createClass({
         var userData = this.props.userData;
         var sameUser = (window.user_key && userData.key == window.user_key);
         //console.log("sameUser: ", sameUser, window.user_key, userData.key);
-        var isFollowing = !sameUser && _.contains(this.state.following, userData.key);
+        var isFollowing = !sameUser && this.state.following.includes(userData.key);
         var followItem = '';
         var unfollowItem = '';
         if (!sameUser) {
@@ -24,10 +27,14 @@ var UserHeader = React.createClass({
                 <button className="btn btn-small btn-danger"
                         onClick={this.onUnfollow}>Unfollow</button></li>;
         }
+
         // Update our idea of followers in case the current user has
         // followed / unfollowed.
-        var followers = (isFollowing ? _.union : _.difference)(
-            userData.followers, [window.user_key]);
+        //
+        // TODO(joel): I don't understand this
+        const followers = isFollowing
+          ? union(userData.followers, [window.user_key])
+          : difference(userData.followers, [window.user_key]);
 
         return <div className="user-header row-fluid">
             <div className="user-header-inner">
@@ -52,7 +59,7 @@ var UserHeader = React.createClass({
             type: 'PUT',
             success: function(response) {
                 console.log("PUT was successful: " + response);
-                var fn = followOrUnfollow == "follow" ? _.union : _.difference;
+                var fn = followOrUnfollow == "follow" ? union : difference;
                 self.setState({following: fn(window.following, [userDataKey])});
             },
             error: function(xhr, status, err) {

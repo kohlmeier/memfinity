@@ -1,8 +1,10 @@
 /*
  * Interface for feed mode
  */
+import $ from 'jquery';
 import React from 'react';
 import { Link } from 'react-router';
+
 import { CardModel } from './models';
 import gravatar from './gravatar';
 import UserHeader from './userheader';
@@ -205,12 +207,11 @@ var SearchFeed = React.createClass({
     },
     onTakeAll: function() {
         console.log("Take ALL", this.state.cardCollection);
-        var self = this;
-        _.map(this.state.cardCollection, function(cardModel) {
+        for (cardModel of this.state.cardCollection) {
             if (cardModel.get('user_key') !== self.state.userKey) {
                 cardModel.takeCard();
             }
-        });
+        }
     }
 });
 
