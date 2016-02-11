@@ -7,6 +7,7 @@ import Router from 'react-router';
 import { WithContext as ReactTags } from 'react-tag-input';
 
 import * as API from './api';
+import Container from './markdown-container';
 import { CardModel } from './models';
 
 function MarkdownContainer({ children }) {
@@ -22,6 +23,15 @@ function MarkdownContainer({ children }) {
 
 function EditorRow({ title, ...props }) {
   const { value, id } = props;
+
+  const content = (
+    <Markdown
+      // container={MarkdownContainer}
+      container={Container}
+      source={value}
+    />
+  );
+
   return (
     <div className="form-group">
       <label style={{ margin: 10 }} htmlFor={id}>
@@ -33,10 +43,21 @@ function EditorRow({ title, ...props }) {
           className="form-control"
           {...props}
         />
-        <Markdown
-          container={MarkdownContainer}
-          source={value}
-        />
+        <div
+          style={{
+            flexBasis: 0,
+            flexGrow: 1,
+            margin: 10,
+            position: 'relative',
+            backgroundColor: '#fff',
+            borderRadius: 2,
+            boxShadow: '2px 2px #bdc3c7',
+          }}
+        >
+          <div className="content">
+            {content}
+          </div>
+        </div>
       </div>
     </div>
   );
