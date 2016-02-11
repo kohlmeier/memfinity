@@ -1,12 +1,46 @@
 /*
  * Interface for card editing
  */
+import Markdown from 'react-remarkable';
 import React from 'react';
 import Router from 'react-router';
 import { WithContext as ReactTags } from 'react-tag-input';
 
 import * as API from './api';
 import { CardModel } from './models';
+
+function MarkdownContainer({ children }) {
+  const style = {
+    flexBasis: 0,
+    flexGrow: 1,
+    overflow: 'hidden',
+    margin: 10
+  };
+
+  return <div style={style}>{children}</div>;
+}
+
+function EditorRow({ title, ...props }) {
+  const { value, id } = props;
+  return (
+    <div className="form-group">
+      <label style={{ margin: 10 }} htmlFor={id}>
+        {title}
+      </label>
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <textarea
+          style={{ flexBasis: 0, flexGrow: 1, margin: 10 }}
+          className="form-control"
+          {...props}
+        />
+        <Markdown
+          container={MarkdownContainer}
+          source={value}
+        />
+      </div>
+    </div>
+  );
+}
 
 // props: submitCardData
 // stats:  [a dict representing fields which have been changed]
@@ -15,7 +49,9 @@ class EditorForm extends React.Component {
     super(props);
     this.state = {
       isEnabled: true,
-      tags: [],
+      tags: props.cardModel.tags || [],
+      front: props.cardModel.front || '',
+      back: props.cardModel.back || '',
     };
   }
 
@@ -26,6 +62,7 @@ class EditorForm extends React.Component {
     } else {
       state[field] = event.target.value;
     }
+    console.log(field, event, state);
     this.setState(state);
   }
 
@@ -63,34 +100,27 @@ class EditorForm extends React.Component {
 
   render() {
     // TODO(joel) - hook this up
-    // var tagsArray = this.props.cardModel.tags;
-    const tagsArray = this.state.tags;
+    const { tags, front, back } = this.state;
     return (
       <form className="editorForm" onSubmit={this.handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="editor-input-front">Front</label>
-          <textarea
-            id="editor-input-front"
-            className="form-control span6"
-            placeholder="Front of card..."
-            defaultValue={this.props.cardModel.front}
-            onChange={event => this.handleChange('front', event)}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="editor-input-back">Back</label>
-          <textarea
-            id="editor-input-back"
-            className="form-control span6"
-            placeholder="Back of card..."
-            defaultValue={this.props.cardModel.back}
-            onChange={event => this.handleChange('back', event)}
-          />
-        </div>
+        <EditorRow
+          value={front}
+          id="editor-input-front"
+          title="Front"
+          placeholder="Front of card..."
+          onChange={event => this.handleChange('front', event)}
+        />
+        <EditorRow
+          value={back}
+          id="editor-input-back"
+          title="Back"
+          placeholder="Back of card..."
+          onChange={event => this.handleChange('back', event)}
+        />
         <div className="form-group">
           <label htmlFor="editor-input-tags">Tags</label>
           <ReactTags
-            tags={tagsArray}
+            tags={tags}
             handleDelete={this.handleDeleteTag}
             handleAddition={this.handleAddTag}
             handleDrag={this.handleDragTag}
@@ -167,7 +197,7 @@ export default class Editor extends React.Component {
     }
 
     return (
-      <div className="editor">
+      <div className="editor span12">
         <EditorForm
           isEnabled={!this.state.pendingSubmit}
           cardModel={this.state.cardModel}

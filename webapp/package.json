@@ -23,6 +23,7 @@
     "webpack-hot-middleware": "^2.6.4"
   },
   "dependencies": {
+    "babel-plugin-syntax-object-rest-spread": "^6.5.0",
     "history": "^1.13.1",
     "immutable": "^3.7.6",
     "lodash": "^4.3.0",
