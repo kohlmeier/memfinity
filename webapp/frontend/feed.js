@@ -4,15 +4,12 @@
 import $ from 'jquery';
 import React from 'react';
 import { Link } from 'react-router';
+import Markdown from 'react-remarkable';
 
+import Container from './markdown-container';
 import { CardModel } from './models';
 import gravatar from './gravatar';
 import UserHeader from './userheader';
-
-// TODO(chris): this is chock-full of XSS potential. Plz fix. We
-// really ought to sanitize the generated HTML, probably on the
-// server. See Markdown and Bleach for Python.
-var converter = new Showdown.converter();
 
 // props: model
 var FeedCard = React.createClass({
@@ -38,30 +35,31 @@ var FeedCard = React.createClass({
                 </div>;
         };
 
-        var inputFormat = this.props.model.get('input_format'),
-            front = this.props.model.get('front'),
-            back = this.props.model.get('back');
-        if (inputFormat == 'text') {
-            front = <div style={{whiteSpace: 'pre-line'}}>{front}</div>;
-            back = <div style={{whiteSpace: 'pre-line'}}>{back}</div>;
-        } else if (inputFormat == 'markdown') {
-            front = <div className="userhtml" dangerouslySetInnerHTML={{__html: converter.makeHtml(front)}}></div>;
-            back = <div className="userhtml" dangerouslySetInnerHTML={{__html: converter.makeHtml(back)}}></div>;
-        }
-
-        return <div className='feedcard row-fluid'>
+        return (
+          <div className='feedcard row-fluid'>
             <FeedCardMeta model={this.props.model} />
             <div className='feedcard_right span10'>
-                <div className='feedcard_front'>{front}</div>
-                <div className='feedcard_back'>{back}</div>
-                <div className="feedcard_meta row-fluid">
-                    <Tags list={this.props.model.get('tags')} />
-                    <div className='span3 btn-container'>
-                        {cardActionButtons}
-                    </div>
+              <div className='feedcard_front'>
+                <Markdown
+                  container={Container}
+                  content={this.props.model.get('front')}
+                />
+              </div>
+              <div className='feedcard_back'>
+                <Markdown
+                  container={Container}
+                  content={this.props.model.get('back')}
+                />
+              </div>
+              <div className="feedcard_meta row-fluid">
+                <Tags list={this.props.model.get('tags')} />
+                <div className='span3 btn-container'>
+                  {cardActionButtons}
                 </div>
+              </div>
             </div>
-        </div>;
+          </div>
+        );
     },
     deleteCard: function() {
         // fire off an async DELETE to the server

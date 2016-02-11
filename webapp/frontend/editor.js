@@ -62,9 +62,6 @@ var EditorForm = React.createClass({
         // TODO(joel) - hook this up
         // var tagsArray = this.props.cardModel.tags;
         const tagsArray = this.state.tags;
-        var inputFormat = (this.props.cardModel.input_format
-                           ? this.props.cardModel.input_format.toLowerCase()
-                           : "text");
         return <form className="editorForm" onSubmit={this.handleSubmit}>
             <div className="form-group">
                 <label htmlFor="editor-input-front">Front</label>
@@ -79,15 +76,6 @@ var EditorForm = React.createClass({
                           placeholder="Back of card..."
                           defaultValue={this.props.cardModel.back}
                           onChange={event => this.handleChange('back', event)} />
-            </div>
-            <div className="form-group">
-                <label htmlFor="editor-input-format">Format</label>
-                <select id="editor-input-format" className="form-control"
-                        defaultValue={inputFormat}
-                        onChange={event => this.handleChange('input_format', event)}>
-                    <option value="text">Text</option>
-                    <option value="markdown">Markdown</option>
-                </select>
             </div>
             <div className="form-group">
                 <label htmlFor="editor-input-tags">Tags</label>

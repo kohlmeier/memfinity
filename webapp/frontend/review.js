@@ -3,14 +3,11 @@
  */
 import $ from 'jquery';
 import React from 'react';
-
+import Markdown from 'react-remarkable';
 import { Link } from 'react-router';
-import { CardModel } from './models';
 
-// TODO(chris): this is chock-full of XSS potential. Plz fix. We
-// really ought to sanitize the generated HTML, probably on the
-// server. See Markdown and Bleach for Python.
-var converter = new Showdown.converter();
+import Container from './markdown-container';
+import { CardModel } from './models';
 
 var Review = React.createClass({
     render: function() {
@@ -207,35 +204,41 @@ var ReviewedStackMeta = React.createClass({
 // TODO this should probably take state as as prop
 var Card = React.createClass({
     render: function() {
-        var stateView,
-            content;
-        if (this.state.state === 'front') {
-            var clickHandler = function() {
-                this.setState({state: 'back'});
-            }.bind(this);
-            content = this.props.model.get('front');
-            if (this.props.model.get('input_format') == 'markdown') {
-                content = <div className="userhtml"
-                             dangerouslySetInnerHTML={{__html: converter.makeHtml(content)}}></div>;
-            }
-            stateView = <CardFront
-                content={content}
-                onClick={clickHandler} />;
-        } else if (this.state.state === 'back') {
-            content = this.props.model.get('back');
-            if (this.props.model.get('input_format') == 'markdown') {
-                content = <div className="userhtml"
-                             dangerouslySetInnerHTML={{__html: converter.makeHtml(content)}}></div>;
-            }
-            stateView = <CardBack
-                content={content}
-                rate={this.props.rate} />;
-        } else { // meta
-            stateView = <CardMeta info={this.props.model.get('meta')} />;
-        }
-        return <div className='card'>
+      let stateView;
+      if (this.state.state === 'front') {
+        const content = (
+          <Markdown
+            container={Container}
+            source={this.props.model.get('front')}
+          />
+        );
+        stateView = (
+          <CardFront
+            content={content}
+            onClick={() => this.setState({ state: 'back' })}
+          />
+        );
+      } else if (this.state.state === 'back') {
+        const content = (
+          <Markdown
+            container={Container}
+            source={this.props.model.get('back')}
+          />
+        );
+        stateView = (
+          <CardBack
+            content={content}
+            rate={this.props.rate}
+          />
+        );
+      } else { // meta
+        stateView = <CardMeta info={this.props.model.get('meta')} />;
+      }
+      return (
+        <div className='card'>
             {stateView}
-        </div>;
+        </div>
+      );
     },
     getInitialState: function() {
         return {
