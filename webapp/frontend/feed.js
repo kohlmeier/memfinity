@@ -1,91 +1,85 @@
-/** @jsx React.DOM */
 /*
  * Interface for feed mode
  */
-var React = require('react');
-var Link = require('react-nested-router').Link;
-var BackboneMixin = require('./backbonemixin.js');
-var models = require('./models.js');
-var gravatar = require('./gravatar.js');
-var UserHeader = require('./userheader.jsx');
+import React from 'react';
+import { Link } from 'react-router';
+import Markdown from 'react-remarkable';
 
-// TODO(chris): this is chock-full of XSS potential. Plz fix. We
-// really ought to sanitize the generated HTML, probably on the
-// server. See Markdown and Bleach for Python.
-var converter = new Showdown.converter();
+import * as API from './api';
+import Container from './markdown-container';
+import { CardModel } from './models';
+import gravatar from './gravatar';
+import UserHeader from './userheader';
 
 // props: model
-var FeedCard = React.createClass({
-    mixins: [BackboneMixin],
+export const FeedCard = React.createClass({
     render: function() {
         var cardActionButtons;
         if (window.user_key === null || window.user_key === 'None') {
             cardActionButtons = null;
         } else if (window.user_key !== this.props.model.get('user_key')) {
-            cardActionButtons = 
+            cardActionButtons =
                 <div className='btn btn-info btn-small' onClick={this.takeCard}>
                     <i className='icon-download'></i> Take
                 </div>;
         } else {
-            cardActionButtons = 
+            cardActionButtons =
                 <div>
                     <div className='btn btn-primary btn-small' onClick={this.deleteCard}>
                         <i className='icon-trash'></i> Delete
                     </div>
-                    <Link to='edit' className='btn btn-primary btn-small'
+                    <Link to='/edit' className='btn btn-primary btn-small'
                           cardKey={this.props.model.get('key')}>
                         <i className='icon-edit'></i> Edit
                     </Link>
                 </div>;
         };
 
-        var inputFormat = this.props.model.get('input_format'),
-            front = this.props.model.get('front'),
-            back = this.props.model.get('back');
-        if (inputFormat == 'text') {
-            front = <div style={{whiteSpace: 'pre-line'}}>{front}</div>;
-            back = <div style={{whiteSpace: 'pre-line'}}>{back}</div>;
-        } else if (inputFormat == 'markdown') {
-            front = <div className="userhtml" dangerouslySetInnerHTML={{__html: converter.makeHtml(front)}}></div>;
-            back = <div className="userhtml" dangerouslySetInnerHTML={{__html: converter.makeHtml(back)}}></div>;
-        }
-
-        return <div className='feedcard row-fluid'>
+        return (
+          <div className='feedcard row-fluid'>
             <FeedCardMeta model={this.props.model} />
             <div className='feedcard_right span10'>
-                <div className='feedcard_front'>{front}</div>
-                <div className='feedcard_back'>{back}</div>
-                <div className="feedcard_meta row-fluid">
-                    <Tags list={this.props.model.get('tags')} />
-                    <div className='span3 btn-container'>
-                        {cardActionButtons}
-                    </div>
+              <div className='feedcard_front'>
+                <Markdown
+                  container={Container}
+                  content={this.props.model.get('front')}
+                />
+              </div>
+              <div className='feedcard_back'>
+                <Markdown
+                  container={Container}
+                  content={this.props.model.get('back')}
+                />
+              </div>
+              <div className="feedcard_meta row-fluid">
+                <Tags list={this.props.model.get('tags')} />
+                <div className='span3 btn-container'>
+                  {cardActionButtons}
                 </div>
+              </div>
             </div>
-        </div>;
-    },
-    getBackboneModels: function() {
-        return [this.props.model];
+          </div>
+        );
     },
     deleteCard: function() {
-        // fire off an async DELETE to the server
-        this.props.model.deleteCard();
-        // optimistically, we remove it from the UI
-        this.props.onDeleteCard(this.props.model);
+      // fire off an async DELETE to the server
+      API.deleteCard(this.props.model);
+      // optimistically, we remove it from the UI
+      this.props.onDeleteCard(this.props.model);
     },
     takeCard: function() {
-        this.props.model.takeCard();
+      API.takeCard(this.props.model);
     }
 });
 
-var FeedCardMeta = React.createClass({
+export const FeedCardMeta = React.createClass({
     render: function() {
         // TODO get this info from google
         // http://stackoverflow.com/q/3591278/2121468
         var userImage = gravatar(this.props.model.get('user_email'), 60),
             photoStyle = {background: 'url(' + userImage + ') no-repeat'};
         return <div className='feedcard_userinfo span2'>
-            <Link to="user" userKey={this.props.model.get('user_key')}>
+            <Link to="/user" userKey={this.props.model.get('user_key')}>
                 <div className='feedcard_photo' style={photoStyle} />
                 <div className='feedcard_desc'>
                     <div className='feedcard_username'>
@@ -96,18 +90,18 @@ var FeedCardMeta = React.createClass({
         </div>;
     },
     takeCard: function() {
-        console.log('TODO');
+      console.log('TODO');
     }
 });
 
 var Tags = React.createClass({
     render: function() {
-        var tags = _(this.props.list).map(function(tag) {
-            return <span className='label label-info'>{tag}</span>;
-        });
-        return <div className='tags span9'>
-            Tags: {tags}
-        </div>;
+      const tags = this.props.list.map(tag => (
+        <span className='label label-info'>{tag}</span>
+      ));
+      return <div className='tags span9'>
+          Tags: {tags}
+      </div>;
     }
 });
 
@@ -116,15 +110,21 @@ var FeedBody = React.createClass({
     render: function() {
         var onDeleteCard = this.props.onDeleteCard;
         var collection = this.props.collection;
-        var feedItems = _(collection.models).map(function(model) {
-            return <li className="l-feedcard-container" key={model.cid}>
-                <FeedCard model={model} key={model.cid} collection={collection}
-                    onDeleteCard={onDeleteCard} />
-            </li>;
-        });
-        return <ol className='feedbody'>
+        var feedItems = collection.models.map(model => (
+          <li className="l-feedcard-container" key={model.cid}>
+            <FeedCard
+              model={model}
+              key={model.cid}
+              collection={collection}
+              onDeleteCard={onDeleteCard}
+            />
+          </li>
+        ));
+        return (
+          <ol className='feedbody'>
             {feedItems}
-        </ol>;
+          </ol>
+        );
     },
 });
 
@@ -141,7 +141,7 @@ var PracticeButton = React.createClass({
 var FilterBar = React.createClass({
     handleSubmit: function(event) {
         event.preventDefault();
-        var query = this.refs.query.getDOMNode().value.trim();
+        var query = this.refs.query.value.trim();
         this.props.onFilterChange(query);
     },
     render: function() {
@@ -186,7 +186,7 @@ var SearchFeed = React.createClass({
     getInitialState: function() {
         // TODO set some state for a spinner?
         return {
-            cardCollection: new models.CardCollection(),
+            cardCollection: [],
             userKey: window.user_key
         };
     },
@@ -195,37 +195,35 @@ var SearchFeed = React.createClass({
     },
     cardsFromJSON: function(cardsJSON) {
         var cardData = JSON.parse(cardsJSON);
-        var cardModels = _(cardData).map(function(card) {
-            return new models.CardModel(card);
-        });
-        return new models.CardCollection(cardModels);
+        return cardData.map(card => new CardModel(card));
     },
     fetchCardData: function(query) {
-        var self = this;
-        $.get('/api/cards/search', {q: query}, function(newCardsJSON) {
-            self.setState({cardCollection: self.cardsFromJSON(newCardsJSON)});
-        });
+      API.queryCards(
+        query,
+        newCardsJSON => {
+          this.setState({cardCollection: self.cardsFromJSON(newCardsJSON)});
+        },
+        response => {
+          console.error(response);
+        }
+      );
     },
     onDeleteCard: function(cardModel) {
-        // TODO(jace) This seems lame and inefficient to make copy of the
-        // existing card collection, but there are warnings
-        // against modifying state directly.  Should figure out a better way.
-        var cardCollection = new models.CardCollection(this.state.cardCollection.models);
-        cardCollection.remove(cardModel);
-        this.setState({cardCollection: cardCollection});
+        const cardCollection = this.state.cardCollection
+          .filter(card => card !== cardModel);
+        this.setState({ cardCollection });
     },
     onTakeAll: function() {
-        console.log("Take ALL", this.state.cardCollection.models);
-        var self = this;
-        _.map(this.state.cardCollection.models, function(cardModel) {
-            if (cardModel.get('user_key') !== self.state.userKey) {
-                cardModel.takeCard();
+        console.log("Take ALL", this.state.cardCollection);
+        for (const cardModel of this.state.cardCollection) {
+            if (cardModel.get('user_key') !== this.state.userKey) {
+                API.takeCard(cardModel);
             }
-        });
+        }
     }
 });
 
-var UserFeed = React.createClass({
+export const UserFeed = React.createClass({
     determineUserKey: function() {
         if (this.props.params && this.props.params.userKey) {
             return this.props.params.userKey;
@@ -258,20 +256,18 @@ var UserFeed = React.createClass({
         };
     },
     componentDidMount: function() {
-        var userKey = this.determineUserKey();
-        if (!this.state.userData && userKey) {
-            var url = '/api/user/' + userKey ;
-            var self = this;
-            $.get(url, function(response) {
-                var userData = JSON.parse(response);
-                var query = [userData.key].concat(userData.following).join(' ');
-                self.setState({userData: userData, query: query});
-            });
-        }
+      var userKey = this.determineUserKey();
+      if (!this.state.userData && userKey) {
+        API.requestUser(
+          userKey,
+          userData => {
+            var query = [userData.key].concat(userData.following).join(' ');
+            this.setState({userData: userData, query: query});
+          },
+          err => {
+            console.error(err);
+          }
+        );
+      }
     }
 });
-
-module.exports = {
-    SearchFeed: SearchFeed,
-    UserFeed: UserFeed
-};

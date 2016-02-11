@@ -15,12 +15,10 @@ class CardBulkExportTest(unittest.TestCase):
         second_json = json.dumps(json.loads(second), sort_keys=True, indent=2)
         self.assertMultiLineEqual(first_json, second_json)
 
-    def assert_card_json(self, card, front='', back='',
-                         input_format='text', tags=None):
+    def assert_card_json(self, card, front='', back='', tags=None):
         """Assert that card serializes to JSON with the given properties."""
         card_obj = {'front': front,
                     'back': back,
-                    'input_format': input_format,
                     }
         if tags is not None:
             card_obj['tags'] = tags
@@ -34,12 +32,12 @@ class CardBulkExportTest(unittest.TestCase):
     def test_empty_properties(self):
         # Default values.
         self.assert_card_json(models.Card(), front='', back='',
-                              input_format='text', tags=None)
+                              tags=None)
 
         # Null handling. Setting "tags" to None is an error in NDB, though.
-        card = models.Card(front=None, back=None, input_format=None, tags=[])
+        card = models.Card(front=None, back=None, tags=[])
         self.assert_card_json(card, front='', back='',
-                              input_format='text', tags=None)
+                              tags=None)
 
     def test_no_cards(self):
         self.assert_json(
@@ -47,12 +45,8 @@ class CardBulkExportTest(unittest.TestCase):
             '{"cards": [], "version": "v1", "format": "JSONCardArchive"}')
 
     def test_simple_card(self):
-        kwargs = {'front': 'Hello', 'back': 'World', 'tags': ['in-text']}
-        self.assert_card_json(models.Card(**kwargs), **kwargs)
-
-        # Now again but with markdown.
         kwargs = {'front': 'Hello\n====', 'back': '* World',
-                  'tags': ['in-text'], 'input_format': 'markdown'}
+                  'tags': ['in-text']}
         self.assert_card_json(models.Card(**kwargs), **kwargs)
 
 
@@ -80,7 +74,6 @@ class CardBulkImportTest(unittest.TestCase):
              "version": "v1",
              "cards": [{"front": "First side.",
                         "back": "Second side.",
-                        "input_format": "text",
                         "tags": ["keep-it-simple"]
                         }]
              }
@@ -90,5 +83,4 @@ class CardBulkImportTest(unittest.TestCase):
         card = archive.get_cards()[0]
         self.assertEqual(card.front, "First side.")
         self.assertEqual(card.back, "Second side.")
-        self.assertEqual(card.input_format, "text")
         self.assertEqual(card.tags, ["keep-it-simple"])

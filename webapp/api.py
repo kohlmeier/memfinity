@@ -385,7 +385,6 @@ class _JSONCardArchive(object):
         """Python object representation of a model.Card for export."""
         obj = {"front": card.front or "",
                "back": card.back or "",
-               "input_format": card.input_format or "text",
                }
         if card.tags:
             obj["tags"] = card.tags
