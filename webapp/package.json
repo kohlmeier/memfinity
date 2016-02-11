@@ -23,8 +23,8 @@
     "webpack-hot-middleware": "^2.6.4"
   },
   "dependencies": {
-    "backbone": "^1.2.3",
     "history": "^1.13.1",
+    "immutable": "^3.7.6",
     "jquery": "^2.2.0",
     "lodash": "^4.3.0",
     "react": "^0.14.7",

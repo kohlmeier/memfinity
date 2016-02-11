@@ -1,41 +1,54 @@
-import Backbone from 'backbone';
+import { Record } from 'immutable';
 import $ from 'jquery';
 
-/*
- * Cards store the following data:
- * - front: markup appearing on the front of the card
- * - back: markup appearing on the back of the card
- * - tags: list of tag names
- * - ... meta ...
- */
-export const CardModel = Backbone.Model.extend({
-    url: function() {
-        return '/api/card/' + this.get('key');
-    },
-    rate: function(rating) {
-        $.ajax({
-            url: this.url() + '/review',
-            data: JSON.stringify({ grade: rating }),
-            contentType: 'application/json',
-            type: 'PUT'
-        })
-            //.done(function() { console.log('card rate success'); })
-            .fail(function() { console.log('card rate fail'); });
-    },
-    deleteCard: function() {
-        $.ajax({
-            url: this.url(),
-            type: 'DELETE'
-        })
-            //.done(function() { console.log('card delete success'); })
-            .fail(function() { console.log('card delete fail'); });
-    },
-    takeCard: function() {
-        $.ajax({
-            url: this.url() + '/import',
-            type: 'PUT'
-        })
-            //.done(function() { console.log('card import success'); })
-            .fail(function() { console.log('card import fail'); });
-    },
+
+const CardData = Record({
+  front: null,
+  back: null,
+  tags: null,
+  reversible: false,
+  'private': false,
+
+  // metadata
+  added: null,
+  modified: null,
+  source_url: null,
+
+  // TODO(joel): more fields
 });
+
+
+export class CardModel {
+  get url() {
+    return `/api/card/${this.key}`;
+  }
+
+  rate(grade) {
+    $.ajax({
+      url: `${this.url}/review`,
+      data: JSON.stringify({ grade }),
+      contentType: 'application/json',
+      type: 'PUT',
+    })
+      //.done(() => { console.log('card rate success'); })
+      .fail(() => { console.log('card rate fail'); });
+  }
+
+  deleteCard() {
+    $.ajax({
+      url: this.url,
+      type: 'DELETE'
+    })
+      //.done(() => { console.log('card delete success'); })
+      .fail(() => { console.log('card delete fail'); });
+  }
+
+  takeCard() {
+    $.ajax({
+      url: `${this.url}/import`,
+      type: 'PUT'
+    })
+      //.done(() => { console.log('card import success'); })
+      .fail(() => { console.log('card import fail'); });
+  }
+}

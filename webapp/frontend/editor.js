@@ -135,7 +135,7 @@ class EditorForm extends React.Component {
       </form>
     );
   }
-});
+}
 
 
 // props: params.cardKey
@@ -144,7 +144,7 @@ export default class Editor extends React.Component {
   constructor(props) {
     super(props);
     const isCreateMode = !props.params.cardKey;
-    return {
+    this.state = {
       isCreateMode,
       cardModel: isCreateMode ? new CardModel() : null,
       pendingSubmit: false
@@ -184,10 +184,9 @@ export default class Editor extends React.Component {
   }
 
   fetchCardData() {
-    var self = this;
-    $.get('/api/card/' + this.props.params.cardKey, function(cardData) {
-      cardData = JSON.parse(cardData);
-      self.setState({cardModel: cardData});
+    $.get('/api/card/' + this.props.params.cardKey, cardData => {
+      const cardModel = JSON.parse(cardData);
+      this.setState({ cardModel });
     });
   }
 
