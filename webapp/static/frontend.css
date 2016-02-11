@@ -528,14 +528,20 @@ body {
     }
 }
 
-/* Override some flat-ui styles.
+/* TODO(joel) */
+.ReactTags__tag {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px 10px 10px 0;
+    display: inline-block;
+}
 
-   For some reason, flat-ui is at odds with vanilla bootstrap. E.g.,
-   if not using flat-ui JS, sometimes elements (like checkboxes) done
-   in the bootstrap style simply don't show up.
-*/
-.tagsinput {
-    border-color: #bdc3c7; /* Override flat-ui border color. */
+.ReactTags__tag:hover {
+    cursor: move;
+}
+
+.ReactTags__remove {
+    padding-left: 8px;
 }
 
 .checkbox input,

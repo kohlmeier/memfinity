@@ -4,6 +4,7 @@
 import $ from 'jquery';
 import React from 'react';
 import Router from 'react-router';
+import { WithContext as ReactTags } from 'react-tag-input';
 
 import { CardModel } from './models';
 
@@ -11,7 +12,10 @@ import { CardModel } from './models';
 // stats:  [a dict representing fields which have been changed]
 var EditorForm = React.createClass({
     getInitialState: function() {
-        return {isEnabled: true};
+        return {
+          isEnabled: true,
+          tags: [],
+        };
     },
     handleChange: function(field, event) {
         var state = {};
@@ -22,21 +26,42 @@ var EditorForm = React.createClass({
         }
         this.setState(state);
     },
-    handleTagsInputChange: function(elt) {
-        // The tagsInput arguments aren't helpful or consistent, so we
-        // go straight to the source.
-        // TODO(chris): this is called once per tag on initialization,
-        // which is silly.
-        var tags = this.refs.tagsinput.value.split(',');
-        this.setState({tags: tags});
+
+    handleDeleteTag(i) {
+      const tags = this.state.tags.slice();
+      tags.splice(i, 1);
+      this.setState({ tags });
     },
+
+    handleAddTag(tag) {
+      const tags = this.state.tags.slice();
+
+      tags.push({
+        id: tags.length + 1,
+        text: tag
+      });
+      this.setState({ tags });
+    },
+
+    handleDragTag(tag, currPos, newPos) {
+      const tags = this.state.tags.slice();
+
+      // mutate array
+      tags.splice(currPos, 1);
+      tags.splice(newPos, 0, tag);
+
+      // re-render
+      this.setState({ tags });
+    },
+
     handleSubmit: function() {
         this.setState({isEnabled: false});
         this.props.submitCardData(this.state);
     },
     render: function() {
-        var tagsArray = this.props.cardModel.tags;
-        var tagsCSV = tagsArray ? tagsArray.join(", ") : "";
+        // TODO(joel) - hook this up
+        // var tagsArray = this.props.cardModel.tags;
+        const tagsArray = this.state.tags;
         var inputFormat = (this.props.cardModel.input_format
                            ? this.props.cardModel.input_format.toLowerCase()
                            : "text");
@@ -66,10 +91,12 @@ var EditorForm = React.createClass({
             </div>
             <div className="form-group">
                 <label htmlFor="editor-input-tags">Tags</label>
-                <input type="text" id="editor-input-tags"
-                               className="tagsinput form-control"
-                               defaultValue={tagsCSV}
-                               ref="tagsinput" />
+                <ReactTags
+                  tags={tagsArray}
+                  handleDelete={this.handleDeleteTag}
+                  handleAddition={this.handleAddTag}
+                  handleDrag={this.handleDragTag}
+                />
             </div>
             <div className="form-group">
                 <label htmlFor="editor-input-source">Source URL</label>
@@ -90,11 +117,6 @@ var EditorForm = React.createClass({
             <input type="submit" disabled={!this.props.isEnabled} className="btn btn-primary" value="Save" />
         </form>;
     },
-    componentDidMount: function() {
-        $(this.refs.tagsinput).tagsInput({
-            onChange: this.handleTagsInputChange
-        });
-    }
 });
 
 
