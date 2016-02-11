@@ -7,14 +7,14 @@ export default function FAQ() {
   return (
     <div>
       <div id="faq-links">
-        <div id="features" className="features container">
+        <div className="features container">
             <div className="feature">
                 <h1>Memfinity: Frequently Asked Questions</h1>
             </div>
         </div>
     </div>
     <div className="faq-qna">
-        <div id="features" className="features container">
+        <div className="features container">
             <div className="feature">
                 <h3>Q: What kind of spaced repetition algorithm does Memfinity use?</h3>
                 <p>A: Memfinity uses a <a href="http://en.wikipedia.org/wiki/Leitner_system">Leitner system</a> algorithm. The current configuration for the algorithm uses five boxes with corresponding review intervals of 1, 5, 25, 125, and 625 days. In the future, we'd like to add the ability for each user to customize this configuration.</p>
