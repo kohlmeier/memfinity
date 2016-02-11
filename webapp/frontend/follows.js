@@ -1,62 +1,61 @@
 /*
  * Interface for feed mode
  */
-import $ from 'jquery';
 import React from 'react';
 import { Link } from 'react-router';
 
+import * as API from './api';
 import gravatar from './gravatar';
 import UserHeader from './userheader';
 
 // props: model
-var UserCard = React.createClass({
-    render: function() {
-        var cardActionButtons;
-        if (window.username === null) {
-            cardActionButtons = null;
-        } else if (window.username !== this.props.user.email) {
-            cardActionButtons = null;
-            // TODO.. should implement a *follow* button here...
-            //<div className='btn btn-primary btn-small' onClick={this.takeCard}>
-            //   <i className='icon-download'></i> Take
-            //</div>;
-        };
-        var front = this.props.user.nickname,
-            back = this.props.user.name;
-        return <div className='feedcard row-fluid'>
-            <UserCardMeta user={this.props.user} />
-            <div className='feedcard_right span10'>
-                <div className='feedcard_front'>{front}</div>
-                <div className='feedcard_back'>{back}</div>
-                <div className="feedcard_meta row-fluid">
-                    <div className='span3 btn-container'>
-                        {cardActionButtons}
-                    </div>
-                </div>
-            </div>
-        </div>;
-    }
-});
+function UserCard({ user }) {
+  var cardActionButtons;
+  if (window.username === null) {
+    cardActionButtons = null;
+  } else if (window.username !== user.email) {
+    cardActionButtons = null;
+    // TODO.. should implement a *follow* button here...
+    //<div className='btn btn-primary btn-small' onClick={this.takeCard}>
+    //   <i className='icon-download'></i> Take
+    //</div>;
+  };
 
-var UserCardMeta = React.createClass({
-    render: function() {
-        // TODO get this info from google
-        // http://stackoverflow.com/q/3591278/2121468
-        // TODO DRY this up with-- duplicates FeedCardMeta in feed.jsx
-        var userImage = gravatar(this.props.user.email, 60),
-            photoStyle = {background: 'url(' + userImage + ') no-repeat'};
-        return <div className='feedcard_userinfo span2'>
-            <Link to="/user" userKey={this.props.user.key}>
-                <div className='feedcard_photo' style={photoStyle} />
-                <div className='feedcard_desc'>
-                    <div className='feedcard_username'>
-                        {this.props.user.nickname}
-                    </div>
-                </div>
-            </Link>
-        </div>;
-    }
-});
+  return (
+    <div className='feedcard row-fluid'>
+      <UserCardMeta user={user} />
+      <div className='feedcard_right span10'>
+        <div className='feedcard_front'>{user.nickname}</div>
+        <div className='feedcard_back'>{user.name}</div>
+        <div className="feedcard_meta row-fluid">
+          <div className='span3 btn-container'>
+            {cardActionButtons}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function UserCardMeta({ user }) {
+  // TODO get this info from google
+  // http://stackoverflow.com/q/3591278/2121468
+  // TODO DRY this up with-- duplicates FeedCardMeta in feed.jsx
+  const userImage = gravatar(user.email, 60);
+  const photoStyle = {background: 'url(' + userImage + ') no-repeat'};
+  return (
+    <div className='feedcard_userinfo span2'>
+      <Link to="/user" userKey={user.key}>
+        <div className='feedcard_photo' style={photoStyle} />
+        <div className='feedcard_desc'>
+          <div className='feedcard_username'>
+            {user.nickname}
+          </div>
+        </div>
+      </Link>
+    </div>
+  );
+}
 
 // props: userKey, followersOrFollowing
 var Follows = React.createClass({
@@ -98,27 +97,22 @@ var Follows = React.createClass({
         }
     },
     fetchData: function() {
-        var self = this;
-        var url = '/api/user/' + this.props.userKey + '/follows';
-        $.get(url, function(response) {
-            self.setState({followsData: JSON.parse(response)});
-        });
+      API.getFollows(
+        this.props.userKey,
+        followsData => {
+          self.setState({ followsData });
+        },
+        err => {
+          console.error(err);
+        }
+      );
     }
 });
 
-var Following = React.createClass({
-    render: function() {
-        return <Follows userKey={this.props.params.userKey} followersOrFollowing="following" />
-    }
-});
+export function Following({ params }) {
+  return <Follows userKey={params.userKey} followersOrFollowing="following" />;
+}
 
-var Followers = React.createClass({
-    render: function() {
-        return <Follows userKey={this.props.params.userKey} followersOrFollowing="followers" />
-    }
-});
-
-module.exports = {
-    Following: Following,
-    Followers: Followers
-};
+export function Followers({ params }) {
+  return <Follows userKey={params.userKey} followersOrFollowing="followers" />;
+}

@@ -1,11 +1,11 @@
 /*
  * Interface for review mode
  */
-import $ from 'jquery';
 import React from 'react';
 import Markdown from 'react-remarkable';
 import { Link } from 'react-router';
 
+import * as API from './api';
 import Container from './markdown-container';
 import { CardModel } from './models';
 
@@ -39,7 +39,7 @@ var Review = React.createClass({
     handleRate: function(rating) {
         var { easyStack, hardStack, reviewingStack } = this.state;
         var model = reviewingStack[0];
-        model.rate(rating);
+        API.rate(model, rating);
         var reviewingStack = reviewingStack.slice();
         reviewingStack.splice(0, 1);
         if (rating === 'easy') {
@@ -80,18 +80,16 @@ var Review = React.createClass({
     },
 
     fetchCardData: function(reviewAll) {
-        var self = this;
-        var url = '/api/cards?review=1';
-        if (reviewAll) {
-            url += "&reviewAll=true"
+      API.getReviewCards(
+        reviewAll,
+        reviewCards => {
+          const reviewingStack = reviewCards.map(card => new CardModel(card));
+          self.setState({ reviewingStack });
+        },
+        err => {
+          console.error(err);
         }
-
-        $.get(url, function(reviewCards) {
-            var cardModels = _(JSON.parse(reviewCards)).map(function(card) {
-                return new CardModel(card);
-            });
-            self.setState({ reviewingStack: cardModels });
-        });
+      );
     },
 });
 

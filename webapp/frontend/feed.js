@@ -1,18 +1,18 @@
 /*
  * Interface for feed mode
  */
-import $ from 'jquery';
 import React from 'react';
 import { Link } from 'react-router';
 import Markdown from 'react-remarkable';
 
+import * as API from './api';
 import Container from './markdown-container';
 import { CardModel } from './models';
 import gravatar from './gravatar';
 import UserHeader from './userheader';
 
 // props: model
-var FeedCard = React.createClass({
+export const FeedCard = React.createClass({
     render: function() {
         var cardActionButtons;
         if (window.user_key === null || window.user_key === 'None') {
@@ -62,17 +62,17 @@ var FeedCard = React.createClass({
         );
     },
     deleteCard: function() {
-        // fire off an async DELETE to the server
-        this.props.model.deleteCard();
-        // optimistically, we remove it from the UI
-        this.props.onDeleteCard(this.props.model);
+      // fire off an async DELETE to the server
+      API.deleteCard(this.props.model);
+      // optimistically, we remove it from the UI
+      this.props.onDeleteCard(this.props.model);
     },
     takeCard: function() {
-        this.props.model.takeCard();
+      API.takeCard(this.props.model);
     }
 });
 
-var FeedCardMeta = React.createClass({
+export const FeedCardMeta = React.createClass({
     render: function() {
         // TODO get this info from google
         // http://stackoverflow.com/q/3591278/2121468
@@ -90,7 +90,7 @@ var FeedCardMeta = React.createClass({
         </div>;
     },
     takeCard: function() {
-        console.log('TODO');
+      console.log('TODO');
     }
 });
 
@@ -192,10 +192,15 @@ var SearchFeed = React.createClass({
         return _(cardData).map(card => new CardModel(card));
     },
     fetchCardData: function(query) {
-        var self = this;
-        $.get('/api/cards/search', {q: query}, function(newCardsJSON) {
-            self.setState({cardCollection: self.cardsFromJSON(newCardsJSON)});
-        });
+      API.queryCards(
+        query,
+        newCardsJSON => {
+          this.setState({cardCollection: self.cardsFromJSON(newCardsJSON)});
+        },
+        response => {
+          console.error(response);
+        }
+      );
     },
     onDeleteCard: function(cardModel) {
         var cardCollection = _(this.state.cardCollection).filter(card => {
@@ -207,13 +212,13 @@ var SearchFeed = React.createClass({
         console.log("Take ALL", this.state.cardCollection);
         for (const cardModel of this.state.cardCollection) {
             if (cardModel.get('user_key') !== this.state.userKey) {
-                cardModel.takeCard();
+                API.takeCard(cardModel);
             }
         }
     }
 });
 
-var UserFeed = React.createClass({
+export const UserFeed = React.createClass({
     determineUserKey: function() {
         if (this.props.params && this.props.params.userKey) {
             return this.props.params.userKey;
@@ -246,20 +251,18 @@ var UserFeed = React.createClass({
         };
     },
     componentDidMount: function() {
-        var userKey = this.determineUserKey();
-        if (!this.state.userData && userKey) {
-            var url = '/api/user/' + userKey ;
-            var self = this;
-            $.get(url, function(response) {
-                var userData = JSON.parse(response);
-                var query = [userData.key].concat(userData.following).join(' ');
-                self.setState({userData: userData, query: query});
-            });
-        }
+      var userKey = this.determineUserKey();
+      if (!this.state.userData && userKey) {
+        API.requestUser(
+          userKey,
+          userData => {
+            var query = [userData.key].concat(userData.following).join(' ');
+            this.setState({userData: userData, query: query});
+          },
+          err => {
+            console.error(err);
+          }
+        );
+      }
     }
 });
-
-module.exports = {
-    SearchFeed: SearchFeed,
-    UserFeed: UserFeed
-};

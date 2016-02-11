@@ -1,11 +1,11 @@
 /*
  * Interface for card editing
  */
-import $ from 'jquery';
 import React from 'react';
 import Router from 'react-router';
 import { WithContext as ReactTags } from 'react-tag-input';
 
+import * as API from './api';
 import { CardModel } from './models';
 
 // props: submitCardData
@@ -184,8 +184,7 @@ export default class Editor extends React.Component {
   }
 
   fetchCardData() {
-    $.get('/api/card/' + this.props.params.cardKey, cardData => {
-      const cardModel = JSON.parse(cardData);
+    API.getCard(this.props.params.cardKey, cardModel => {
       this.setState({ cardModel });
     });
   }
@@ -196,12 +195,8 @@ export default class Editor extends React.Component {
     console.log(data);
     this.setState({pendingSubmit: true});
     if (this.state.isCreateMode) {
-      $.ajax({
-        url: '/api/card',
-        contentType: "application/json",
-        type: 'POST',
-        data: JSON.stringify(data),
-        success: response => {
+      API.createCard(
+        response => {
           console.log("creation POST was successful: " + response);
           this.setState({pendingSubmit: false});
           // if you successfully created a new card, we just route
@@ -217,26 +212,23 @@ export default class Editor extends React.Component {
             Router.transitionTo('feed');
           }, 1000);
         },
-        error: (xhr, status, err) => {
-          console.error(this.props.url, status, err.toString());
+        err => {
+          console.error(this.props.url, err.status, err.response);
           this.setState({pendingSubmit: false});
         }
-      });
+      );
     } else {
-      $.ajax({
-        url: '/api/card/' + this.props.params.cardKey,
-        contentType: "application/json",
-        type: 'PUT',
-        data: JSON.stringify(data),
-        success: response => {
+      API.updateCard(
+        this.props.params.cardKey,
+        response => {
           console.log("PUT was successful: " + response);
           this.setState({pendingSubmit: false});
         },
-        error: (xhr, status, err) => {
-          console.error(this.props.url, status, err.toString());
+        err => {
+          console.error(this.props.url, err.status, err.response);
           this.setState({pendingSubmit: false});
         }
-      });
+      );
     }
   }
 }

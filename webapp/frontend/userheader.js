@@ -1,11 +1,11 @@
 /*
  * Interface for feed mode
  */
-import $ from 'jquery';
 import { union, difference } from 'lodash';
 import React from 'react';
 import { Link } from 'react-router';
 
+import * as API from './api';
 import gravatar from './gravatar';
 
 var UserHeader = React.createClass({
@@ -51,27 +51,26 @@ var UserHeader = React.createClass({
                 </div>
             </div>;
     },
-    fireAJAX: function(followOrUnfollow) {
-        var self = this;
-        var userDataKey = this.props.userData.key;
-        $.ajax({
-            url: '/api/user/' + userDataKey + '/' + followOrUnfollow,
-            type: 'PUT',
-            success: function(response) {
-                console.log("PUT was successful: " + response);
-                var fn = followOrUnfollow == "follow" ? union : difference;
-                self.setState({following: fn(window.following, [userDataKey])});
-            },
-            error: function(xhr, status, err) {
-                console.log("PUT failed: ", status, err.toString());
-            }
-        });
+    fireAJAX(followOrUnfollow) {
+      const userDataKey = this.props.userData.key;
+      API.followUser(
+        userDataKey,
+        followOrUnfollow,
+        response => {
+          console.log("PUT was successful: " + response);
+          var fn = followOrUnfollow == "follow" ? union : difference;
+          this.setState({following: fn(window.following, [userDataKey])});
+        },
+        err => {
+          console.log("PUT failed: ", err.status, err.response);
+        }
+      );
     },
-    onFollow: function() {
-        this.fireAJAX('follow');
+    onFollow() {
+      this.fireAJAX('follow');
     },
-    onUnfollow: function() {
-        this.fireAJAX('unfollow');
+    onUnfollow() {
+      this.fireAJAX('unfollow');
     }
 });
 
