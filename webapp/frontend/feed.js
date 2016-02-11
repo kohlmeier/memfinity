@@ -207,8 +207,8 @@ var SearchFeed = React.createClass({
     },
     onTakeAll: function() {
         console.log("Take ALL", this.state.cardCollection);
-        for (cardModel of this.state.cardCollection) {
-            if (cardModel.get('user_key') !== self.state.userKey) {
+        for (const cardModel of this.state.cardCollection) {
+            if (cardModel.get('user_key') !== this.state.userKey) {
                 cardModel.takeCard();
             }
         }
