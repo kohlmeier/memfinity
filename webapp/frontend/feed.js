@@ -96,12 +96,12 @@ export const FeedCardMeta = React.createClass({
 
 var Tags = React.createClass({
     render: function() {
-        var tags = _(this.props.list).map(function(tag) {
-            return <span className='label label-info'>{tag}</span>;
-        });
-        return <div className='tags span9'>
-            Tags: {tags}
-        </div>;
+      const tags = this.props.list.map(tag => (
+        <span className='label label-info'>{tag}</span>
+      ));
+      return <div className='tags span9'>
+          Tags: {tags}
+      </div>;
     }
 });
 
@@ -110,15 +110,21 @@ var FeedBody = React.createClass({
     render: function() {
         var onDeleteCard = this.props.onDeleteCard;
         var collection = this.props.collection;
-        var feedItems = _(collection.models).map(function(model) {
-            return <li className="l-feedcard-container" key={model.cid}>
-                <FeedCard model={model} key={model.cid} collection={collection}
-                    onDeleteCard={onDeleteCard} />
-            </li>;
-        });
-        return <ol className='feedbody'>
+        var feedItems = collection.models.map(model => (
+          <li className="l-feedcard-container" key={model.cid}>
+            <FeedCard
+              model={model}
+              key={model.cid}
+              collection={collection}
+              onDeleteCard={onDeleteCard}
+            />
+          </li>
+        ));
+        return (
+          <ol className='feedbody'>
             {feedItems}
-        </ol>;
+          </ol>
+        );
     },
 });
 
@@ -189,7 +195,7 @@ var SearchFeed = React.createClass({
     },
     cardsFromJSON: function(cardsJSON) {
         var cardData = JSON.parse(cardsJSON);
-        return _(cardData).map(card => new CardModel(card));
+        return cardData.map(card => new CardModel(card));
     },
     fetchCardData: function(query) {
       API.queryCards(
@@ -203,9 +209,8 @@ var SearchFeed = React.createClass({
       );
     },
     onDeleteCard: function(cardModel) {
-        var cardCollection = _(this.state.cardCollection).filter(card => {
-            return card !== cardModel;
-        });
+        const cardCollection = this.state.cardCollection
+          .filter(card => card !== cardModel);
         this.setState({ cardCollection });
     },
     onTakeAll: function() {

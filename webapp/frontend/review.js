@@ -96,12 +96,14 @@ var Review = React.createClass({
 var stackSides = function (primary, secondary, size, times) {
     times = 1;
     var ret = [];
-    _(times).times(function(n) {
+
+    // XXX(joel) times is always 1?
+    {
         n += 1; // 1-indexed
         var color = n % 2 === 0 ? primary : secondary,
             sz = (size * n) + 'px ';
         ret.push(sz + sz + color);
-    });
+    }
     ret = ret.join(', ');
     return ret;
 };
@@ -160,29 +162,30 @@ var ReviewingStackMeta = React.createClass({
     }
 });
 
-// props: collection, position, (some handler)
+// props: collection, name
 var ReviewedStack = React.createClass({
     render: function() {
-        var sideLayers = this.props.collection.length;
-        var stackstyle = {
-            'boxShadow': stackSides('#2C3E50', '#BDC3C7', 2, sideLayers)
-        };
+      const { collection, name } = this.props;
+      var sideLayers = collection.length;
+      var stackstyle = {
+          'boxShadow': stackSides('#2C3E50', '#BDC3C7', 2, sideLayers)
+      };
 
-        var topCardModel = _(this.props.collection).last();
-        var topCard = null;
-        if (topCardModel) {
-            // TODO way to view this card
-            topCard = <Card model={topCardModel}
-                            key={topCardModel.cid} />;
-        }
-        return <div className={'reviewedstackall reviewedstackall-' + this.props.name.toLowerCase()}>
-            <ReviewedStackMeta count={this.props.collection.length}
-                               name={this.props.name} />
-            <div className='reviewedstack' style={stackstyle}>
-                <div className='topcardcover' />
-                {topCard}
-            </div>
-        </div>;
+      var topCardModel = collection[collection.length - 1];
+      var topCard = null;
+      if (topCardModel) {
+          // TODO way to view this card
+          topCard = <Card model={topCardModel}
+                          key={topCardModel.cid} />;
+      }
+      return <div className={'reviewedstackall reviewedstackall-' + name.toLowerCase()}>
+          <ReviewedStackMeta count={collection.length}
+                             name={name} />
+          <div className='reviewedstack' style={stackstyle}>
+              <div className='topcardcover' />
+              {topCard}
+          </div>
+      </div>;
     },
 });
 
@@ -277,18 +280,22 @@ var Content = React.createClass({
 });
 
 var Choices = React.createClass({
-    render: function() {
-        return <div className='choices'>
-            <span className='choices_hard'
-                  onClick={_(this.props.rate).partial('hard')}>
-                Hard
-            </span>
-            <span className='choices_easy'
-                  onClick={_(this.props.rate).partial('easy')}>
-                Easy
-            </span>
-        </div>;
-    }
+  render: function() {
+    const { rate } = this.props;
+
+    return (
+      <div className='choices'>
+        <span className='choices_hard'
+              onClick={() => rate('hard')}>
+            Hard
+        </span>
+        <span className='choices_easy'
+              onClick={() => rate('easy')}>
+            Easy
+        </span>
+      </div>
+    );
+  }
 });
 
 var MetaButton = React.createClass({

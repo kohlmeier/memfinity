@@ -71,11 +71,11 @@ var Follows = React.createClass({
             userDicts = this.state.followsData.followers;
         }
 
-        var userItems = _(userDicts).map(function(user) {
-            return <li className="l-feedcard-container" key={user.email}>
-                <UserCard user={user} key={user.email} />
-            </li>;
-        });
+        const userItems = userDicts.map(user => (
+          <li className="l-feedcard-container" key={user.email}>
+            <UserCard user={user} key={user.email} />
+          </li>
+        ));
 
         return <div>
             <UserHeader userData={this.state.followsData.user_data} />
