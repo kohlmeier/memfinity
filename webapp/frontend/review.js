@@ -9,158 +9,177 @@ import * as API from './api';
 import Container from './markdown-container';
 import { CardModel } from './models';
 
-var Review = React.createClass({
-    render: function() {
-        var { easyStack, hardStack, reviewingStack } = this.state;
+export default class Review extends React.Component {
+  constructor (props) {
+    super(props)
 
-        if (window.user_key === 'None') {
-            return <div className="editor">
-                Please log in to practice your personal cards.  :)
-            </div>;
-        }
+    // TODO(joel): make this not depend on props
+    const reviewAll = (
+      (props.params && props.params.reviewAll==='true') ||
+      (props.query && props.query.reviewAll==='true')
+    );
 
-        if (!reviewingStack) {
-            // If we don't have the data yet, display a temp message.
-            return <div>Sit tight, partner.  We&lsquo;re loading your data now!</div>;
-        }
-
-        return <div className="review_workspace">
-            <ReviewedStack collection={hardStack}
-                           name='Hard' />
-            <ReviewedStack collection={easyStack}
-                           name='Easy' />
-
-            <ReviewingStack onKeepPracticing={this.onKeepPracticing}
-                            collection={reviewingStack}
-                            rate={this.handleRate} />
-        </div>;
-    },
-
-    handleRate: function(rating) {
-        var { easyStack, hardStack, reviewingStack } = this.state;
-        var model = reviewingStack[0];
-        API.rate(model, rating);
-        var reviewingStack = reviewingStack.slice();
-        reviewingStack.splice(0, 1);
-        if (rating === 'easy') {
-            easyStack = easyStack.concat([model]);
-        } else { // hard
-            hardStack = hardStack.concat([model]);
-        }
-        this.setState({
-            reviewingStack,
-            easyStack,
-            hardStack,
-        });
-    },
-
-    getInitialState: function() {
-        var reviewAll = (
-            (this.props.params && this.props.params.reviewAll==='true') ||
-            (this.props.query && this.props.query.reviewAll==='true')
-        );
-        return {
-            reviewingStack: null,
-            reviewAll: reviewAll,
-            hardStack: [],
-            easyStack: [],
-        };
-    },
-
-    componentDidMount: function() {
-        if (this.state.reviewingStack === null) {
-            // force an API call to retrieve cards
-            this.fetchCardData(this.state.reviewAll);
-        }
-    },
-
-    onKeepPracticing: function() {
-        this.setState({reviewAll: true, reviewingStack: null});
-        this.fetchCardData(true);
-    },
-
-    fetchCardData: function(reviewAll) {
-      API.getReviewCards(
+    this.state = {
+        reviewingStack: null,
         reviewAll,
-        reviewCards => {
-          const reviewingStack = reviewCards.map(card => new CardModel(card));
-          self.setState({ reviewingStack });
-        },
-        err => {
-          console.error(err);
-        }
-      );
-    },
-});
+        hardStack: [],
+        easyStack: [],
+    };
+  }
 
-var stackSides = function (primary, secondary, size, times) {
-    times = 1;
-    var ret = [];
+  render() {
+    const { easyStack, hardStack, reviewingStack } = this.state;
 
-    // XXX(joel) times is always 1?
-    {
-        n += 1; // 1-indexed
-        var color = n % 2 === 0 ? primary : secondary,
-            sz = (size * n) + 'px ';
-        ret.push(sz + sz + color);
+    if (window.user_key === 'None') {
+        return <div className="editor">
+            Please log in to practice your personal cards.  :)
+        </div>;
     }
-    ret = ret.join(', ');
-    return ret;
+
+    if (!reviewingStack) {
+        // If we don't have the data yet, display a temp message.
+        return <div>Sit tight, partner.  We&lsquo;re loading your data now!</div>;
+    }
+
+    return (
+      <div className="review_workspace">
+        <ReviewedStack collection={hardStack} name='Hard' />
+        <ReviewedStack collection={easyStack} name='Easy' />
+
+        <ReviewingStack
+          onKeepPracticing={this.onKeepPracticing}
+          collection={reviewingStack}
+          rate={this.handleRate}
+        />
+      </div>
+    );
+  }
+
+  handleRate(rating) {
+    let { easyStack, hardStack, reviewingStack } = this.state;
+    const model = reviewingStack[0];
+    API.rate(model, rating);
+    reviewingStack = reviewingStack.slice();
+    reviewingStack.splice(0, 1);
+    if (rating === 'easy') {
+      easyStack = easyStack.concat([model]);
+    } else { // hard
+      hardStack = hardStack.concat([model]);
+    }
+    this.setState({
+      reviewingStack,
+      easyStack,
+      hardStack,
+    });
+  }
+
+  componentDidMount() {
+    if (this.state.reviewingStack === null) {
+      // force an API call to retrieve cards
+      this.fetchCardData(this.state.reviewAll);
+    }
+  }
+
+  onKeepPracticing() {
+    this.setState({reviewAll: true, reviewingStack: null});
+    this.fetchCardData(true);
+  }
+
+  fetchCardData(reviewAll) {
+    API.getReviewCards(
+      reviewAll,
+      reviewCards => {
+        const reviewingStack = reviewCards.map(card => new CardModel(card));
+        self.setState({ reviewingStack });
+      },
+      err => {
+        console.error(err);
+      }
+    );
+  }
+}
+
+function stackSides<A>(
+  primary: A,
+  secondary: A,
+  size: number,
+  times: number
+): A {
+  times = 1;
+  var ret = [];
+
+  // XXX(joel) times is always 1?
+  {
+    n += 1; // 1-indexed
+    var color = n % 2 === 0 ? primary : secondary,
+      sz = (size * n) + 'px ';
+    ret.push(sz + sz + color);
+  }
+  ret = ret.join(', ');
+  return ret;
 };
 
 // props: collection, position ({x, y})?, rate
-var ReviewingStack = React.createClass({
-    render: function() {
-        var topCardModel = this.props.collection[0];
-        var sideLayers = Math.max(1, this.props.collection.length);
-        var stackstyle = {
-            'boxShadow': stackSides('#2C3E50', '#BDC3C7', 2, sideLayers)
-        };
+function ReviewingStack({ collection, onKeepPracticing, rate }) {
+  const topCardModel = collection[0];
+  const sideLayers = Math.max(1, collection.length);
+  const stackstyle = {
+    'boxShadow': stackSides('#2C3E50', '#BDC3C7', 2, sideLayers)
+  };
 
-        var stack;
-        if (!topCardModel) { // empty stack
-            // TODO
-            stack = <div className='reviewingstack emptyreviewingstack'
-                        style={stackstyle}>
-                <h2>Congratulations!</h2>
+  let stack;
+  if (!topCardModel) { // empty stack
+    // TODO
+    stack = (
+      <div
+        className='reviewingstack emptyreviewingstack'
+        style={stackstyle}
+      >
+        <h2>Congratulations!</h2>
 
-                <p>you have no cards needing practice right now.</p>
-                <p>
-                    <Link to="/create">Create new cards</Link> or
-                    <a href="javascript:void(0);" onClick={this.onKeepPracticing}> continue practicing</a>
-                </p>
-            </div>;
-        } else {
-            var topCard = <Card model={topCardModel}
-                                rate={this.props.rate}
-                                key={topCardModel.cid} />;
-            stack = <div className='reviewingstack' style={stackstyle}>
-                {topCard}
-            </div>;
-        }
-        return <div className='reviewingstackall'>
-            <ReviewingStackMeta
-                    count={this.props.collection.length}
-                    name='Remaining' />
-            {stack}
-        </div>;
-    },
-    onKeepPracticing: function(event) {
-        this.props.onKeepPracticing();
-    },
-});
+        <p>you have no cards needing practice right now.</p>
+        <p>
+          <Link to="/create">Create new cards</Link> or
+          <a href="javascript:void(0);" onClick={onKeepPracticing}>
+            continue practicing
+          </a>
+        </p>
+      </div>
+    );
+  } else {
+    stack = (
+      <div className='reviewingstack' style={stackstyle}>
+        <Card
+          model={topCardModel}
+          rate={rate}
+          key={topCardModel.cid}
+        />
+      </div>
+    );
+  }
 
-var ReviewingStackMeta = React.createClass({
-    render: function() {
-        var count = this.props.count,
-            word = this.props.count === 1 ? 'card' : 'cards',
-            phrase = count + ' ' + word;
-        return <div className='reviewingstackmeta'>
-            <h3>{this.props.name}</h3>
-            <h4>{phrase}</h4>
-        </div>;
-    }
-});
+  return (
+    <div className='reviewingstackall'>
+      <ReviewingStackMeta
+        count={collection.length}
+        name='Remaining'
+      />
+      {stack}
+    </div>
+  );
+}
+
+function ReviewingStackMeta({ name, count }) {
+  const word = count === 1 ? 'card' : 'cards';
+  const phrase = count + ' ' + word;
+
+  return (
+    <div className='reviewingstackmeta'>
+      <h3>{name}</h3>
+      <h4>{phrase}</h4>
+    </div>
+  );
+}
 
 // props: collection, name
 var ReviewedStack = React.createClass({
@@ -189,119 +208,109 @@ var ReviewedStack = React.createClass({
     },
 });
 
-var ReviewedStackMeta = React.createClass({
-    render: function() {
-        var count = this.props.count,
-            word = this.props.count === 1 ? 'card' : 'cards',
-            phrase = count + ' ' + word;
-        return <div className='reviewedstackmeta'>
-            <h4>{this.props.name}</h4>
-            {phrase}
-        </div>;
-    }
-});
+function ReviewedStackMeta({ count, name }) {
+  const word = count === 1 ? 'card' : 'cards';
+  const phrase = count + ' ' + word;
+  return (
+    <div className='reviewedstackmeta'>
+      <h4>{name}</h4>
+      {phrase}
+    </div>
+  );
+}
 
 // props: nextCard, front, back, (tags or meta)
 // TODO this should probably take state as as prop
-var Card = React.createClass({
-    render: function() {
-      let stateView;
-      if (this.state.state === 'front') {
-        const content = (
-          <Markdown
-            container={Container}
-            source={this.props.model.get('front')}
-          />
-        );
-        stateView = (
-          <CardFront
-            content={content}
-            onClick={() => this.setState({ state: 'back' })}
-          />
-        );
-      } else if (this.state.state === 'back') {
-        const content = (
-          <Markdown
-            container={Container}
-            source={this.props.model.get('back')}
-          />
-        );
-        stateView = (
-          <CardBack
-            content={content}
-            rate={this.props.rate}
-          />
-        );
-      } else { // meta
-        stateView = <CardMeta info={this.props.model.get('meta')} />;
-      }
-      return (
-        <div className='card'>
-            {stateView}
-        </div>
+class Card extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { state: 'front' };
+  }
+
+  render() {
+    const { state } = this.state;
+    const { model, rate } = this.props;
+
+    let stateView;
+    if (state === 'front') {
+      const content = (
+        <Markdown
+          container={Container}
+          source={model.get('front')}
+        />
       );
-    },
-    getInitialState: function() {
-        return {
-            state: 'front'
-        };
+      stateView = (
+        <CardFront
+          content={content}
+          onClick={() => this.setState({ state: 'back' })}
+        />
+      );
+    } else if (state === 'back') {
+      const content = (
+        <Markdown
+          container={Container}
+          source={model.get('back')}
+        />
+      );
+      stateView = (
+        <CardBack
+          content={content}
+          rate={rate}
+        />
+      );
+    } else { // meta
+      stateView = <CardMeta info={model.get('meta')} />;
     }
-});
-
-var CardFront = React.createClass({
-    render: function() {
-        return <div className='cardFront' onClick={this.props.onClick}>
-            <Content content={this.props.content} />
-            <div className='flip_prompt'>(click to reveal and rate)</div>
-        </div>;
-    }
-});
-
-var CardBack = React.createClass({
-    render: function() {
-        // <MetaButton onClick={undefined} />
-        return <div className='clearfix'>
-            <Content content={this.props.content} />
-            <Choices rate={this.props.rate} />
-        </div>;
-    }
-});
-
-var CardMeta = React.createClass({
-    render: function() {
-        return <span />;
-    }
-});
-
-var Content = React.createClass({
-    render: function() {
-        return <div className='content'>{this.props.content}</div>;
-    }
-});
-
-var Choices = React.createClass({
-  render: function() {
-    const { rate } = this.props;
-
     return (
-      <div className='choices'>
-        <span className='choices_hard'
-              onClick={() => rate('hard')}>
-            Hard
-        </span>
-        <span className='choices_easy'
-              onClick={() => rate('easy')}>
-            Easy
-        </span>
+      <div className='card'>
+          {stateView}
       </div>
     );
   }
-});
+}
 
-var MetaButton = React.createClass({
-    render: function() {
-        return <div />;
-    }
-});
+function CardFront({ content, onClick }) {
+  return (
+    <div className='cardFront' onClick={onClick}>
+      <Content content={content} />
+      <div className='flip_prompt'>(click to reveal and rate)</div>
+    </div>
+  );
+}
 
-module.exports = Review;
+function CardBack({ content, rate }) {
+  // <MetaButton onClick={undefined} />
+  return (
+    <div className='clearfix'>
+      <Content content={content} />
+      <Choices rate={rate} />
+    </div>
+  );
+}
+
+function CardMeta() {
+  return <span />;
+}
+
+function Content({ content }) {
+  return <div className='content'>{this.props.content}</div>;
+}
+
+function Choices({ rate }) {
+  return (
+    <div className='choices'>
+      <span className='choices_hard'
+            onClick={() => rate('hard')}>
+          Hard
+      </span>
+      <span className='choices_easy'
+            onClick={() => rate('easy')}>
+          Easy
+      </span>
+    </div>
+  );
+}
+
+function MetaButton() {
+  return <div />;
+}
